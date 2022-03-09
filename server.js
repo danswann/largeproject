@@ -5,15 +5,27 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 
+
 // Set constants
 const PORT = process.env.PORT || 5000;
 
-// Create express app
+
+// Create and configure MongoDB connection
+const MongoClient = require('mongodb').MongoClient;
+require('dotenv').config();
+const url = process.env.MONGODB_URI;
+const client = new MongoClient(url);
+client.connect();
+
+
+// Create and configure express app
 const app = express();
 app.set('port', (process.env.PORT || 5000));
 app.use(cors());
 app.use(bodyParser.json());
 
+
+// Customizer headers
 app.use((req, res, next) => 
 {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -22,6 +34,8 @@ app.use((req, res, next) =>
     next();
 });
 
+
+// Configure paths for static files
 if(process.env.NODE_ENV === 'production')
 {
     app.use(express.static('frontend/build'));
@@ -31,8 +45,14 @@ if(process.env.NODE_ENV === 'production')
     });
 }
 
+
+// Configure API
+var apiMain = require('./api/main.js');
+apiMain.setApp(app, client);
+
+
+// Begin listening on relevant port
 app.listen(PORT, () =>
 {
     console.log('Server listening on port ' + PORT);
 });
-
