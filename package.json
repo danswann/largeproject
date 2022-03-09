@@ -4,7 +4,8 @@
     "description": "",
     "main": "server.js",
     "scripts": {
-        "start": "node server.js & npm start --prefix frontend",
+        "test": "node server.js & npm start --prefix frontend",
+        "start": "node server.js",
         "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
     },
     "author": "",
@@ -15,6 +16,7 @@
         "dotenv": "^16.0.0",
         "express": "^4.17.3",
         "mongodb": "^4.4.1",
+        "spotify-web-api-node": "^5.0.2",
         "yarn": "^1.22.17"
     }
 }
