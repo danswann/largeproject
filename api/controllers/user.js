@@ -1,4 +1,5 @@
 exports.login = function(req, res, next) {
-    var ret = {message: 'You logged in!'};
+    const {login, password} = req.body;
+    var ret = {message: 'You tried to login as ' + login + '!'};
     res.status(200).json(ret);
 }
