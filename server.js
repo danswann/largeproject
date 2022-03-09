@@ -48,6 +48,8 @@ if(process.env.NODE_ENV === 'production')
 // Configure API
 var apiMain = require('./api/main.js');
 apiMain.setApp(app, client);
+var spotifyMain = require('./api/spotify/main.js');
+spotifyMain.setApp(app, client);
 
 
 // Begin listening on relevant port
