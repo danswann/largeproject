@@ -23,6 +23,7 @@ app.use(bodyParser.json());
 
 var api = require('./api/controllers/user.js');
 api.login( app, client );
+api.register( app, client );
 
 // Customizer headers
 app.use((req, res, next) =>
