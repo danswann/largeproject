@@ -15,16 +15,17 @@ const url = C.MONGODB_URI;
 const client = new MongoClient(url);
 client.connect();
 
-
 // Create and configure express app
 const app = express();
 app.set('port', C.PORT);
 app.use(cors());
 app.use(bodyParser.json());
 
+var api = require('./api/controllers/user.js');
+api.login( app, client );
 
 // Customizer headers
-app.use((req, res, next) => 
+app.use((req, res, next) =>
 {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
@@ -47,7 +48,6 @@ if(process.env.NODE_ENV === 'production')
 // Configure API routes
 const userRouter = require('./api/routes/user');
 app.use('/api/user', userRouter);
-
 
 // Begin listening on relevant port
 app.listen(C.PORT, () =>
