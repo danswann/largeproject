@@ -9,11 +9,22 @@ export default function Home({ navigation }: RootTabScreenProps<"Home">) {
   return <View style={styles.container}></View>;
 }
 
+const HomeScreen = () => {
+  return
+  (
+    <View style={styles.container}>
+      <Text style={styles.text}>welcome</Text>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#573c6b',
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    padding: 20,
   },
   title: {
     fontSize: 20,
