@@ -1,22 +1,27 @@
 {
-    "name": "largeproject",
-    "version": "0.0.1",
-    "description": "",
-    "main": "server.js",
-    "scripts": {
-        "test": "node server.js & npm start --prefix frontend",
-        "start": "node server.js",
-        "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
-    },
-    "author": "",
-    "license": "ISC",
-    "dependencies": {
-        "body-parser": "^1.19.2",
-        "cors": "^2.8.5",
-        "dotenv": "^16.0.0",
-        "express": "^4.17.3",
-        "mongodb": "^4.4.1",
-        "spotify-web-api-node": "^5.0.2",
-        "yarn": "^1.22.17"
-    }
+  "name": "largeproject",
+  "version": "0.0.1",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js & npm start --prefix frontend",
+    "start": "node server.js",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "expo": "^44.0.6",
+    "express": "^4.17.3",
+    "mongodb": "^4.4.1",
+    "spotify-web-api-node": "^5.0.2",
+    "yarn": "^1.22.17"
+  },
+  "devDependencies": {
+    "typescript": "~4.3.5",
+    "@types/react-native": "~0.64.12"
+  }
 }
