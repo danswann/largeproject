@@ -11,7 +11,7 @@ const ChatSchema = new Schema({
 
 // Define directMessage schema
 const DMSchema = new Schema({
-    chat: {},
+    chat: [{type:ChatSchema, default:()=>({})}],
     users: [{type:Schema.ObjectId, ref:'User'}],
     mostRecent: {type:Date, default:Date.now}
 });
