@@ -19,25 +19,26 @@ exports.login = function(app, client) {
 }
 
 exports.register = function(app, client) {
-    app.put('/api/user/register', async (req, res, next) =>
+    app.post('/api/user/register', async (req, res, next) =>
     {
-        // incoming: biography, DOB, email, phoneNumber, username, password,
+        // incoming: full name, biography, DOB, email, phoneNumber, username, password,
         // outgoing: success/fail message
         var message = '';
         var myDate = Date();
 
-        const {biography, dob, email, phoneNumber, username, password} = req.body;
+        const {fullName, biography, dob, email, phoneNumber, username, password} = req.body;
 
         const db = client.db();
         await db.collection('users').insertOne({
+            fullName:fullName,
             biography:biography,
-            DOB:dob,
+            DOB: new Date(dob),
             email:email,
             phoneNumber:phoneNumber,
             username:username,
             password:password,
             profileImageUrl:'http://...',
-            dateJoined:myDate,
+            dateJoined: new Date(Date.now()),
             followerCount:0,
             followerIDs:[],
             followingCount:0,
