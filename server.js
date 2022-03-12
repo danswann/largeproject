@@ -4,26 +4,21 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 
-
 // Set constants
 const C = require('./constants.js');
 
-
-// Create and configure MongoDB connection
-const MongoClient = require('mongodb').MongoClient;
-const url = C.MONGODB_URI;
-const client = new MongoClient(url);
-client.connect();
+// Create and configure MongoDB connection with mongoose
+const mongoose = require('mongoose');
+mongoose.connect(C.MONGODB_URI, {useNewUrlParser:true, useUnifiedTopology:true});
+mongoose.Promise = global.Promise;
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // Create and configure express app
 const app = express();
 app.set('port', C.PORT);
 app.use(cors());
 app.use(bodyParser.json());
-
-var api = require('./api/controllers/user.js');
-api.login( app, client );
-api.register( app, client );
 
 // Customizer headers
 app.use((req, res, next) =>
@@ -34,6 +29,9 @@ app.use((req, res, next) =>
     next();
 });
 
+// Configure API routes
+const userRouter = require('./api/routes/user');
+app.use('/api/user', userRouter);
 
 // Configure paths for static files
 if(process.env.NODE_ENV === 'production')
@@ -44,11 +42,6 @@ if(process.env.NODE_ENV === 'production')
         res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
     });
 }
-
-
-// Configure API routes
-const userRouter = require('./api/routes/user');
-app.use('/api/user', userRouter);
 
 // Begin listening on relevant port
 app.listen(C.PORT, () =>

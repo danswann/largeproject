@@ -1,58 +1,64 @@
-// require('express');
-// require('mongodb');
+const User = require('../models/user');
 
-exports.login = function(app, client) {
-    app.post('/api/user/login', async (req, res, next) =>
+exports.login = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true};
+
+    // Incoming values
+    const {username, password} = req.body;
+
+    // Attempt to find a user with matching username/password
+    const user = await User.findOne({username:username, password:password}).exec();
+
+    // If the user exists, return ok:true and the user's details
+    if(user)
     {
-        // incoming: username, password
-        // outgoing: id, objectId, fullname error
-
-        var error = '';
-
-        const {username, password} = req.body;
-
-        const db = client.db();
-        const results = await db.collection('users').find({username:username,password:password}).toArray();
-
-        res.status(200).json(results[0]);
-    });
+        response.user = user.toJSON();
+        res.status(200).json(response);
+    }
+    // Otherwise return ok:false and the error message
+    else
+    {
+        response.ok = false;
+        response.error = 'Invalid username or password';
+        res.status(200).json(response);
+    }
 }
+exports.register = async function(req, res, next)
+{
+    // Default response object
+    var response = {ok:true}
 
-exports.register = function(app, client) {
-    app.post('/api/user/register', async (req, res, next) =>
-    {
-        // incoming: full name, biography, DOB, email, phoneNumber, username, password,
-        // outgoing: success/fail message
-        var message = '';
-        var myDate = Date();
+    // Incoming values
+    const {firstName, lastName, email, phoneNumber, username, password, dob} = req.body;
 
-        const {fullName, biography, dob, email, phoneNumber, username, password} = req.body;
+    // Create a new instance of User model
+    var newUser = new User({
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        phoneNumber: phoneNumber,
+        DOB: dob,
+        username: username,
+        password: password,
+        profileImageUrl: 'FILLER',
+        biography: 'FILLER'
+    });
 
-        const db = client.db();
-        await db.collection('users').insertOne({
-            fullName:fullName,
-            biography:biography,
-            DOB: new Date(dob),
-            email:email,
-            phoneNumber:phoneNumber,
-            username:username,
-            password:password,
-            profileImageUrl:'http://...',
-            dateJoined: new Date(Date.now()),
-            followerCount:0,
-            followerIDs:[],
-            followingCount:0,
-            followingIDs:[],
-            postCount:0,
-            posts:[],
-            likedPosts:[],
-            bookedMarkedPosts:[],
-            unreadNotifications:0,
-            notifications:[],
-            DMIDS:[],
-            pushNotificationsOn:true
-        });
-        var ret = {message:'successfully inserted a new user'};
-        res.status(200).json(ret);
+    // Save the new instance
+    newUser.save(function (err) {
+        // If an error occurs, return ok:false and the error message
+        if(err)
+        {
+            response.ok = false;
+            response.error = err;
+            res.status(200).json(response);
+        }
+        // Otherwise return a success message
+        else
+        {
+            response.message = 'Succesfully added user ' + newUser.fullName + '!';
+            res.status(200).json(response);
+        }
     });
 }
