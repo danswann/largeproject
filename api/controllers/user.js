@@ -24,6 +24,7 @@ exports.login = async function(req, res, next) {
         res.status(200).json(response);
     }
 }
+
 exports.register = async function(req, res, next)
 {
     // Default response object
