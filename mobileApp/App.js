@@ -1,83 +1,16 @@
-import * as React from "react";
+import React from "react";
 import { Text, View, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
-
-function HomeScreen() {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "black",
-      }}
-    >
-      <Text style={{ color: "white" }}>Home!</Text>
-    </View>
-  );
-}
-
-function SearchScreen() {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "black",
-      }}
-    >
-      <Text style={{ color: "white" }}>Search</Text>
-    </View>
-  );
-}
-
-function PostScreen() {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "black",
-      }}
-    >
-      <Text style={{ color: "white" }}>Create a Post!</Text>
-    </View>
-  );
-}
-
-function NotificationScreen() {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "black",
-      }}
-    >
-      <Text style={{ color: "white" }}>View Your Notifications!</Text>
-    </View>
-  );
-}
-
-function ProfileScreen() {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "black",
-      }}
-    >
-      <Text style={{ color: "white" }}>View Your Profile!</Text>
-    </View>
-  );
-}
+import HeaderBackground from "./components/HeaderBackground";
+import HeaderTitle from "./components/HeaderTitle";
+import HeaderProfile from "./components/HeaderProfile";
+import HomeScreen from "./screens/HomeScreen";
+import SearchScreen from "./screens/SearchScreen";
+import PostScreen from "./screens/PostScreen";
+import NotificationScreen from "./screens/NotificationScreen";
+import ProfileScreen from "./screens/ProfileScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -107,6 +40,10 @@ export default function App() {
           tabBarInactiveTintColor: "gray",
           tabBarStyle: { backgroundColor: "black", borderTopColor: "gray" },
           tabBarShowLabel: false,
+          headerBackground: HeaderBackground,
+          headerLeft: HeaderTitle,
+          headerRight: HeaderProfile,
+          title: "",
         })}
       >
         <Tab.Screen name="Home" component={HomeScreen} />
