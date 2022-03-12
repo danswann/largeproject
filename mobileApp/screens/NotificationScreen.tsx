@@ -56,7 +56,6 @@ export default function App() {
           tabBarShowLabel: false,
         })}
       >
-        <Tab.Screen name="Messages" component={MessageScreen} />
         <Tab.Screen name="Notification" component={NotificationScreen} />
 
       </Tab.Navigator>
