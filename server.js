@@ -33,6 +33,16 @@ app.use((req, res, next) =>
 const userRouter = require('./api/routes/user');
 app.use('/api/user', userRouter);
 
+const postRouter = require('./api/routes/post');
+app.use('/api/post', postRouter);
+
+const notificationRouter = require('./api/routes/notification');
+app.use('/api/notification', notificationRouter);
+
+const directMessageRouter = require('./api/routes/directMessage');
+app.use('/api/directMessage', directMessageRouter);
+
+
 // Configure paths for static files
 if(process.env.NODE_ENV === 'production')
 {

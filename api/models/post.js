@@ -12,7 +12,7 @@ const CommentSchema = new Schema({
 // Define post schema
 const PostSchema = new Schema({
     isReposted: {type:Boolean, required:true, default:false},
-    originalPostID: {type:Schema.ObjectId, ref:'Post', required:true, default:'0'},
+    originalPostID: {type:Schema.ObjectId, ref:'Post', default:null},
     playlistID: {type:String, maxlength:100},
     caption: {type:String, maxlength:250},
     mentionedUsers: [{type:Schema.ObjectId, ref:'User'}],
