@@ -1,57 +1,42 @@
 import React from "react";
+import { useState } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import HeaderBackground from "./components/HeaderBackground";
-import HeaderTitle from "./components/HeaderTitle";
-import HeaderProfile from "./components/HeaderProfile";
-import HomeScreen from "./screens/HomeScreen";
-import SearchScreen from "./screens/SearchScreen";
-import PostScreen from "./screens/PostScreen";
-import NotificationScreen from "./screens/NotificationScreen";
-import ProfileScreen from "./screens/ProfileScreen";
+import AuthenticatedScreen from "./screens/AuthenticatedScreen";
+import LoginScreen from "./screens/LoginScreen";
+import RegisterScreen from "./screens/RegisterScreen";
 
-const Tab = createBottomTabNavigator();
+// Variable to maintain state of user authentication
+const isLoggedIn = false;
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
-
-            if (route.name === "Home") {
-              iconName = focused ? "home" : "home-outline";
-            } else if (route.name === "Search") {
-              iconName = focused ? "search" : "search-outline";
-            } else if (route.name === "Post") {
-              iconName = focused ? "add-circle" : "add-circle-outline";
-            } else if (route.name === "Notification") {
-              iconName = focused ? "notifications" : "notifications-outline";
-            } else if (route.name === "Profile") {
-              iconName = focused ? "person" : "person-outline";
-            }
-            // You can return any component that you like here!
-            return <Ionicons name={iconName} size={size} color={color} />;
-          },
-          tabBarActiveTintColor: "#573C6B",
-          tabBarInactiveTintColor: "gray",
-          tabBarStyle: { backgroundColor: "black", borderTopColor: "gray" },
-          tabBarShowLabel: false,
-          headerBackground: HeaderBackground,
-          headerLeft: HeaderTitle,
-          headerRight: HeaderProfile,
-          title: "",
-        })}
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
       >
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Search" component={SearchScreen} />
-        <Tab.Screen name="Post" component={PostScreen} />
-        <Tab.Screen name="Notification" component={NotificationScreen} />
-        <Tab.Screen name="Profile" component={ProfileScreen} />
-      </Tab.Navigator>
+        {/* Checks if user is authenticated, if so we show the authenticated screen which is our main app screen */}
+        {isLoggedIn ? (
+          <Stack.Group>
+            <Stack.Screen
+              name="Authenticated"
+              component={AuthenticatedScreen}
+            />
+          </Stack.Group>
+        ) : (
+          // If user is not authenticated then we show the unauthenticated screen which is composed of the login/register screen
+          <Stack.Group>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
+          </Stack.Group>
+        )}
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }
