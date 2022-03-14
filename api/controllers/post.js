@@ -1,5 +1,21 @@
 const Post = require('../models/post');
 
+function checkObjectId (id) {
+    const ObjectId = require('mongoose').Types.ObjectId;
+
+    if(ObjectId.isValid(id)) {
+        if((String)(new ObjectId(id)) === id)
+        {
+            return true;
+        }
+        return false;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 exports.newPost = async function(req, res, next) {
     // Default response object
     var response = {ok:true};
@@ -40,20 +56,8 @@ exports.likePost = async function(req, res, next) {
     // Incoming values
     const {id, userID} = req.body;
 
-    // Check if id is valid object id
-    const ObjectId = require('mongoose').Types.ObjectId;
-
-    if(ObjectId.isValid(id)) {
-        if(!((String)(new ObjectId(id)) === id))
-        {
-            response.ok = false;
-            response.error = 'Invalid post id';
-            res.status(200).json(response);
-            return;
-        }
-    }
-    else
-    {
+    // Check if post id is valid object id
+    if(!checkObjectId(id)) {
         response.ok = false;
         response.error = 'Invalid post id';
         res.status(200).json(response);
@@ -61,17 +65,7 @@ exports.likePost = async function(req, res, next) {
     }
 
     // Check if userID is a valid object id
-    if(ObjectId.isValid(userID)) {
-        if(!((String)(new ObjectId(userID)) === userID))
-        {
-            response.ok = false;
-            response.error = 'Invalid user id';
-            res.status(200).json(response);
-            return;
-        }
-    }
-    else
-    {
+    if(!checkObjectId(userID)) {
         response.ok = false;
         response.error = 'Invalid user id';
         res.status(200).json(response);
@@ -92,7 +86,7 @@ exports.likePost = async function(req, res, next) {
         // If the post exists, return ok:true
         if(post)
         {
-            response.user = post.toJSON();
+            response.action = 'post successfully unliked';
             res.status(200).json(response);
         }
         // Otherwise return ok:false and the error message
@@ -115,7 +109,7 @@ exports.likePost = async function(req, res, next) {
         // If the post exists, return ok:true
         if(post)
         {
-            response.user = post.toJSON();
+            response.action = 'post successfully liked';
             res.status(200).json(response);
         }
         // Otherwise return ok:false and the error message
