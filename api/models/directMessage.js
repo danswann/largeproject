@@ -12,8 +12,7 @@ const ChatSchema = new Schema({
 // Define directMessage schema
 const DMSchema = new Schema({
     chat: [{type:ChatSchema, default:()=>({})}],
-    users: [{type:Schema.ObjectId, ref:'User'}],
-    mostRecent: {type:Date, default:Date.now}
+    users: [{type:Schema.ObjectId, ref:'User'}]
 });
 
 // Export model
