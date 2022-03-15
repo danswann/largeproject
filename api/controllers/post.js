@@ -121,3 +121,52 @@ exports.likePost = async function(req, res, next) {
         }
     }
 }
+
+exports.commentOnPost = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true};
+
+    // Incoming values
+    const {id, comment, userID} = req.body;
+
+    // Check if post id is valid object id
+    if(!checkObjectId(id)) {
+        response.ok = false;
+        response.error = 'Invalid post id';
+        res.status(200).json(response);
+        return;
+    }
+
+    // Check if userID is a valid object id
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid user id';
+        res.status(200).json(response);
+        return;
+    }
+
+    // find post by post id
+    const filter = {_id:id};
+    const post = await Post.findOne(filter);
+
+    // add comment object to comments array
+    const update = {comment:comment,userID:userID};
+    post.comments.push(update);
+
+    // update the post json file in database
+    post.save(function (err) {
+        // If an error occurs, return ok:false and the error message
+        if(err)
+        {
+            response.ok = false;
+            response.error = err;
+            res.status(200).json(response);
+        }
+        // Otherwise return a success message
+        else
+        {
+            response.message = 'Succesfully added comment!';
+            res.status(200).json(response);
+        }
+    });
+}
