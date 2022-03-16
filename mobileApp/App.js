@@ -9,7 +9,7 @@ import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 
 // Variable to maintain state of user authentication
-const isLoggedIn = false;
+const isLoggedIn = true;
 
 const Stack = createNativeStackNavigator();
 
