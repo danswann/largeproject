@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const Notification = require('../models/notification');
 
 exports.login = async function(req, res, next) {
     // Default response object
