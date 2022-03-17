@@ -103,5 +103,52 @@ exports.sendMessage = async function(req, res, next) {
             res.status(200).json(response);
         }
     });
+}
 
+exports.readDM = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true};
+
+    // Incoming values
+    const {dmID} = req.body;
+
+    // Check if dm id is valid object id
+    if(!checkObjectId(dmID)) {
+        response.ok = false;
+        response.error = 'Invalid post id';
+        res.status(200).json(response);
+        return;
+    }
+
+
+    // find dm by dm id
+    const filter = {_id:dmID};
+    const dm = await DirectMessage.findOne(filter);
+
+    if(dm)
+    {
+        for(var i = 0; i < dm.chat.length; i++)
+            dm.chat[i].isRead = true;
+
+        dm.save(function (err) {
+            // If an error occurs, return ok:false and the error message
+            if(err)
+            {
+                response.ok = false;
+                response.error = err;
+                res.status(200).json(response);
+            }
+            else
+            {
+                response.message = 'Succesfully read messages!';
+                res.status(200).json(response);
+            }
+        });
+    }
+    else
+    {
+        response.ok = false;
+        response.message = 'dm not found';
+        res.status(200).json(response);
+    }
 }
