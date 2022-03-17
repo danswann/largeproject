@@ -1,35 +1,123 @@
 import React from "react";
 import { useState } from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, ActivityIndicator } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 // import Ionicons from "react-native-vector-icons/Ionicons";
 import AuthenticatedScreen from "./screens/AuthenticatedScreen";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
+import { AuthContext } from "./Context";
 
-// Variable to maintain state of user authentication
-const isLoggedIn = true;
-
-const Stack = createNativeStackNavigator();
+const LoggedOutStack = createNativeStackNavigator();
+const LoggedInStack = createNativeStackNavigator();
 
 export default function App() {
+  // const [isLoading, setIsLoading] = React.useState(true);
+  // const [userToken, setUserToken] = React.useState(null);
+
+  // Initial state
+  const initialLoginState = {
+    isLoading: true,
+    username: null,
+    userToken: null,
+  };
+
+  // Reducer function
+  const loginReducer = (prevState, action) => {
+    switch (action.type) {
+      case "RETRIEVE_TOKEN":
+        return {
+          ...prevState,
+          userToken: action.token,
+          isLoading: false,
+        };
+      case "LOGIN":
+        return {
+          ...prevState,
+          username: action.id,
+          userToken: action.token,
+          isLoading: false,
+        };
+      case "LOGOUT":
+        return {
+          ...prevState,
+          username: null,
+          userToken: null,
+          isLoading: false,
+        };
+      case "REGISTER":
+        return {
+          ...prevState,
+          username: action.id,
+          userToken: action.token,
+          isLoading: false,
+        };
+    }
+  };
+
+  const [loginState, dispatch] = React.useReducer(
+    loginReducer,
+    initialLoginState
+  );
+
+  // Context functions that can change the authentication status of the user
+  const authContext = React.useMemo(() => {
+    return {
+      signIn: (username, password) => {
+        let userToken;
+        userToken = null;
+        username = "user";
+        password = "pass";
+        if (username === "user" && password === "pass") {
+          userToken = "usertoken";
+        }
+        dispatch({ type: "LOGIN", id: username, token: userToken });
+      },
+      signUp: () => {
+        setIsLoading(false);
+        setUserToken("User");
+      },
+      signOut: () => {
+        dispatch({ type: "LOGOUT" });
+      },
+    };
+  }, []);
+
+  // Set the buffer time for the loading screen (only occurs on first opening the app)
+  React.useEffect(() => {
+    setTimeout(() => {
+      dispatch({ type: "RETRIEVE_TOKEN", token: "usertoken" });
+    }, 1000);
+  }, []);
+
+  // Show the loading circle while we retrieve whether the users logged in status
+  if (loginState.isLoading) {
+    return (
+      <View
+        style={{ flex: 1, justifyContent: "center", backgroundColor: "black" }}
+      >
+        <ActivityIndicator size="large" color="#573C6B" />
+      </View>
+    );
+  }
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false, }}>
-        {/* Checks if user is authenticated, if so we show the authenticated screen which is our main app screen */}
-        {isLoggedIn ? (
-          <Stack.Group>
-            <Stack.Screen name="Authenticated" component={AuthenticatedScreen}/>
-          </Stack.Group>
-        ):(
-          // If user is not authenticated then we show the unauthenticated screen which is composed of the login/register screen
-          <Stack.Group>
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Register" component={RegisterScreen} />
-          </Stack.Group>
+    // Use authcontext provider to track the users authentication status across the whole app
+    <AuthContext.Provider value={authContext}>
+      <NavigationContainer>
+        {loginState.userToken ? (
+          <LoggedInStack.Navigator screenOptions={{ headerShown: false }}>
+            <LoggedInStack.Screen
+              name="Authenticated"
+              component={AuthenticatedScreen}
+            />
+          </LoggedInStack.Navigator>
+        ) : (
+          <LoggedOutStack.Navigator screenOptions={{ headerShown: false }}>
+            <LoggedOutStack.Screen name="Login" component={LoginScreen} />
+          </LoggedOutStack.Navigator>
         )}
-      </Stack.Navigator>
-    </NavigationContainer>
+      </NavigationContainer>
+    </AuthContext.Provider>
   );
 }
