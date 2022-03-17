@@ -97,7 +97,7 @@ exports.followUser = async function(req, res, next)
         return;
     }
 
-    // Check if userID is a valid object id
+    // Check if followID is a valid object id
     if(!checkObjectId(followingID)) {
         response.ok = false;
         response.error = 'Invalid following id';
@@ -208,5 +208,75 @@ exports.followUser = async function(req, res, next)
                 res.status(200).json(response);
             }
         });
+    }
+}
+
+exports.bookmarkPost = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true}
+
+    // Incoming values
+    const {userID, postID} = req.body;
+
+    // Check if userID is a valid object id
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid user id';
+        res.status(200).json(response);
+        return;
+    }
+
+    // Check if postID is a valid object id
+    if(!checkObjectId(postID)) {
+        response.ok = false;
+        response.error = 'Invalid post id';
+        res.status(200).json(response);
+        return;
+    }
+
+    // Check if already bookmarked
+    const checkBookmark = await User.find({_id:userID,bookmarks:{$in:[postID]}});
+
+    if(checkBookmark != '')
+    {
+        // deleting a bookmark
+        const filter = {_id:userID};
+        const update = {$pull:{bookmarks:postID}};
+        const user = await User.findOneAndUpdate(filter, update);
+
+        // If the user exists, return ok:true
+        if(user)
+        {
+            response.action = 'bookmark successfully removed';
+            res.status(200).json(response);
+        }
+        // Otherwise return ok:false and the error message
+        else
+        {
+            response.ok = false;
+            response.error = 'Invalid id or cannot remove';
+            res.status(200).json(response);
+        }
+    }
+    else
+    {
+        // update user with postID
+        const filter = {_id:userID};
+        const update = {$push:{bookmarks:postID}};
+        const user = await User.findOneAndUpdate(filter, update);
+
+        // If the user exists, return ok:true
+        if(user)
+        {
+            response.action = 'post successfully bookmarked';
+            res.status(200).json(response);
+        }
+        // Otherwise return ok:false and the error message
+        else
+        {
+            response.ok = false;
+            response.error = 'Cannot add bookmark';
+            res.status(200).json(response);
+        }
     }
 }

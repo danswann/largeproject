@@ -6,5 +6,6 @@ router.post('/login', userController.login);
 router.post('/register', userController.register);
 // router.post('/searchUser', userController.searchUser);
 router.post('/followUser', userController.followUser);
+router.post('/bookmarkPost', userController.bookmarkPost);
 
 module.exports = router;
