@@ -21,7 +21,6 @@ const UserSchema = new Schema({
     dateJoined: {type:Date, default:Date.now},
     followers: [{type:Schema.ObjectId, ref:'User'}],
     following: [{type:Schema.ObjectId, ref:'User'}],
-    likes: [{type:Schema.ObjectId, ref:'Post'}],
     bookmarks: [{type:Schema.ObjectId, ref:'Post'}],
     settings: {type:UserSettingsSchema, required:true, default:()=>({})}
 });
