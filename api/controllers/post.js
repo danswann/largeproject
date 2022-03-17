@@ -147,7 +147,6 @@ exports.likePost = async function(req, res, next) {
         const update = {$push:{likedBy:userID}};
         const post = await Post.findOneAndUpdate(filter, update);
 
-
         // If the post exists, return ok:true
         if(post)
         {

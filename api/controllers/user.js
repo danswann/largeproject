@@ -1,6 +1,22 @@
 const User = require('../models/user');
 const Notification = require('../models/notification');
 
+function checkObjectId (id) {
+    const ObjectId = require('mongoose').Types.ObjectId;
+
+    if(ObjectId.isValid(id)) {
+        if((String)(new ObjectId(id)) === id)
+        {
+            return true;
+        }
+        return false;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 exports.login = async function(req, res, next) {
     // Default response object
     var response = {ok:true};
@@ -63,4 +79,134 @@ exports.register = async function(req, res, next)
             res.status(200).json(response);
         }
     });
+}
+
+exports.followUser = async function(req, res, next)
+{
+    // Default response object
+    var response = {ok:true}
+
+    // Incoming values
+    const {userID, followingID} = req.body;
+
+    // Check if userID is a valid object id
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid user id';
+        res.status(200).json(response);
+        return;
+    }
+
+    // Check if userID is a valid object id
+    if(!checkObjectId(followingID)) {
+        response.ok = false;
+        response.error = 'Invalid following id';
+        res.status(200).json(response);
+        return;
+    }
+
+    // find user by user id
+    const filter = {_id:userID};
+    const user = await User.findOne(filter);
+
+    if(user.following.includes(followingID))
+    {
+        // remove following id from following array
+        const index = user.following.indexOf(followingID);
+        user.following.splice(index, 1);
+
+        user.save(function (err) {
+            // If an error occurs, return ok:false and the error message
+            if(err)
+            {
+                response.ok = false;
+                response.errorLoc = 'Error removing following from users following array';
+                response.error = err;
+                res.status(200).json(response);
+            }
+        });
+
+        // find following by following id
+        const filter2 = {_id:followingID};
+        const user2 = await User.findOne(filter2);
+
+        // remove user id from followers array
+        const index2 = user2.followers.indexOf(userID);
+        user2.followers.splice(index2, 1);
+
+        user2.save(function (err) {
+            // If an error occurs, return ok:false and the error message
+            if(err)
+            {
+                response.ok = false;
+                response.errorLoc = 'Error removing user from following followers array';
+                response.error = err;
+                res.status(200).json(response);
+            }
+            // Otherwise return a success message
+            else
+            {
+                response.message = 'Succesfully unfollowed user!';
+                res.status(200).json(response);
+            }
+        });
+    }
+    else
+    {
+        // add following id to following array
+        user.following.push(followingID);
+
+        user.save(function (err) {
+            // If an error occurs, return ok:false and the error message
+            if(err)
+            {
+                response.ok = false;
+                response.error = err;
+                res.status(200).json(response);
+            }
+        });
+
+        // find following by following id
+        const filter2 = {_id:followingID};
+        const user2 = await User.findOne(filter2);
+
+        // add user id to followers array
+        user2.followers.push(userID);
+
+        user2.save(function (err) {
+            // If an error occurs, return ok:false and the error message
+            if(err)
+            {
+                response.ok = false;
+                response.errorLoc = 'Error saving user to followings follower array';
+                response.error = err;
+                res.status(200).json(response);
+            }
+            // Otherwise return a success message
+            else
+            {
+                // Create a new instance of notification model
+                var newNotification = new Notification({
+                    notificationType: 0,
+                    userID: followingID,
+                    senderID: userID
+                });
+
+                // Save the new instance
+                newNotification.save(function (err) {
+                    // If an error occurs, return ok:false and the error message
+                    if(err)
+                    {
+                        response.ok = false;
+                        response.errorLoc = 'Error sending notification';
+                        response.error = err;
+                        res.status(200).json(response);
+                    }
+                });
+
+                response.message = 'Succesfully followed user!';
+                res.status(200).json(response);
+            }
+        });
+    }
 }

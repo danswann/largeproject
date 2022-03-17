@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 
 // Define chat subdocument schema
 const ChatSchema = new Schema({
+    isRead: {type:Boolean, default:false},
     timeStamp: {type:Date, default:Date.now},
     containsEmbed: {type:Boolean, default:false},
     playlistID: {type:String, required:false},
