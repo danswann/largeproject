@@ -39,8 +39,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#573c6b',
     borderRadius: 5,
     padding: 5,
-    alignItems: "center",
-    display: "inline-block",    
+    alignItems: "center",   
   },
 
   ButtonText: {

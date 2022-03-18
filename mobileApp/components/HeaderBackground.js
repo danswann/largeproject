@@ -12,6 +12,6 @@ const HeaderBackgroundStyles = new StyleSheet.create({
     flex: 1,
     backgroundColor: "black",
     borderBottomColor: "gray",
-    borderBottomWidth: "1px",
+    borderBottomWidth: 1,
   },
 });

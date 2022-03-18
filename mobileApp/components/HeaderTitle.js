@@ -24,11 +24,11 @@ const HeaderTitleStyles = StyleSheet.create({
     backgroundColor: "black",
     backgroundColor: "black",
     borderBottomColor: "gray",
-    borderBottomWidth: "1px",
+    borderBottomWidth: 1,
   },
   HeaderImage: {
-    marginLeft: "10px",
-    height: "100px",
-    width: "120px",
+    marginLeft: 10,
+    height: 100,
+    width: 120,
   },
 });

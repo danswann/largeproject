@@ -32,9 +32,9 @@ const styles = StyleSheet.create({
   },
   Button: {
     backgroundColor: "white",
-    borderRadius: "5px",
-    padding: "5px",
-    marginTop: "10px"
+    borderRadius: 5,
+    padding: 5,
+    marginTop: 10
   },
   ButtonText: {
     color: "black",

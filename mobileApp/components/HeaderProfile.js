@@ -8,11 +8,11 @@ export default function HeaderProfile() {
   const { signOut } = React.useContext(AuthContext);
   return (
     <View style={HeaderProfileStyles.HeaderProfileStyles}>
-      <Text style={{ color: "white", marginRight: "10px" }}>
+      <Text style={{ color: "white", marginRight: 10 }}>
         <Ionicons name="person-circle" size={25} />
       </Text>
       <TouchableHighlight onPress={() => signOut()} underlayColor="#573C6B">
-        <Text style={{ color: "white", marginRight: "10px" }}>
+        <Text style={{ color: "white", marginRight: 10 }}>
           <Ionicons name="log-out-outline" size={25} />
         </Text>
       </TouchableHighlight>
@@ -30,6 +30,6 @@ const HeaderProfileStyles = StyleSheet.create({
     backgroundColor: "black",
     backgroundColor: "black",
     borderBottomColor: "gray",
-    borderBottomWidth: "1px",
+    borderBottomWidth: 1
   },
 });
