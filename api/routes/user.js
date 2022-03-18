@@ -7,5 +7,8 @@ router.post('/register', userController.register);
 // router.post('/searchUser', userController.searchUser);
 router.post('/followUser', userController.followUser);
 router.post('/bookmarkPost', userController.bookmarkPost);
+router.post('/showFollowers', userController.showFollowers);
+router.post('/showFollowings', userController.showFollowings);
+
 
 module.exports = router;
