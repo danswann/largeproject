@@ -280,3 +280,122 @@ exports.bookmarkPost = async function(req, res, next) {
         }
     }
 }
+
+exports.showFollowers = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true}
+
+    // Incoming values
+    const {userID} = req.body;
+
+    // Check if userID is a valid object id
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid user id';
+        res.status(200).json(response);
+        return;
+    }
+
+    const filter = {_id:userID};
+    const user = await User.findOne(filter);
+
+    if(user)
+    {
+        // Creates array of follower's objects with the stuff we want to return in it
+        var arrayFollowers = [];
+
+        // Loops through all followers
+        for(let i = 0; i < user.followers.length; i++)
+        {
+            // filters for follower's id
+            const filter2 = {_id:user.followers[i]}
+            const user2 = await User.findOne(filter2);
+
+            if(user2)
+            {
+                // Pushes all followers's infomration into the array
+                arrayFollowers.push({
+                    userID: user2._id,
+                    username: user2.username,
+                    profilePicture: user2.profileImageUrl
+                });
+            }
+            else
+            {
+                response.ok = false;
+                response.error = 'follower id not found';
+                res.status(200).json(response);
+            }
+        }
+        // Returns followers array with ok response
+        response.followers = arrayFollowers;
+        res.status(200).json(response);
+    }
+    else
+    {
+        // If user isnt found, return user not found
+        response.ok = false;
+        response.error = 'user not found';
+        res.status(200).json(response);
+    }
+}
+
+
+exports.showFollowings = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true}
+
+    // Incoming values
+    const {userID} = req.body;
+
+    // Check if userID is a valid object id
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid user id';
+        res.status(200).json(response);
+        return;
+    }
+
+    const filter = {_id:userID};
+    const user = await User.findOne(filter);
+
+    if(user)
+    {
+        // Creates array of following's objects with the stuff we want to return in it
+        var arrayFollowings = [];
+
+        // Loops through all followings
+        for(let i = 0; i < user.following.length; i++)
+        {
+            // filters for following's id
+            const filter2 = {_id:user.following[i]}
+            const user2 = await User.findOne(filter2);
+
+            if(user2)
+            {
+                // Pushes all following's infomration into the array
+                arrayFollowings.push({
+                    userID: user2._id,
+                    username: user2.username,
+                    profilePicture: user2.profileImageUrl
+                });
+            }
+            else
+            {
+                response.ok = false;
+                response.error = 'followering id not found';
+                res.status(200).json(response);
+            }
+        }
+        // Returns following array with ok response
+        response.following = arrayFollowings;
+        res.status(200).json(response);
+    }
+    else
+    {
+        // If user isnt found, return user not found
+        response.ok = false;
+        response.error = 'user not found';
+        res.status(200).json(response);
+    }
+}
