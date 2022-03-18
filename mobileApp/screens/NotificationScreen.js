@@ -1,23 +1,37 @@
 import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, FlatList } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { Card } from "react-native-elements";
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
-// COMPONENT BODY
-const NotificationScreen = () => {
+
+const Tab = createMaterialTopTabNavigator();
+
+function NotificationScreen() {
   return (
-    <View style={styles.MainContainer}>
-      <Text style={styles.MainText}>View Your Notifications!</Text>
+    <Tab.Navigator>
+      <Tab.Screen name="Notifications" component={NotificationScreen} />
+      <Tab.Screen name="Messages" component={MessagesScreen} />
+    </Tab.Navigator>
+  );
+}
 
-      <TouchableOpacity style={styles.Button} onPress={() => { alert("Here are your notifications"); }}>
-        <Text style={styles.ButtonText}>Notifications</Text>
-      </TouchableOpacity>
+// // COMPONENT BODY
+// const NotificationScreen = () => {
+//   return (
+//     <View style={styles.MainContainer}>
+//       <Text style={styles.MainText}>View Your Notifications!</Text>
 
-      <TouchableOpacity style={styles.Button} onPress={() => { alert("Here are your messages"); }}>
-        <Text style={styles.ButtonText}>Messages</Text>
-      </TouchableOpacity>
-    </View>
-  );  
-};
+//       <TouchableOpacity style={styles.Button} onPress={() => { alert("Here are your notifications"); }}>
+//         <Text style={styles.ButtonText}>Notifications</Text>
+//       </TouchableOpacity>
+
+//       <TouchableOpacity style={styles.Button} onPress={() => { alert("Here are your messages"); }}>
+//         <Text style={styles.ButtonText}>Messages</Text>
+//       </TouchableOpacity>
+//     </View>
+//   );  
+// };
 
 export default NotificationScreen;
 
@@ -26,9 +40,9 @@ const styles = StyleSheet.create({
 
   MainContainer: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: 'center',
     alignItems: "center",
-    backgroundColor: "black",
+    backgroundColor: 'black',
   },
 
   MainText: {
@@ -45,5 +59,12 @@ const styles = StyleSheet.create({
   ButtonText: {
     color: "white",
   },
+
+  box: {
+    flex: 1,
+    paddingLeft: 20,
+    paddingRight: 20,
+  },
+
 
 });
