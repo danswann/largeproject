@@ -1,5 +1,6 @@
 {
   "expo": {
+    "sdkVersion": "44.0.0",
     "name": "mobileApp",
     "slug": "mobileApp",
     "version": "1.0.0",

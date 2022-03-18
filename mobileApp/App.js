@@ -13,9 +13,6 @@ const LoggedOutStack = createNativeStackNavigator();
 const LoggedInStack = createNativeStackNavigator();
 
 export default function App() {
-  // const [isLoading, setIsLoading] = React.useState(true);
-  // const [userToken, setUserToken] = React.useState(null);
-
   // Initial state
   const initialLoginState = {
     isLoading: true,
@@ -87,7 +84,7 @@ export default function App() {
   // Set the buffer time for the loading screen (only occurs on first opening the app)
   React.useEffect(() => {
     setTimeout(() => {
-      dispatch({ type: "RETRIEVE_TOKEN", token: "usertoken" });
+      dispatch({ type: "RETRIEVE_TOKEN", token: loginState.userToken });
     }, 1000);
   }, []);
 
@@ -101,6 +98,7 @@ export default function App() {
       </View>
     );
   }
+  console.log(loginState);
   return (
     // Use authcontext provider to track the users authentication status across the whole app
     <AuthContext.Provider value={authContext}>

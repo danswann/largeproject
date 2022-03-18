@@ -1,9 +1,14 @@
 import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity, FlatList } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Card } from "react-native-elements";
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -30,19 +35,18 @@ function NotificationScreen() {
 //         <Text style={styles.ButtonText}>Messages</Text>
 //       </TouchableOpacity>
 //     </View>
-//   );  
+//   );
 // };
 
 export default NotificationScreen;
 
 // COMPONENT STYLES
 const styles = StyleSheet.create({
-
   MainContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     alignItems: "center",
-    backgroundColor: 'black',
+    backgroundColor: "black",
   },
 
   MainText: {
@@ -50,10 +54,10 @@ const styles = StyleSheet.create({
   },
 
   Button: {
-    backgroundColor: '#573c6b',
+    backgroundColor: "#573c6b",
     borderRadius: 5,
     padding: 5,
-    alignItems: "center",   
+    alignItems: "center",
   },
 
   ButtonText: {
@@ -65,6 +69,4 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 20,
   },
-
-
 });
