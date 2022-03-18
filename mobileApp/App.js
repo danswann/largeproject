@@ -8,6 +8,7 @@ import AuthenticatedScreen from "./screens/AuthenticatedScreen";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import { AuthContext } from "./Context";
+import UnauthenticatedScreen from "./screens/UnauthenticatedScreen";
 
 const LoggedOutStack = createNativeStackNavigator();
 const LoggedInStack = createNativeStackNavigator();
@@ -111,9 +112,7 @@ export default function App() {
             />
           </LoggedInStack.Navigator>
         ) : (
-          <LoggedOutStack.Navigator screenOptions={{ headerShown: false }}>
-            <LoggedOutStack.Screen name="Login" component={LoginScreen} />
-          </LoggedOutStack.Navigator>
+          <UnauthenticatedScreen />
         )}
       </NavigationContainer>
     </AuthContext.Provider>
