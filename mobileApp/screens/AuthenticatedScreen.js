@@ -37,7 +37,7 @@ const AuthenticatedScreen = () => {
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: "#573C6B",
-        tabBarInactiveTintColor: "gray",
+        tabBarInactiveTintColor: "white",
         tabBarStyle: { backgroundColor: "black", borderTopColor: "gray" },
         tabBarShowLabel: false,
         headerBackground: HeaderBackground,
