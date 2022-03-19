@@ -18,6 +18,7 @@ function LoginScreen({ navigation }) {
   // Keeps track of what the user has inputted
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
   // Sign in method from context to allow us to login
   const { signIn } = React.useContext(AuthContext);
 
@@ -77,9 +78,69 @@ function LoginScreen({ navigation }) {
 
 // Register screen
 function RegisterScreen({ navigation }) {
+  // Keeps track of what the user has inputted
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const { signUp } = React.useContext(AuthContext);
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Register Screen</Text>
+    <View style={styles.container}>
+      <Image
+        style={styles.image}
+        resizeMethod="resize"
+        resizeMode="contain"
+        source={require("../assets/images/soundlinklogo.png")}
+      />
+
+      <StatusBar style="auto" />
+      {/* Username input field */}
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.TextInput}
+          placeholder="Username"
+          placeholderTextColor="#003f5c"
+          onChangeText={(username) => setUsername(username)}
+        />
+      </View>
+
+      {/* Email Address input field */}
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.TextInput}
+          placeholder="Email Address"
+          placeholderTextColor="#003f5c"
+          onChangeText={(email) => setEmail(email)}
+        />
+      </View>
+
+      {/* Password input field */}
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.TextInput}
+          placeholder="Password"
+          placeholderTextColor="#003f5c"
+          secureTextEntry={true}
+          onChangeText={(password) => setPassword(password)}
+        />
+      </View>
+
+      {/* Confirm Password input field */}
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.TextInput}
+          placeholder="Confirm Password"
+          placeholderTextColor="#003f5c"
+          secureTextEntry={true}
+          onChangeText={(confirmPassword) => setConfirmPassword(password)}
+        />
+      </View>
+
+      {/* Login button */}
+      <TouchableOpacity style={styles.loginBtn} onPress={() => signUp()}>
+        <Text style={styles.loginText}>SIGN UP</Text>
+      </TouchableOpacity>
       <Text
         onPress={() => navigation.navigate("Login")}
         style={styles.clickableText}
@@ -115,13 +176,14 @@ const styles = StyleSheet.create({
   },
 
   image: {
+    marginTop: 0,
     marginBottom: 30,
     height: 160,
     width: 200,
   },
 
   inputView: {
-    backgroundColor: "gray",
+    backgroundColor: "white",
     borderRadius: 30,
     width: "70%",
     height: 45,
@@ -129,19 +191,19 @@ const styles = StyleSheet.create({
   },
 
   signUpView: {
-    width: "50%",
+    width: "60%",
     alignContent: "center",
     alignItems: "center",
   },
 
   signUpText: {
     marginTop: 40,
-    fontSize: 10,
+    fontSize: 12,
     color: "white",
   },
 
   clickableText: {
-    fontSize: 10,
+    fontSize: 12,
     color: "#573C6B",
   },
 
@@ -153,12 +215,16 @@ const styles = StyleSheet.create({
   },
 
   loginBtn: {
-    width: "80%",
+    width: "70%",
     borderRadius: 25,
     height: 50,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 60,
     backgroundColor: "#573C6B",
+  },
+
+  loginText: {
+    color: "white",
   },
 });

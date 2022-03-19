@@ -73,8 +73,7 @@ export default function App() {
         dispatch({ type: "LOGIN", id: username, token: userToken });
       },
       signUp: () => {
-        setIsLoading(false);
-        setUserToken("User");
+        dispatch({ type: "REGISTER", id: "user", token: "usertoken" });
       },
       signOut: () => {
         dispatch({ type: "LOGOUT" });
