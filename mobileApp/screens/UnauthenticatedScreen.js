@@ -38,7 +38,7 @@ function LoginScreen({ navigation }) {
         <TextInput
           style={styles.TextInput}
           placeholder="Username"
-          placeholderTextColor="#003f5c"
+          placeholderTextColor="#573C6B"
           onChangeText={(username) => setUsername(username)}
         />
       </View>
@@ -48,7 +48,7 @@ function LoginScreen({ navigation }) {
         <TextInput
           style={styles.TextInput}
           placeholder="Password"
-          placeholderTextColor="#003f5c"
+          placeholderTextColor="#573C6B"
           secureTextEntry={true}
           onChangeText={(password) => setPassword(password)}
         />
@@ -115,33 +115,35 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    marginBottom: 30,
+    marginBottom: 60,
     height: 160,
     width: 200,
   },
 
   inputView: {
-    backgroundColor: "gray",
+    borderWidth: 1,
     borderRadius: 30,
-    width: "70%",
+    borderColor: "#573C6B",
+    backgroundColor: "white",
+    width: "75%",
     height: 45,
     marginBottom: 20,
   },
 
   signUpView: {
-    width: "50%",
+    width: "60%",
     alignContent: "center",
     alignItems: "center",
   },
 
   signUpText: {
     marginTop: 40,
-    fontSize: 10,
+    fontSize: 12,
     color: "white",
   },
 
   clickableText: {
-    fontSize: 10,
+    fontSize: 12,
     color: "#573C6B",
   },
 
@@ -150,15 +152,21 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     marginLeft: 20,
+    color: "black"
   },
 
   loginBtn: {
-    width: "80%",
+    width: "75%",
     borderRadius: 25,
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 60,
+    marginTop: 40,
     backgroundColor: "#573C6B",
+  },
+
+  loginText: {
+    fontSize: 15,
+    color: "white"
   },
 });
