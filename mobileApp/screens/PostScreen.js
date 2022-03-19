@@ -2,7 +2,7 @@ import React from "react";
 import { Text, View, StyleSheet,TouchableOpacity, Div} from "react-native";
 
 // COMPONENT BODY
-export default function PostScreen({ navigation }) {
+export default function PostScreen({}) {
   return (
     // Main container
     <View style={styles.container}>
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "white",
   },
-  
+
   btnText: {
     fontSize: 13,
     color: "white",
