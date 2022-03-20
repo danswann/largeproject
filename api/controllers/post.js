@@ -1,5 +1,6 @@
 const Post = require('../models/post');
 const Notification = require('../models/notification');
+const User = require('../models/user');
 
 function checkObjectId (id) {
     const ObjectId = require('mongoose').Types.ObjectId;
@@ -248,4 +249,50 @@ exports.commentOnPost = async function(req, res, next) {
             res.status(200).json(response);
         }
     });
+}
+
+exports.deletePost = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true};
+
+    // Incoming values
+    const {id} = req.body;
+
+    // Check if post id is valid object id
+    if(!checkObjectId(id)) {
+        response.ok = false;
+        response.error = 'Invalid post id';
+        res.status(200).json(response);
+        return;
+    }
+
+    const post = await Post.deleteOne({_id:id});
+
+    // If the post exists, return ok:true
+    if(post)
+    {
+        // Removes post from users' bookmark array
+        const user = await User.updateMany({}, {$pullAll:{bookmarks:[id]}});
+        if (user)
+        {
+            response.action = 'post successfully deleted';
+            res.status(200).json(response);
+        }
+        // Otherwise return ok:false and the error message
+        else
+        {
+            response.ok = false;
+            response.error = 'Invalid user id or cannot remove from bookmarks';
+            res.status(200).json(response);
+        }
+    }
+    // Otherwise return ok:false and the error message
+    else
+    {
+        response.ok = false;
+        response.error = 'Invalid id or cannot delete';
+        res.status(200).json(response);
+    }
+
+    
 }
