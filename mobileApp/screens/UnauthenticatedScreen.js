@@ -47,6 +47,7 @@ function LoginScreen({ navigation }) {
             placeholder="Username"
             placeholderTextColor="white"
             clearButtonMode="while-editing"
+            selectionColor={"#573C6B"}
             showSoftInputOnFocus={true}
             onChangeText={(username) => setUsername(username)}
           />
@@ -59,6 +60,7 @@ function LoginScreen({ navigation }) {
             placeholder="Password"
             placeholderTextColor="white"
             clearButtonMode="while-editing"
+            selectionColor={"#573C6B"}
             secureTextEntry={true}
             onChangeText={(password) => setPassword(password)}
           />
