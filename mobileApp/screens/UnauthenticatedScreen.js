@@ -110,7 +110,8 @@ function RegisterScreen({ navigation }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phoneNumber, setPhone] = useState("");
+  const [dob, setDob] = useState("");
 
   const { signUp } = React.useContext(AuthContext);
 
@@ -151,6 +152,7 @@ function RegisterScreen({ navigation }) {
               placeholderTextColor="white"
               clearButtonMode="while-editing"
               selectionColor={"#573C6B"}
+              autoCompleteType="email"
               onChangeText={(email) => setEmail(email)}
             />
           </View>
@@ -206,18 +208,6 @@ function RegisterScreen({ navigation }) {
             />
           </View>
 
-          {/* Email input field */}
-          <View style={styles.inputView}>
-            <TextInput
-              style={styles.TextInput}
-              placeholder="Email Address"
-              placeholderTextColor="white"
-              clearButtonMode="while-editing"
-              selectionColor={"#573C6B"}
-              onChangeText={(email) => setEmail(email)}
-            />
-          </View>
-
           {/* Phone number input field */}
           <View style={styles.inputView}>
             <TextInput
@@ -226,7 +216,7 @@ function RegisterScreen({ navigation }) {
               placeholderTextColor="white"
               clearButtonMode="while-editing"
               selectionColor={"#573C6B"}
-              onChangeText={(phone) => setPhone(phone)}
+              onChangeText={(phoneNumber) => setPhone(phoneNumber)}
             />
           </View>
 
@@ -238,12 +228,25 @@ function RegisterScreen({ navigation }) {
               placeholderTextColor="white"
               clearButtonMode="while-editing"
               selectionColor={"#573C6B"}
-              onChangeText={(DOB) => setDOB(DOB)}
+              onChangeText={(dob) => setDob(dob)}
             />
           </View>
 
           {/* Register button */}
-          <TouchableOpacity style={styles.loginBtn} onPress={() => signUp()}>
+          <TouchableOpacity
+            style={styles.loginBtn}
+            onPress={() =>
+              signUp(
+                firstName,
+                lastName,
+                email,
+                phoneNumber,
+                username,
+                password,
+                dob
+              )
+            }
+          >
             <Text style={styles.loginText}>Register</Text>
           </TouchableOpacity>
 
