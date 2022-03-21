@@ -18,6 +18,7 @@ function LoginScreen({ navigation }) {
   // Keeps track of what the user has inputted
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
   // Sign in method from context to allow us to login
   const { signIn } = React.useContext(AuthContext);
 
@@ -123,6 +124,16 @@ function RegisterScreen({ navigation }) {
         />
       </View>
 
+      {/* Email Address input field */}
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.TextInput}
+          placeholder="Email Address"
+          placeholderTextColor="#573C6B"
+          onChangeText={(email) => setEmail(email)}
+        />
+      </View>
+
       {/* Password input field */}
       <View style={styles.inputView}>
         <TextInput
@@ -204,6 +215,27 @@ function RegisterScreen({ navigation }) {
           </Text>
         </Text>
       </View>
+      {/* Confirm Password input field */}
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.TextInput}
+          placeholder="Confirm Password"
+          placeholderTextColor="#003f5c"
+          secureTextEntry={true}
+          onChangeText={(confirmPassword) => setConfirmPassword(password)}
+        />
+      </View>
+
+      {/* Login button */}
+      <TouchableOpacity style={styles.loginBtn} onPress={() => signUp()}>
+        <Text style={styles.loginText}>SIGN UP</Text>
+      </TouchableOpacity>
+      <Text
+        onPress={() => navigation.navigate("Login")}
+        style={styles.clickableText}
+      >
+        Back to login
+      </Text>
     </View>
   );
 }
@@ -233,12 +265,14 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    marginBottom: 40,
+    marginTop: 0,
+    marginBottom: 30,
     height: 160,
     width: 200,
   },
 
   inputView: {
+    backgroundColor: "white",
     borderWidth: 1,
     borderRadius: 30,
     borderColor: "#573C6B",
@@ -286,11 +320,11 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     marginLeft: 20,
-    color: "black"
+    color: "black",
   },
 
   loginBtn: {
-    width: "75%",
+    width: "70%",
     borderRadius: 25,
     height: 50,
     alignItems: "center",
@@ -300,7 +334,6 @@ const styles = StyleSheet.create({
   },
 
   loginText: {
-    fontSize: 15,
-    color: "white"
+    color: "white",
   },
 });
