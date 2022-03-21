@@ -4,41 +4,44 @@ import {
   Text,
   View,
   TouchableOpacity,
-  FlatList,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { Card } from "react-native-elements";
+
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
 const Tab = createMaterialTopTabNavigator();
 
-function NotificationScreen() {
+export default function NotificationScreen() {
   return (
-    <Tab.Navigator>
-      <Tab.Screen name="Notifications" component={NotificationScreen} />
-      <Tab.Screen name="Messages" component={MessagesScreen} />
+    <Tab.Navigator screenOptions={{
+      tabBarLabelStyle: { fontSize: 12, color: "white" },
+      tabBarIndicatorStyle: {
+        backgroundColor: "white",
+      },
+      tabBarStyle: {
+        backgroundColor: "#573C6B",
+      },
+    }}>
+      <Tab.Screen name="Notifications" component={NotificationTab} />
+      <Tab.Screen name="Messages" component={MessageTab} />
     </Tab.Navigator>
   );
 }
 
-// // COMPONENT BODY
-// const NotificationScreen = () => {
-//   return (
-//     <View style={styles.MainContainer}>
-//       <Text style={styles.MainText}>View Your Notifications!</Text>
+function NotificationTab() {
+  return (
+    <View style={styles.MainContainer}>
+      <Text style={styles.MainText}>View Your Notifications!</Text>
+    </View>
+  );
+}
 
-//       <TouchableOpacity style={styles.Button} onPress={() => { alert("Here are your notifications"); }}>
-//         <Text style={styles.ButtonText}>Notifications</Text>
-//       </TouchableOpacity>
-
-//       <TouchableOpacity style={styles.Button} onPress={() => { alert("Here are your messages"); }}>
-//         <Text style={styles.ButtonText}>Messages</Text>
-//       </TouchableOpacity>
-//     </View>
-//   );
-// };
-
-export default NotificationScreen;
+function MessageTab() {
+  return (
+    <View style={styles.MainContainer}>
+      <Text style={styles.MainText}>View Your Messages!</Text>
+    </View>
+  );
+}
 
 // COMPONENT STYLES
 const styles = StyleSheet.create({
@@ -46,7 +49,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "black",
+    backgroundColor: "#23192B",
   },
 
   MainText: {
@@ -64,9 +67,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
 
-  box: {
-    flex: 1,
-    paddingLeft: 20,
-    paddingRight: 20,
-  },
+  tabs: {
+
+  }
 });

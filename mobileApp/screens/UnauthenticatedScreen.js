@@ -54,9 +54,22 @@ function LoginScreen({ navigation }) {
         />
       </View>
 
+      {/* Forgot Password prompt text */}
+      <View style={styles.forgotView}>
+        <Text style={styles.forgotText}>
+          Forgot your password?{" "}
+          <Text
+            //onPress={() => navigation.navigate("ForgotPassword")}
+            style={styles.clickableText}
+          >
+            Click Here!
+          </Text>
+        </Text>
+      </View>
+
       {/* Login button */}
       <TouchableOpacity style={styles.loginBtn} onPress={() => signIn()}>
-        <Text style={styles.loginText}>LOGIN</Text>
+        <Text style={styles.loginText}>Login</Text>
       </TouchableOpacity>
 
       {/* Register prompt text */}
@@ -77,15 +90,120 @@ function LoginScreen({ navigation }) {
 
 // Register screen
 function RegisterScreen({ navigation }) {
+
+  // Keeps track of what the user has inputted
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+
+  //const { signUp } = React.useContext(AuthContext);
+
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Register Screen</Text>
-      <Text
-        onPress={() => navigation.navigate("Login")}
-        style={styles.clickableText}
-      >
-        Back to login
-      </Text>
+    // Main container
+    <View style={styles.container}>
+      {/* Soundlink logo */}
+      <Image
+        style={styles.image}
+        resizeMethod="resize"
+        resizeMode="contain"
+        source={require("../assets/images/soundlinklogo.png")}
+      />
+
+      <StatusBar style="auto" />
+      {/* Username input field */}
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.TextInput}
+          placeholder="Username"
+          placeholderTextColor="#573C6B"
+          onChangeText={(username) => setUsername(username)}
+        />
+      </View>
+
+      {/* Password input field */}
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.TextInput}
+          placeholder="Password"
+          placeholderTextColor="#573C6B"
+          secureTextEntry={true}
+          onChangeText={(password) => setPassword(password)}
+        />
+      </View>
+
+      <View style={styles.spacer}></View>
+
+      {/* Name input fields */}
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.TextInput}
+          placeholder="First Name"
+          placeholderTextColor="#573C6B"
+          onChangeText={(firstName) => setFirstName(firstName)}
+        />
+      </View>
+      
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.TextInput}
+          placeholder="Last Name"
+          placeholderTextColor="#573C6B"
+          onChangeText={(lastName) => setLastName(lastName)}
+        />
+      </View>
+
+      <View style={styles.spacer}></View>
+
+      {/* Email input field */}
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.TextInput}
+          placeholder="Email Address"
+          placeholderTextColor="#573C6B"
+          onChangeText={(email) => setEmail(email)}
+        />
+      </View>
+
+      {/* Phone number input field */}
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.TextInput}
+          placeholder="Phone Number"
+          placeholderTextColor="#573C6B"
+          onChangeText={(phone) => setPhone(phone)}
+        />
+      </View>
+
+      {/* Date of birth input field */}
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.TextInput}
+          placeholder="Date of birth"
+          placeholderTextColor="#573C6B"
+          onChangeText={(DOB) => setDOB(DOB)}
+        />
+      </View>
+    
+      {/* Register button */}
+      <TouchableOpacity style={styles.loginBtn}>
+        <Text style={styles.loginText}>Register</Text>
+      </TouchableOpacity>
+
+      {/* Login prompt text */}
+      <View style={styles.signUpView}>
+        <Text 
+          onPress={() => navigation.navigate("Login")}
+          style={styles.signUpText}
+        >
+           Back to {" "}
+           <Text style={styles.clickableText}>
+            Login
+          </Text>
+        </Text>
+      </View>
     </View>
   );
 }
@@ -109,13 +227,13 @@ export default UnauthenticatedScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "black",
+    backgroundColor: "#23192B",
     alignItems: "center",
     justifyContent: "center",
   },
 
   image: {
-    marginBottom: 60,
+    marginBottom: 40,
     height: 160,
     width: 200,
   },
@@ -130,6 +248,22 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 
+  spacer: {
+    height: 30,
+  },
+
+  forgotView: {
+    width: "60%",
+    alignContent: "center",
+    alignItems: "center",
+  },
+
+  forgotText: {
+    marginBottom: 30,
+    fontSize: 12,
+    color: "white",
+  },
+
   signUpView: {
     width: "60%",
     alignContent: "center",
@@ -137,14 +271,14 @@ const styles = StyleSheet.create({
   },
 
   signUpText: {
-    marginTop: 40,
+    marginTop: 20,
     fontSize: 12,
     color: "white",
   },
 
   clickableText: {
     fontSize: 12,
-    color: "#573C6B",
+    color: "#A57FC1",
   },
 
   TextInput: {

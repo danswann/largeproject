@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
-    backgroundColor: "black",
+    backgroundColor: "#23192B",
   },
 
   searchResultsContainer: {

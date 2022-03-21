@@ -16,7 +16,7 @@ const ProfileScreenStyles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "black",
+    backgroundColor: "#23192B",
   },
   MainText: {
     color: "white",

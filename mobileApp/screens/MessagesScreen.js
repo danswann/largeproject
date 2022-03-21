@@ -1,6 +1,6 @@
 const MessagesScreen = () => {
     return (
-      <View style=(styles.box}>
+      <View style={styles.box}>
         <FlatList
           data={Messages}
           keyExtractor={item=>item.id}
@@ -22,3 +22,4 @@ const MessagesScreen = () => {
       <Stack.Screen name = "Chat" component = {ChatScreen} />
     </StackNavigator>
   };
+  export default MessagesScreen;

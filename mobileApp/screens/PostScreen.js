@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, StyleSheet,TouchableOpacity, Div} from "react-native";
+import { Text, View, StyleSheet,TouchableOpacity,} from "react-native";
 
 // COMPONENT BODY
 export default function PostScreen({}) {
@@ -28,7 +28,7 @@ export default function PostScreen({}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "black",
+    backgroundColor: "#23192B",
     alignItems: "center",
     justifyContent: "center",
   },
