@@ -73,6 +73,23 @@ export default function App() {
         dispatch({ type: "LOGIN", id: username, token: userToken });
       },
       signUp: () => {
+        // Object that specifies what we need for the request since it is a POST
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            firstName: "test",
+            lastName: "user",
+            email: "fakeemail@mail.com",
+            phoneNumber: "1234567890",
+            username: "testuser",
+            password: "testpass",
+            dob: "02/22/1998",
+          }),
+        };
+        fetch("http://localhost:5000/api/user/register", requestOptions)
+          .then((response) => response.json())
+          .then((data) => console.log(data));
         dispatch({ type: "REGISTER", id: "user", token: "usertoken" });
       },
       signOut: () => {

@@ -91,7 +91,6 @@ function LoginScreen({ navigation }) {
 
 // Register screen
 function RegisterScreen({ navigation }) {
-
   // Keeps track of what the user has inputted
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -101,7 +100,7 @@ function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
 
-  //const { signUp } = React.useContext(AuthContext);
+  const { signUp } = React.useContext(AuthContext);
 
   return (
     // Main container
@@ -145,7 +144,7 @@ function RegisterScreen({ navigation }) {
           onChangeText={(password) => setPassword(password)}
         />
       </View>
-      
+
       {/* Confirm Password input field */}
       <View style={styles.inputView}>
         <TextInput
@@ -168,7 +167,7 @@ function RegisterScreen({ navigation }) {
           onChangeText={(firstName) => setFirstName(firstName)}
         />
       </View>
-      
+
       <View style={styles.inputView}>
         <TextInput
           style={styles.TextInput}
@@ -209,35 +208,21 @@ function RegisterScreen({ navigation }) {
           onChangeText={(DOB) => setDOB(DOB)}
         />
       </View>
-    
+
       {/* Register button */}
-      <TouchableOpacity style={styles.loginBtn}>
+      <TouchableOpacity style={styles.loginBtn} onPress={() => signUp()}>
         <Text style={styles.loginText}>Register</Text>
       </TouchableOpacity>
 
       {/* Login prompt text */}
       <View style={styles.signUpView}>
-        <Text 
+        <Text
           onPress={() => navigation.navigate("Login")}
           style={styles.signUpText}
         >
-           Back to {" "}
-           <Text style={styles.clickableText}>
-            Login
-          </Text>
+          Back to <Text style={styles.clickableText}>Login</Text>
         </Text>
       </View>
-
-      {/* Login button */}
-      <TouchableOpacity style={styles.loginBtn} onPress={() => signUp()}>
-        <Text style={styles.loginText}>SIGN UP</Text>
-      </TouchableOpacity>
-      <Text
-        onPress={() => navigation.navigate("Login")}
-        style={styles.clickableText}
-      >
-        Back to login
-      </Text>
     </View>
   );
 }
