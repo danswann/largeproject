@@ -95,6 +95,7 @@ function RegisterScreen({ navigation }) {
   // Keeps track of what the user has inputted
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -142,6 +143,17 @@ function RegisterScreen({ navigation }) {
           placeholderTextColor="#573C6B"
           secureTextEntry={true}
           onChangeText={(password) => setPassword(password)}
+        />
+      </View>
+      
+      {/* Confirm Password input field */}
+      <View style={styles.inputView}>
+        <TextInput
+          style={styles.TextInput}
+          placeholder="Confirm Password"
+          placeholderTextColor="#573C6B"
+          secureTextEntry={true}
+          onChangeText={(confirmPassword) => setConfirmPassword(password)}
         />
       </View>
 
@@ -214,16 +226,6 @@ function RegisterScreen({ navigation }) {
             Login
           </Text>
         </Text>
-      </View>
-      {/* Confirm Password input field */}
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-          placeholder="Confirm Password"
-          placeholderTextColor="#003f5c"
-          secureTextEntry={true}
-          onChangeText={(confirmPassword) => setConfirmPassword(password)}
-        />
       </View>
 
       {/* Login button */}
