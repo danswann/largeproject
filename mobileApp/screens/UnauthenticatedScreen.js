@@ -8,6 +8,11 @@ import {
   TextInput,
   Button,
   TouchableOpacity,
+  ScrollView,
+  TouchableWithoutFeedbackBase,
+  TouchableWithoutFeedback,
+  Keyboard,
+  KeyboardAvoidingView,
 } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -24,68 +29,73 @@ function LoginScreen({ navigation }) {
 
   return (
     // Main container
-    <View style={styles.container}>
-      {/* Soundlink logo */}
-      <Image
-        style={styles.image}
-        resizeMethod="resize"
-        resizeMode="contain"
-        source={require("../assets/images/soundlinklogo.png")}
-      />
-
-      <StatusBar style="auto" />
-      {/* Username input field */}
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-          placeholder="Username"
-          placeholderTextColor="#573C6B"
-          onChangeText={(username) => setUsername(username)}
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <View style={styles.container}>
+        {/* Soundlink logo */}
+        <Image
+          style={styles.image}
+          resizeMethod="resize"
+          resizeMode="contain"
+          source={require("../assets/images/soundlinklogo.png")}
         />
-      </View>
 
-      {/* Password input field */}
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-          placeholder="Password"
-          placeholderTextColor="#573C6B"
-          secureTextEntry={true}
-          onChangeText={(password) => setPassword(password)}
-        />
-      </View>
+        <StatusBar style="auto" />
+        {/* Username input field */}
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.TextInput}
+            placeholder="Username"
+            placeholderTextColor="white"
+            clearButtonMode="while-editing"
+            showSoftInputOnFocus={true}
+            onChangeText={(username) => setUsername(username)}
+          />
+        </View>
 
-      {/* Forgot Password prompt text */}
-      <View style={styles.forgotView}>
-        <Text style={styles.forgotText}>
-          Forgot your password?{" "}
-          <Text
-            //onPress={() => navigation.navigate("ForgotPassword")}
-            style={styles.clickableText}
-          >
-            Click Here!
+        {/* Password input field */}
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.TextInput}
+            placeholder="Password"
+            placeholderTextColor="white"
+            clearButtonMode="while-editing"
+            secureTextEntry={true}
+            onChangeText={(password) => setPassword(password)}
+          />
+        </View>
+
+        {/* Forgot Password prompt text */}
+        <View style={styles.forgotView}>
+          <Text style={styles.forgotText}>
+            Forgot your password?{" "}
+            <Text
+              //onPress={() => navigation.navigate("ForgotPassword")}
+              style={styles.clickableText}
+            >
+              Click Here!
+            </Text>
           </Text>
-        </Text>
-      </View>
+        </View>
 
-      {/* Login button */}
-      <TouchableOpacity style={styles.loginBtn} onPress={() => signIn()}>
-        <Text style={styles.loginText}>Login</Text>
-      </TouchableOpacity>
+        {/* Login button */}
+        <TouchableOpacity style={styles.loginBtn} onPress={() => signIn()}>
+          <Text style={styles.loginText}>Login</Text>
+        </TouchableOpacity>
 
-      {/* Register prompt text */}
-      <View style={styles.signUpView}>
-        <Text style={styles.signUpText}>
-          Don't have an account?{" "}
-          <Text
-            onPress={() => navigation.navigate("Register")}
-            style={styles.clickableText}
-          >
-            Sign Up Here!
+        {/* Register prompt text */}
+        <View style={styles.signUpView}>
+          <Text style={styles.signUpText}>
+            Don't have an account?{" "}
+            <Text
+              onPress={() => navigation.navigate("Register")}
+              style={styles.clickableText}
+            >
+              Sign Up Here!
+            </Text>
           </Text>
-        </Text>
+        </View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -103,127 +113,151 @@ function RegisterScreen({ navigation }) {
   const { signUp } = React.useContext(AuthContext);
 
   return (
-    // Main container
-    <View style={styles.container}>
-      {/* Soundlink logo */}
-      <Image
-        style={styles.image}
-        resizeMethod="resize"
-        resizeMode="contain"
-        source={require("../assets/images/soundlinklogo.png")}
-      />
+    // Pushes content up when keyboard is blocking it
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      {/* Makes screen scrollable and closes keyboard when pressing off */}
+      <ScrollView keyboardShouldPersistTaps={"never"} bounces={false}>
+        {/* // Main container */}
+        <View style={styles.container}>
+          {/* Soundlink logo */}
+          <Image
+            style={styles.image}
+            resizeMethod="resize"
+            resizeMode="contain"
+            source={require("../assets/images/soundlinklogo.png")}
+          />
 
-      <StatusBar style="auto" />
-      {/* Username input field */}
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-          placeholder="Username"
-          placeholderTextColor="#573C6B"
-          onChangeText={(username) => setUsername(username)}
-        />
-      </View>
+          <StatusBar style="auto" />
+          {/* Username input field */}
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.TextInput}
+              placeholder="Username"
+              placeholderTextColor="white"
+              clearButtonMode="while-editing"
+              selectionColor={"#573C6B"}
+              onChangeText={(username) => setUsername(username)}
+            />
+          </View>
+          {/* Email Address input field */}
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.TextInput}
+              placeholder="Email Address"
+              placeholderTextColor="white"
+              clearButtonMode="while-editing"
+              selectionColor={"#573C6B"}
+              onChangeText={(email) => setEmail(email)}
+            />
+          </View>
 
-      {/* Email Address input field */}
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-          placeholder="Email Address"
-          placeholderTextColor="#573C6B"
-          onChangeText={(email) => setEmail(email)}
-        />
-      </View>
+          {/* Password input field */}
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.TextInput}
+              placeholder="Password"
+              placeholderTextColor="white"
+              clearButtonMode="while-editing"
+              selectionColor={"#573C6B"}
+              secureTextEntry={true}
+              onChangeText={(password) => setPassword(password)}
+            />
+          </View>
 
-      {/* Password input field */}
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-          placeholder="Password"
-          placeholderTextColor="#573C6B"
-          secureTextEntry={true}
-          onChangeText={(password) => setPassword(password)}
-        />
-      </View>
+          {/* Confirm Password input field */}
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.TextInput}
+              placeholder="Confirm Password"
+              placeholderTextColor="white"
+              clearButtonMode="while-editing"
+              selectionColor={"#573C6B"}
+              secureTextEntry={true}
+              onChangeText={(confirmPassword) =>
+                setConfirmPassword(confirmPassword)
+              }
+            />
+          </View>
 
-      {/* Confirm Password input field */}
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-          placeholder="Confirm Password"
-          placeholderTextColor="#573C6B"
-          secureTextEntry={true}
-          onChangeText={(confirmPassword) => setConfirmPassword(password)}
-        />
-      </View>
+          {/* Name input fields */}
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.TextInput}
+              placeholder="First Name"
+              placeholderTextColor="white"
+              clearButtonMode="while-editing"
+              selectionColor={"#573C6B"}
+              onChangeText={(firstName) => setFirstName(firstName)}
+            />
+          </View>
 
-      <View style={styles.spacer}></View>
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.TextInput}
+              placeholder="Last Name"
+              placeholderTextColor="white"
+              clearButtonMode="while-editing"
+              selectionColor={"#573C6B"}
+              onChangeText={(lastName) => setLastName(lastName)}
+            />
+          </View>
 
-      {/* Name input fields */}
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-          placeholder="First Name"
-          placeholderTextColor="#573C6B"
-          onChangeText={(firstName) => setFirstName(firstName)}
-        />
-      </View>
+          {/* Email input field */}
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.TextInput}
+              placeholder="Email Address"
+              placeholderTextColor="white"
+              clearButtonMode="while-editing"
+              selectionColor={"#573C6B"}
+              onChangeText={(email) => setEmail(email)}
+            />
+          </View>
 
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-          placeholder="Last Name"
-          placeholderTextColor="#573C6B"
-          onChangeText={(lastName) => setLastName(lastName)}
-        />
-      </View>
+          {/* Phone number input field */}
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.TextInput}
+              placeholder="Phone Number"
+              placeholderTextColor="white"
+              clearButtonMode="while-editing"
+              selectionColor={"#573C6B"}
+              onChangeText={(phone) => setPhone(phone)}
+            />
+          </View>
 
-      <View style={styles.spacer}></View>
+          {/* Date of birth input field */}
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.TextInput}
+              placeholder="Date of birth"
+              placeholderTextColor="white"
+              clearButtonMode="while-editing"
+              selectionColor={"#573C6B"}
+              onChangeText={(DOB) => setDOB(DOB)}
+            />
+          </View>
 
-      {/* Email input field */}
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-          placeholder="Email Address"
-          placeholderTextColor="#573C6B"
-          onChangeText={(email) => setEmail(email)}
-        />
-      </View>
+          {/* Register button */}
+          <TouchableOpacity style={styles.loginBtn} onPress={() => signUp()}>
+            <Text style={styles.loginText}>Register</Text>
+          </TouchableOpacity>
 
-      {/* Phone number input field */}
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-          placeholder="Phone Number"
-          placeholderTextColor="#573C6B"
-          onChangeText={(phone) => setPhone(phone)}
-        />
-      </View>
-
-      {/* Date of birth input field */}
-      <View style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-          placeholder="Date of birth"
-          placeholderTextColor="#573C6B"
-          onChangeText={(DOB) => setDOB(DOB)}
-        />
-      </View>
-
-      {/* Register button */}
-      <TouchableOpacity style={styles.loginBtn} onPress={() => signUp()}>
-        <Text style={styles.loginText}>Register</Text>
-      </TouchableOpacity>
-
-      {/* Login prompt text */}
-      <View style={styles.signUpView}>
-        <Text
-          onPress={() => navigation.navigate("Login")}
-          style={styles.signUpText}
-        >
-          Back to <Text style={styles.clickableText}>Login</Text>
-        </Text>
-      </View>
-    </View>
+          {/* Back to login */}
+          <View style={styles.backToLoginView}>
+            <Text
+              onPress={() => navigation.navigate("Login")}
+              style={styles.signUpText}
+            >
+              Already have an account?{" "}
+              <Text style={styles.clickableText}>Login</Text>
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -252,18 +286,17 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    marginTop: 0,
+    marginTop: 50,
     marginBottom: 30,
     height: 160,
     width: 200,
   },
 
   inputView: {
-    backgroundColor: "white",
+    backgroundColor: "black",
     borderWidth: 1,
     borderRadius: 30,
     borderColor: "#573C6B",
-    backgroundColor: "white",
     width: "75%",
     height: 45,
     marginBottom: 20,
@@ -291,6 +324,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
+  backToLoginView: {
+    width: "60%",
+    alignContent: "center",
+    alignItems: "center",
+    marginBottom: 50,
+  },
+
   signUpText: {
     marginTop: 20,
     fontSize: 12,
@@ -307,7 +347,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     marginLeft: 20,
-    color: "black",
+    color: "white",
   },
 
   loginBtn: {
