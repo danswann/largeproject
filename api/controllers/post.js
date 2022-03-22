@@ -97,10 +97,10 @@ exports.likePost = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
-    const {id, userID} = req.body;
+    const {postID, userID} = req.body;
 
     // Check if post id is valid object id
-    if(!checkObjectId(id)) {
+    if(!checkObjectId(postID)) {
         response.ok = false;
         response.error = 'Invalid post id';
         res.status(200).json(response);
@@ -116,13 +116,13 @@ exports.likePost = async function(req, res, next) {
     }
 
     // Check if already liked
-    const checkLike = await Post.find({_id:id,likedBy:{$in:[userID]}});
+    const checkLike = await Post.find({_id:postID,likedBy:{$in:[userID]}});
 
     // Delete a like if already liked
     if(checkLike != '')
     {
         // deleting a like
-        const filter = {_id:id};
+        const filter = {_id:postID};
         const update = {$pull:{likedBy:userID}};
         const post = await Post.findOneAndUpdate(filter, update);
 
@@ -144,7 +144,7 @@ exports.likePost = async function(req, res, next) {
     else
     {
         // update post with user ID
-        const filter = {_id:id};
+        const filter = {_id:postID};
         const update = {$push:{likedBy:userID}};
         const post = await Post.findOneAndUpdate(filter, update);
 
@@ -154,7 +154,7 @@ exports.likePost = async function(req, res, next) {
             // Create a new instance of notification model
             var newNotification = new Notification({
                 notificationType: 1,
-                postID: id,
+                postID: postID,
                 userID: post.userID,
                 senderID: userID
             });
@@ -188,12 +188,12 @@ exports.commentOnPost = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
-    const {id, comment, userID} = req.body;
+    const {postID, comment, userID} = req.body;
 
     // Check if post id is valid object id
-    if(!checkObjectId(id)) {
+    if(!checkObjectId(postID)) {
         response.ok = false;
-        response.error = 'Invalid post id';
+        response.error = 'Invalid post id: ' + postID;
         res.status(200).json(response);
         return;
     }
@@ -201,54 +201,49 @@ exports.commentOnPost = async function(req, res, next) {
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
-        response.error = 'Invalid user id';
+        response.error = 'Invalid user id ' + userID;
         res.status(200).json(response);
         return;
     }
 
     // find post by post id
-    const filter = {_id:id};
-    const post = await Post.findOne(filter);
+    const filter = {_id:postID};
+    const update = {$push:{comments:{comment:comment,userID:userID}}};
+    const options = {new: true};
+    const post = await Post.findOneAndUpdate(filter, update, options);
 
-    // add comment object to comments array
-    const update = {comment:comment,userID:userID};
-    post.comments.push(update);
+    // If the post exists, return ok:true
+    if(post)
+    {
+        // Create a new instance of notification model
+        var newNotification = new Notification({
+            notificationType: 3,
+            postID: postID,
+            userID: post.userID,
+            senderID: userID
+        });
 
-    // update the post json file in database
-    post.save(function (err) {
-        // If an error occurs, return ok:false and the error message
-        if(err)
-        {
-            response.ok = false;
-            response.error = err;
-            res.status(200).json(response);
-        }
-        // Otherwise return a success message
-        else
-        {
-            // Create a new instance of notification model
-            var newNotification = new Notification({
-                notificationType: 3,
-                postID: id,
-                userID: post.userID,
-                senderID: userID
-            });
+        // Save the new instance into database
+        newNotification.save(function (err) {
+            // If an error occurs, return ok:false and the error message
+            if(err)
+            {
+                response.ok = false;
+                response.error = err;
+                res.status(200).json(response);
+            }
+        });
 
-            // Save the new instance
-            newNotification.save(function (err) {
-                // If an error occurs, return ok:false and the error message
-                if(err)
-                {
-                    response.ok = false;
-                    response.error = err;
-                    res.status(200).json(response);
-                }
-            });
-
-            response.message = 'Succesfully added comment!';
-            res.status(200).json(response);
-        }
-    });
+        response.post = post;
+        res.status(200).json(response);
+    }
+    // Otherwise return ok:false and the error message
+    else
+    {
+        response.ok = false;
+        response.error = 'PostID does not exist in database';
+        res.status(200).json(response);
+    }
 }
 
 exports.deletePost = async function(req, res, next) {
@@ -256,23 +251,26 @@ exports.deletePost = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
-    const {id} = req.body;
+    const {postID} = req.body;
 
     // Check if post id is valid object id
-    if(!checkObjectId(id)) {
+    if(!checkObjectId(postID)) {
         response.ok = false;
-        response.error = 'Invalid post id';
+        response.error = 'Invalid post id ' + postID;
         res.status(200).json(response);
         return;
     }
 
-    const post = await Post.deleteOne({_id:id});
+    const post = await Post.deleteOne({_id:postID});
 
     // If the post exists, return ok:true
     if(post)
     {
         // Removes post from users' bookmark array
-        const user = await User.updateMany({}, {$pullAll:{bookmarks:[id]}});
+        const filter = {};
+        const update = {$pullAll:{bookmarks:[postID]}};
+        const user = await User.updateMany(filter, update);
+
         if (user)
         {
             response.action = 'post successfully deleted';
@@ -293,6 +291,48 @@ exports.deletePost = async function(req, res, next) {
         response.error = 'Invalid id or cannot delete';
         res.status(200).json(response);
     }
+}
 
-    
+exports.deleteComment = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true};
+
+    // Incoming values
+    const {postID, commentID} = req.body;
+
+    // Check if post id is valid object id
+    if(!checkObjectId(postID)) {
+        response.ok = false;
+        response.error = 'Invalid post id ' + postID;
+        res.status(200).json(response);
+        return;
+    }
+
+    // Check if comment id is a valid object id
+    if(!checkObjectId(commentID)) {
+        response.ok = false;
+        response.error = 'Invalid comment id ' + commentID;
+        res.status(200).json(response);
+        return;
+    }
+
+    // find post by post id
+    const filter = {_id:postID};
+    const update = { $pull: {comments: {_id:commentID}}};
+    const options = {new: true};
+    const post = await Post.findOneAndUpdate(filter, update, options);
+
+    // If the post exists, return ok:true
+    if(post)
+    {
+        response.post = post;
+        res.status(200).json(response);
+    }
+    // Otherwise return ok:false and the error message
+    else
+    {
+        response.ok = false;
+        response.error = 'PostID does not exist in database';
+        res.status(200).json(response);
+    }
 }
