@@ -13,14 +13,7 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 
 const Tab = createMaterialTopTabNavigator();
 
-// test data
-const data = [
-  {key: '1', name: 'sebastian', message: 'whats up guyys'},
-  {key: '2', name: 'roberto', message: 'nice playlist'},
-  {key: '3', name: 'will', message: 'hey'},
-  {key: '4', name: 'doug', message: 'whats todays date?'},
-  {key: '5', name: 'daniel', message: 'how is todays weather'},
-];
+
 
 function MessagesList() {
   return (
@@ -56,55 +49,37 @@ function NotificationTab() {
   );
 }
 
-function MessageTab({data}) {
+function MessageTab() {
   return (
-    <TouchableOpacity>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: 'space-between',
-            marginStart: 10,
-            marginEnd: 10,
-            marginTop: 15,
-          }}>
+    <View style={{backgroundColor: '#23192B'}}>
+      <TouchableOpacity>
+        <View 
+          style={styles.MessageContainer}>
           
           <View style={{flexDirection: 'row'}}>
 
             <Image
-              source={{uri: 'https://picsum.photos/600'}}
-              style={{width: 60, height: 60, borderRadius: 70}}
+              source={require('../assets/images/defaultSmile.png')}
+              style={styles.ProfilePic}
             />
 
             <View style={{flexDirection: 'column', marginStart: 15}}>
-              <Text style={{color: 'white', fontWeight: 'bold'}}>
-                {data.name}
-              </Text>
+
+              <Text style={{color: 'white', fontWeight: 'bold', textDecoration: "underline"}}>John Smith</Text>
 
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text style={{color: colors.textFaded2}}>
-                  {data.message}
-                </Text>
-
-                <Image
-                  source={require('../assets/images/defaultSmile.png')}
-                  style={{width: 3, height: 3, marginStart: 5}}
-                />
-
-                <Text style={{color: colors.textFaded2, marginStart: 5}}>2h</Text>
+                <Text style={styles.MainText}>hey nice playlist</Text>
               </View>
+
             </View>
           </View>
 
-          <TouchableOpacity>
-            <View>
-              <Image
-                source={require('../assets/images/defaultSmile.png')}
-                style={{width: 25, height: 25}}
-              />
-            </View>
-          </TouchableOpacity>
+          <Text style={{color: 'white', textAlign: "right"}}>2h ago</Text>
+
         </View>
       </TouchableOpacity>
+    </View>
+    
   );
 }
 
@@ -121,6 +96,22 @@ const styles = StyleSheet.create({
     color: "white",
   },
 
+  MessageContainer: {
+    backgroundColor: "#23192B",
+    flexDirection: "row",
+    justifyContent: 'space-between',
+    marginStart: 10,
+    marginEnd: 10,
+    marginTop: 15,
+  },
+
+  ProfilePic: {
+    
+    width: 60,
+    height: 60,
+    borderRadius: 70,
+  },
+
   Button: {
     backgroundColor: "#573c6b",
     borderRadius: 5,
@@ -134,5 +125,6 @@ const styles = StyleSheet.create({
 
   tabs: {
 
-  }
+  },
+
 });
