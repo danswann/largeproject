@@ -8,7 +8,7 @@ import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import { AuthContext } from "./Context";
 import UnauthenticatedScreen from "./screens/UnauthenticatedScreen";
-import { API_URL } from "@env";
+import { API_URL } from "./constants/Info";
 
 const LoggedOutStack = createNativeStackNavigator();
 const LoggedInStack = createNativeStackNavigator();
@@ -63,14 +63,27 @@ export default function App() {
   const authContext = React.useMemo(() => {
     return {
       signIn: (username, password) => {
+        // User token will store the users unique id
         let userToken;
-        userToken = null;
-        username = "user";
-        password = "pass";
-        if (username === "user" && password === "pass") {
-          userToken = "usertoken";
-        }
-        dispatch({ type: "LOGIN", id: username, token: userToken });
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: username, password: password }),
+        };
+        fetch(`${API_URL}/api/user/login`, requestOptions)
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data.ok);
+            // data.ok will be true if a valid user is attempting to log in
+            if (data.ok === true) {
+              // We then set the valid users token to verify them
+              userToken = data.user._id;
+              // We then pass the user token to authenticate the user, if userToken is null then you can't log in
+              dispatch({ type: "LOGIN", id: username, token: userToken });
+            } else {
+              console.log("Invalid username or password");
+            }
+          });
       },
       signUp: (
         firstName,

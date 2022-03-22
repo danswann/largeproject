@@ -370,3 +370,53 @@ exports.getPost = async function(req, res, next) {
         res.status(200).json(response);
     }
 }
+
+exports.homeFeed = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true};
+
+    // Incoming values
+    const {userID} = req.body;
+
+    // Check if userID is valid object id
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid userID ' + userID;
+        res.status(200).json(response);
+        return;
+    }
+
+    // Find post by postID
+    const filter = {_id:userID};
+    const projection = {_id: 0, following: 1};
+    const followingArray = await User.findOne(filter, projection);
+
+    // If the post exists, return ok:true
+    if(followingArray)
+    {
+        // Find post by postID
+        const filter2 = {userID: followingArray.following};
+        const post = await Post.find(filter2).sort({ timeStamp: 'desc'});
+
+        if(post)
+        {
+            response.filter = filter2;
+            response.followingArray = post;
+            res.status(200).json(response);
+        }
+        // Otherwise return ok:false and the error message
+        else
+        {
+            response.ok = false;
+            response.error = 'No post found';
+            res.status(200).json(response);
+        }
+    }
+    // Otherwise return ok:false and the error message
+    else
+    {
+        response.ok = false;
+        response.error = 'User not found';
+        res.status(200).json(response);
+    }
+}

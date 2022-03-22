@@ -8,6 +8,8 @@ import {
   Image
 } from "react-native";
 
+import MessageBox from "../components/MessageBox";
+
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
 
@@ -54,6 +56,7 @@ function NotificationTab() {
 function MessageTab() {
   return (
     <View style={styles.MainContainer}>
+<<<<<<< HEAD
       <TouchableOpacity>
         <View style={styles.MessageContainer}>        
           <View style={{flexDirection: 'row'}}>
@@ -92,8 +95,17 @@ function MessageTab() {
 
         </View>
       </TouchableOpacity>
+=======
+      <FlatList
+        data={[
+          {key: 1, name: 'John Smith', message: 'hey nice playlist', timeStamp: '2h ago'},
+          {key: 2, name: 'Joe Smith', message: 'Wassup', timeStamp: '3h ago'},
+          {key: 3, name: 'Jane Smith', message: 'brb', timeStamp: '22h ago'}
+        ]}
+        renderItem={({item}) => <MessageBox name={item.name} message={item.message} timeStamp={item.timeStamp}/>}
+      />
+>>>>>>> acb6cac88b67406c5d1c5375ce78f0855b40c5fe
     </View>
-    
   );
 }
 
@@ -101,7 +113,7 @@ function MessageTab() {
 const styles = StyleSheet.create({
   MainContainer: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
     backgroundColor: "#23192B",
   },
