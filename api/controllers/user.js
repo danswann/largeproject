@@ -436,3 +436,90 @@ exports.searchUser = async function(req, res, next) {
         res.status(200).json(response);
     }
 }
+
+exports.changeUsername = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true}
+
+    // Incoming values
+    const {userID, username} = req.body;
+
+    // Check if userID is a valid object id
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid userID';
+        res.status(200).json(response);
+        return;
+    }
+
+    // Searchs for single user and only returns username field
+    const filter = {_id: userID};
+    const projection = {username: 1};
+    const user = await User.findOne(filter, projection);
+
+    if(user)
+    {
+        // Update username
+        user.username = username;
+
+        // Save user into database
+        user.save(function (err) {
+            // If an error occurs, return ok:false and the error message
+            if(err)
+            {
+                response.ok = false;
+                response.error = 'Username already exists';
+                res.status(200).json(response);
+            }
+            // Otherwise return the username and success message
+            else
+            {
+                response.username = username;
+                response.message = 'Succesfully changed username';
+                res.status(200).json(response);
+            }
+        });
+    }
+    // If userID is not found return error
+    else
+    {
+        response.ok = false;
+        response.error = 'User not found';
+        res.status(200).json(response);
+    }
+}
+
+exports.changePassword = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true}
+
+    // Incoming values
+    const {userID, password} = req.body;
+
+    // Check if userID is a valid object id
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid userID';
+        res.status(200).json(response);
+        return;
+    }
+
+    // Searchs for single user and updates password field
+    const filter = {_id: userID};
+    const update = {password: password};
+    const user = await User.findOneAndUpdate(filter, update);
+
+    // If user is found return message
+    if(user)
+    {
+        response.message = 'Succesfully changed password';
+        res.status(200).json(response);
+    }
+    // If userID is not found return error
+    else
+    {
+        response.ok = false;
+        response.error = 'User not found';
+        res.status(200).json(response);
+    }
+}

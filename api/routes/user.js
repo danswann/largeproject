@@ -10,5 +10,7 @@ router.post('/unfollowUser', userController.unfollowUser);
 router.post('/bookmarkPost', userController.bookmarkPost);
 router.post('/showFollowers', userController.showFollowers);
 router.post('/showFollowings', userController.showFollowings);
+router.post('/changeUsername', userController.changeUsername);
+router.post('/changePassword', userController.changePassword);
 
 module.exports = router;
