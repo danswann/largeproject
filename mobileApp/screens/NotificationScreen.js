@@ -44,14 +44,16 @@ export default function NotificationScreen() {
 function NotificationTab() {
   return (
     <View style={styles.MainContainer}>
-      <Text style={styles.MainText}>View Your Notifications!</Text>
+      <Text style={
+        styles.MainText}
+        >View Your Notifications!</Text>
     </View>
   );
 }
 
 function MessageTab() {
   return (
-    <View style={{backgroundColor: '#23192B'}}>
+    <View style={styles.MainContainer}>
       <TouchableOpacity>
         <View style={styles.MessageContainer}>        
           <View style={{flexDirection: 'row'}}>
@@ -64,17 +66,29 @@ function MessageTab() {
 
             {/* name */}
             <View style={{flexDirection: 'column', marginStart: 15}}>
-              <Text style={{color: 'white', fontWeight: 'bold', textDecoration: "underline"}}>John Smith</Text>
+
+              <Text style={{
+                color: 'white', 
+                fontWeight: 'bold', 
+                textDecoration: "underline"}}>
+                John Smith</Text>
 
               {/* Message */}
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text style={styles.MainText}>hey nice playlist</Text>
+
+                <Text 
+                style={styles.MainText}>
+                hey nice playlist</Text>
+
               </View>
             </View>
           </View>
 
           {/* Timestamp */}
-          <Text style={{color: 'white', textAlign: "right"}}>2h ago</Text>
+          <Text style={{
+            color: 'white', 
+            textAlign: "right"}}>
+            2h ago</Text>
 
         </View>
       </TouchableOpacity>
