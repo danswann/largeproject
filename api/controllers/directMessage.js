@@ -152,3 +152,69 @@ exports.readDM = async function(req, res, next) {
         res.status(200).json(response);
     }
 }
+
+exports.getDM = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true};
+
+    // Incoming values
+    const {dmID} = req.body;
+
+    // Check if dmID is valid object id
+    if(!checkObjectId(dmID)) {
+        response.ok = false;
+        response.error = 'Invalid dmID ' + dmID;
+        res.status(200).json(response);
+        return;
+    }
+
+    // find dm by dmID
+    const filter = {_id:dmID};
+    const dm = await DirectMessage.findOne(filter);
+
+    if(dm)
+    {
+        response.dm = dm;
+        res.status(200).json(response);
+    }
+    else
+    {
+        response.ok = false;
+        response.message = 'dm not found';
+        res.status(200).json(response);
+    }
+}
+
+exports.getAllDMs = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true};
+
+    // Incoming values
+    const {userID, currentIndex, numberOfDMs} = req.body;
+
+    // Check if userID is valid object id
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid userID ' + userID;
+        res.status(200).json(response);
+        return;
+    }
+
+    // find dm by dm id
+    const filter = {users: {$elemMatch: {$eq: userID}}};
+    const projection = {chat: {$slice: -1}};
+    const dm = await DirectMessage.find(filter, projection).sort({'chat.timeStamp': 'desc'}).skip(currentIndex).limit(numberOfDMs);
+
+    if(dm)
+    {
+        response.dmLength = dm.length;
+        response.dm = dm;
+        res.status(200).json(response);
+    }
+    else
+    {
+        response.ok = false;
+        response.message = 'No dms found';
+        res.status(200).json(response);
+    }
+}

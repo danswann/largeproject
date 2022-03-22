@@ -8,6 +8,8 @@ import {
   Image
 } from "react-native";
 
+import MessageBox from "../components/MessageBox";
+
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
 
@@ -51,35 +53,16 @@ function NotificationTab() {
 
 function MessageTab() {
   return (
-    <View style={{backgroundColor: '#23192B'}}>
-      <TouchableOpacity>
-        <View style={styles.MessageContainer}>        
-          <View style={{flexDirection: 'row'}}>
-
-            {/* profile pic */}
-            <Image
-              source={require('../assets/images/defaultSmile.png')}
-              style={styles.ProfilePic}
-            />
-
-            {/* name */}
-            <View style={{flexDirection: 'column', marginStart: 15}}>
-              <Text style={{color: 'white', fontWeight: 'bold', textDecorationLine: "underline"}}>John Smith</Text>
-
-              {/* Message */}
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text style={styles.MainText}>hey nice playlist</Text>
-              </View>
-            </View>
-          </View>
-
-          {/* Timestamp */}
-          <Text style={{color: 'white', textAlign: "right"}}>2h ago</Text>
-
-        </View>
-      </TouchableOpacity>
+    <View style={styles.MainContainer}>
+      <FlatList
+        data={[
+          {key: 1, name: 'John Smith', message: 'hey nice playlist', timeStamp: '2h ago'},
+          {key: 2, name: 'Joe Smith', message: 'Wassup', timeStamp: '3h ago'},
+          {key: 3, name: 'Jane Smith', message: 'brb', timeStamp: '22h ago'}
+        ]}
+        renderItem={({item}) => <MessageBox name={item.name} message={item.message} timeStamp={item.timeStamp}/>}
+      />
     </View>
-    
   );
 }
 
@@ -87,7 +70,7 @@ function MessageTab() {
 const styles = StyleSheet.create({
   MainContainer: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
     backgroundColor: "#23192B",
   },

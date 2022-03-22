@@ -25,7 +25,9 @@ exports.login = async function(req, res, next) {
     const {username, password} = req.body;
 
     // Attempt to find a user with matching username/password
-    const user = await User.findOne({username:username, password:password}).exec();
+    const filter = {username: username, password: password};
+    const projection = {password: 0};
+    const user = await User.findOne(filter, projection);
 
     // If the user exists, return ok:true and the user's details
     if(user)
