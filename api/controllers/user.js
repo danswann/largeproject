@@ -92,122 +92,126 @@ exports.followUser = async function(req, res, next)
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
-        response.error = 'Invalid user id';
+        response.error = 'Invalid userID ' + userID;
         res.status(200).json(response);
         return;
     }
 
-    // Check if followID is a valid object id
+    // Check if followingID is a valid object id
     if(!checkObjectId(followingID)) {
         response.ok = false;
-        response.error = 'Invalid following id';
+        response.error = 'Invalid followingID ' + followingID;
         res.status(200).json(response);
         return;
     }
 
-    // find user by user id
-    const filter = {_id:userID};
-    const user = await User.findOne(filter);
+    // Find user by userID and add following to following array if it doesn't exist already
+    const filterUser = {_id: userID};
+    const updateUser = {$addToSet: {following: followingID}};
+    const projection = {password: 0};
+    const optionsUser = {projection: projection, new: true};
+    const user = await User.findOneAndUpdate(filterUser, updateUser, optionsUser);
 
-    if(user.following.includes(followingID))
+    // If the user exists
+    if (user)
     {
-        // remove following id from following array
-        const index = user.following.indexOf(followingID);
-        user.following.splice(index, 1);
+        // Find following by followingID and add user to follower array if doesn't exist already
+        const filterFollowing = {_id: followingID};
+        const updateFollowing = {$addToSet: {followers: userID}};
+        const optionsFollowing = {new: true};
+        const user2 = await User.findOneAndUpdate(filterFollowing, updateFollowing, optionsFollowing);
 
-        user.save(function (err) {
-            // If an error occurs, return ok:false and the error message
-            if(err)
-            {
-                response.ok = false;
-                response.errorLoc = 'Error removing following from users following array';
-                response.error = err;
-                res.status(200).json(response);
-            }
-        });
+        // If the follower exists and is updated, return ok:true and the user's details
+        if (user2)
+        {
+            response.user = user;
+            res.status(200).json(response);
+        }
+        // Otherwise return ok:false and the error message
+        else
+        {
+            // Find user by userID and remove following as its userID was not found
+            const filterUser = {_id: userID};
+            const updateUser = {$pull: {following: followingID}};
+            const optionsUser = {new: true};
+            const user = await User.findOneAndUpdate(filterUser, updateUser, optionsUser);
 
-        // find following by following id
-        const filter2 = {_id:followingID};
-        const user2 = await User.findOne(filter2);
-
-        // remove user id from followers array
-        const index2 = user2.followers.indexOf(userID);
-        user2.followers.splice(index2, 1);
-
-        user2.save(function (err) {
-            // If an error occurs, return ok:false and the error message
-            if(err)
-            {
-                response.ok = false;
-                response.errorLoc = 'Error removing user from following followers array';
-                response.error = err;
-                res.status(200).json(response);
-            }
-            // Otherwise return a success message
-            else
-            {
-                response.message = 'Succesfully unfollowed user!';
-                res.status(200).json(response);
-            }
-        });
+            response.ok = false;
+            response.error = 'Following user not found or cannot be updated';
+            res.status(200).json(response);
+        }
     }
+    // Otherwise return ok:false and the error message
     else
     {
-        // add following id to following array
-        user.following.push(followingID);
+        response.ok = false;
+        response.error = 'User not found or cannot be updated';
+        res.status(200).json(response);
+    }
+}
 
-        user.save(function (err) {
-            // If an error occurs, return ok:false and the error message
-            if(err)
-            {
-                response.ok = false;
-                response.error = err;
-                res.status(200).json(response);
-            }
-        });
+exports.unfollowUser = async function(req, res, next)
+{
+    // Default response object
+    var response = {ok:true}
 
-        // find following by following id
-        const filter2 = {_id:followingID};
-        const user2 = await User.findOne(filter2);
+    // Incoming values
+    const {userID, followingID} = req.body;
 
-        // add user id to followers array
-        user2.followers.push(userID);
+    // Check if userID is a valid object id
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid userID ' + userID;
+        res.status(200).json(response);
+        return;
+    }
 
-        user2.save(function (err) {
-            // If an error occurs, return ok:false and the error message
-            if(err)
-            {
-                response.ok = false;
-                response.errorLoc = 'Error saving user to followings follower array';
-                response.error = err;
-                res.status(200).json(response);
-            }
-            // Otherwise return a success message
-            else
-            {
-                // Create a new instance of notification model
-                var newNotification = new Notification({
-                    notificationType: 0,
-                    userID: followingID,
-                    senderID: userID
-                });
+    // Check if followingID is a valid object id
+    if(!checkObjectId(followingID)) {
+        response.ok = false;
+        response.error = 'Invalid followingID ' + followingID;
+        res.status(200).json(response);
+        return;
+    }
 
-                // Save the new instance
-                newNotification.save(function (err) {
-                    // If an error occurs, return ok:false and the error message
-                    if(err)
-                    {
-                        response.ok = false;
-                        response.errorLoc = 'Error sending notification';
-                        response.error = err;
-                        res.status(200).json(response);
-                    }
-                });
+    // Find user by userID and remove following from following array
+    const filterUser = {_id: userID};
+    const updateUser = {$pull: {following: followingID}};
+    const projection = {password: 0};
+    const optionsUser = {projection: projection, new: true};
+    const user = await User.findOneAndUpdate(filterUser, updateUser, optionsUser);
 
-                response.message = 'Succesfully followed user!';
-                res.status(200).json(response);
-            }
-        });
+    // If the user exists
+    if (user)
+    {
+        // Find following by followingID and remove user from follower array
+        const filterFollowing = {_id: followingID};
+        const updateFollowing = {$pull: {followers: userID}};
+        const optionsFollowing = {new: true};
+        const user2 = await User.findOneAndUpdate(filterFollowing, updateFollowing, optionsFollowing);
+
+        // If the follower exists and is updated, return ok:true and the user's details
+        if (user2)
+        {
+            const index = user.following.indexOf(followingID);
+            user.following.splice(index, 1);
+            response.user = user;
+            res.status(200).json(response);
+        }
+        // Otherwise return ok:false and the error message
+        else
+        {
+            response.ok = false;
+            response.error = 'Following user not found or cannot be updated';
+            res.status(200).json(response);
+        }
+    }
+    // Otherwise return ok:false and the error message
+    else
+    {
+        response.ok = false;
+        response.error = 'User not found or cannot be updated';
+        res.status(200).json(response);
     }
 }
 
@@ -221,7 +225,7 @@ exports.bookmarkPost = async function(req, res, next) {
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
-        response.error = 'Invalid user id';
+        response.error = 'Invalid userID ' + userID;
         res.status(200).json(response);
         return;
     }
@@ -229,7 +233,7 @@ exports.bookmarkPost = async function(req, res, next) {
     // Check if postID is a valid object id
     if(!checkObjectId(postID)) {
         response.ok = false;
-        response.error = 'Invalid post id';
+        response.error = 'Invalid postID ' + postID;
         res.status(200).json(response);
         return;
     }
@@ -291,7 +295,7 @@ exports.showFollowers = async function(req, res, next) {
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
-        response.error = 'Invalid user id';
+        response.error = 'Invalid userID ' + userID;
         res.status(200).json(response);
         return;
     }
@@ -351,7 +355,7 @@ exports.showFollowings = async function(req, res, next) {
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
-        response.error = 'Invalid user id';
+        response.error = 'Invalid userID ' + userID;
         res.status(200).json(response);
         return;
     }
@@ -396,6 +400,126 @@ exports.showFollowings = async function(req, res, next) {
         // If user isnt found, return user not found
         response.ok = false;
         response.error = 'user not found';
+        res.status(200).json(response);
+    }
+}
+
+exports.searchUser = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true}
+
+    // Incoming values
+    const {userID} = req.body;
+
+    // Check if userID is a valid object id
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid userID ' + userID;
+        res.status(200).json(response);
+        return;
+    }
+
+    // Searchs for single user and does not return password field
+    const filter = {_id: userID};
+    const projection = {password: 0};
+    const user = await User.findOne(filter, projection);
+
+    if(user)
+    {
+        response.user = user;
+        res.status(200).json(response);
+    }
+    else
+    {
+        response.ok = false;
+        response.error = 'User not found';
+        res.status(200).json(response);
+    }
+}
+
+exports.changeUsername = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true}
+
+    // Incoming values
+    const {userID, username} = req.body;
+
+    // Check if userID is a valid object id
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid userID ' + userID;
+        res.status(200).json(response);
+        return;
+    }
+
+    // Searchs for single user and only returns username field
+    const filter = {_id: userID};
+    const projection = {username: 1};
+    const user = await User.findOne(filter, projection);
+
+    if(user)
+    {
+        // Update username
+        user.username = username;
+
+        // Save user into database
+        user.save(function (err) {
+            // If an error occurs, return ok:false and the error message
+            if(err)
+            {
+                response.ok = false;
+                response.error = 'Username already exists';
+                res.status(200).json(response);
+            }
+            // Otherwise return the username and success message
+            else
+            {
+                response.username = username;
+                response.message = 'Succesfully changed username';
+                res.status(200).json(response);
+            }
+        });
+    }
+    // If userID is not found return error
+    else
+    {
+        response.ok = false;
+        response.error = 'User not found';
+        res.status(200).json(response);
+    }
+}
+
+exports.changePassword = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true}
+
+    // Incoming values
+    const {userID, password} = req.body;
+
+    // Check if userID is a valid object id
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid userID ' + userID;
+        res.status(200).json(response);
+        return;
+    }
+
+    // Searchs for single user and updates password field
+    const filter = {_id: userID};
+    const update = {password: password};
+    const user = await User.findOneAndUpdate(filter, update);
+
+    // If user is found return message
+    if(user)
+    {
+        response.message = 'Succesfully changed password';
+        res.status(200).json(response);
+    }
+    // If userID is not found return error
+    else
+    {
+        response.ok = false;
+        response.error = 'User not found';
         res.status(200).json(response);
     }
 }

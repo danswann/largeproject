@@ -6,8 +6,8 @@ const Schema = mongoose.Schema;
 const CommentSchema = new Schema({
     timeStamp: {type:Date, default:Date.now},
     comment: {type:String, maxlength:250},
-    userID: {type:Schema.ObjectId, ref:'User', required:true}
-}, {_id:false})
+    userID: {type:Schema.ObjectId, ref:'User', required:true},
+});
 
 // Define post schema
 const PostSchema = new Schema({
@@ -19,7 +19,7 @@ const PostSchema = new Schema({
     likedBy: [{type:Schema.ObjectId, ref:'User'}],
     comments: [{type:CommentSchema, required:true, default:()=>({})}],
     userID: {type:Schema.ObjectId, ref:'User', required:true},
-    timePosted: {type:Date, default:Date.now}
+    timeStamp: {type:Date, default:Date.now}
 });
 
 // Export model
