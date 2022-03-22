@@ -203,7 +203,7 @@ exports.getAllDMs = async function(req, res, next) {
     // find dm by dm id
     const filter = {users: {$elemMatch: {$eq: userID}}};
     const projection = {chat: {$slice: -1}};
-    const dm = await DirectMessage.find(filter, projection).skip(currentIndex).limit(numberOfDMs);
+    const dm = await DirectMessage.find(filter, projection).sort({'chat.timeStamp': 'desc'}).skip(currentIndex).limit(numberOfDMs);
 
     if(dm)
     {
