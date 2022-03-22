@@ -64,7 +64,7 @@ function MessageTab() {
 
             {/* name */}
             <View style={{flexDirection: 'column', marginStart: 15}}>
-              <Text style={{color: 'white', fontWeight: 'bold', textDecoration: "underline"}}>John Smith</Text>
+              <Text style={{color: 'white', fontWeight: 'bold', textDecorationLine: "underline"}}>John Smith</Text>
 
               {/* Message */}
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
