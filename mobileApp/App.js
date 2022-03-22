@@ -3,12 +3,12 @@ import { useState } from "react";
 import { Text, View, StyleSheet, ActivityIndicator } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-// import Ionicons from "react-native-vector-icons/Ionicons";
 import AuthenticatedScreen from "./screens/AuthenticatedScreen";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import { AuthContext } from "./Context";
 import UnauthenticatedScreen from "./screens/UnauthenticatedScreen";
+import { API_URL } from "@env";
 
 const LoggedOutStack = createNativeStackNavigator();
 const LoggedInStack = createNativeStackNavigator();
@@ -95,8 +95,8 @@ export default function App() {
             dob: dob,
           }),
         };
-        fetch("http://localhost:5000/api/user/register", requestOptions)
-          .then((response) => response.json())
+        fetch(`${API_URL}/api/user/register`, requestOptions)
+          .then((response) => response.text())
           .then((data) => console.log(data));
         dispatch({ type: "REGISTER", id: "user", token: "usertoken" });
       },
