@@ -80,7 +80,10 @@ function LoginScreen({ navigation }) {
         </View>
 
         {/* Login button */}
-        <TouchableOpacity style={styles.loginBtn} onPress={() => signIn()}>
+        <TouchableOpacity
+          style={styles.loginBtn}
+          onPress={() => signIn(username, password)}
+        >
           <Text style={styles.loginText}>Login</Text>
         </TouchableOpacity>
 
