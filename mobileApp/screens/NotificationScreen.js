@@ -53,27 +53,27 @@ function MessageTab() {
   return (
     <View style={{backgroundColor: '#23192B'}}>
       <TouchableOpacity>
-        <View 
-          style={styles.MessageContainer}>
-          
+        <View style={styles.MessageContainer}>        
           <View style={{flexDirection: 'row'}}>
 
+            {/* profile pic */}
             <Image
               source={require('../assets/images/defaultSmile.png')}
               style={styles.ProfilePic}
             />
 
+            {/* name */}
             <View style={{flexDirection: 'column', marginStart: 15}}>
-
               <Text style={{color: 'white', fontWeight: 'bold', textDecoration: "underline"}}>John Smith</Text>
 
+              {/* Message */}
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Text style={styles.MainText}>hey nice playlist</Text>
               </View>
-
             </View>
           </View>
 
+          {/* Timestamp */}
           <Text style={{color: 'white', textAlign: "right"}}>2h ago</Text>
 
         </View>
