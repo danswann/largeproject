@@ -8,7 +8,7 @@ import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import { AuthContext } from "./Context";
 import UnauthenticatedScreen from "./screens/UnauthenticatedScreen";
-import { API_URL } from "@env";
+import { API_URL } from "./constants/Info";
 
 const LoggedOutStack = createNativeStackNavigator();
 const LoggedInStack = createNativeStackNavigator();
