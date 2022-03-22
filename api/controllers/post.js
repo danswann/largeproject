@@ -30,7 +30,7 @@ exports.newPost = async function(req, res, next) {
     {
         if(!checkObjectId(mentionedUsers[i])) {
             response.ok = false;
-            response.error = 'Invalid mentionedUsers id at i = ' + i;
+            response.error = 'Invalid mentionedUsers id at i = ' + i + ' userID ' + mentionedUsers[i];
             res.status(200).json(response);
             return;
         }
@@ -39,7 +39,7 @@ exports.newPost = async function(req, res, next) {
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
-        response.error = 'Invalid userID';
+        response.error = 'Invalid userID ' + userID;
         res.status(200).json(response);
         return;
     }
@@ -99,10 +99,10 @@ exports.likePost = async function(req, res, next) {
     // Incoming values
     const {postID, userID} = req.body;
 
-    // Check if post id is valid object id
+    // Check if postID is valid object id
     if(!checkObjectId(postID)) {
         response.ok = false;
-        response.error = 'Invalid post id';
+        response.error = 'Invalid postID ' + postID;
         res.status(200).json(response);
         return;
     }
@@ -110,7 +110,7 @@ exports.likePost = async function(req, res, next) {
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
-        response.error = 'Invalid user id';
+        response.error = 'Invalid userID ' + userID;
         res.status(200).json(response);
         return;
     }
@@ -190,10 +190,10 @@ exports.commentOnPost = async function(req, res, next) {
     // Incoming values
     const {postID, comment, userID} = req.body;
 
-    // Check if post id is valid object id
+    // Check if postID is valid object id
     if(!checkObjectId(postID)) {
         response.ok = false;
-        response.error = 'Invalid post id: ' + postID;
+        response.error = 'Invalid postID ' + postID;
         res.status(200).json(response);
         return;
     }
@@ -201,7 +201,7 @@ exports.commentOnPost = async function(req, res, next) {
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
-        response.error = 'Invalid user id ' + userID;
+        response.error = 'Invalid userID ' + userID;
         res.status(200).json(response);
         return;
     }
@@ -253,10 +253,10 @@ exports.deletePost = async function(req, res, next) {
     // Incoming values
     const {postID} = req.body;
 
-    // Check if post id is valid object id
+    // Check if postID is valid object id
     if(!checkObjectId(postID)) {
         response.ok = false;
-        response.error = 'Invalid post id ' + postID;
+        response.error = 'Invalid postID ' + postID;
         res.status(200).json(response);
         return;
     }
@@ -300,27 +300,61 @@ exports.deleteComment = async function(req, res, next) {
     // Incoming values
     const {postID, commentID} = req.body;
 
-    // Check if post id is valid object id
+    // Check if postID is valid object id
     if(!checkObjectId(postID)) {
         response.ok = false;
-        response.error = 'Invalid post id ' + postID;
+        response.error = 'Invalid postID ' + postID;
         res.status(200).json(response);
         return;
     }
 
-    // Check if comment id is a valid object id
+    // Check if commentID is a valid object id
     if(!checkObjectId(commentID)) {
         response.ok = false;
-        response.error = 'Invalid comment id ' + commentID;
+        response.error = 'Invalid commentID ' + commentID;
         res.status(200).json(response);
         return;
     }
 
-    // find post by post id
+    // find post by postID
     const filter = {_id:postID};
     const update = { $pull: {comments: {_id:commentID}}};
     const options = {new: true};
     const post = await Post.findOneAndUpdate(filter, update, options);
+
+    // If the post exists, return ok:true
+    if(post)
+    {
+        response.post = post;
+        res.status(200).json(response);
+    }
+    // Otherwise return ok:false and the error message
+    else
+    {
+        response.ok = false;
+        response.error = 'PostID does not exist in database';
+        res.status(200).json(response);
+    }
+}
+
+exports.getPost = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true};
+
+    // Incoming values
+    const {postID} = req.body;
+
+    // Check if postID is valid object id
+    if(!checkObjectId(postID)) {
+        response.ok = false;
+        response.error = 'Invalid postID ' + postID;
+        res.status(200).json(response);
+        return;
+    }
+
+    // Find post by postID
+    const filter = {_id:postID};
+    const post = await Post.findOne(filter);
 
     // If the post exists, return ok:true
     if(post)

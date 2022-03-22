@@ -225,7 +225,7 @@ exports.bookmarkPost = async function(req, res, next) {
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
-        response.error = 'Invalid user id';
+        response.error = 'Invalid userID ' + userID;
         res.status(200).json(response);
         return;
     }
@@ -233,7 +233,7 @@ exports.bookmarkPost = async function(req, res, next) {
     // Check if postID is a valid object id
     if(!checkObjectId(postID)) {
         response.ok = false;
-        response.error = 'Invalid post id';
+        response.error = 'Invalid postID ' + postID;
         res.status(200).json(response);
         return;
     }
@@ -295,7 +295,7 @@ exports.showFollowers = async function(req, res, next) {
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
-        response.error = 'Invalid user id';
+        response.error = 'Invalid userID ' + userID;
         res.status(200).json(response);
         return;
     }
@@ -355,7 +355,7 @@ exports.showFollowings = async function(req, res, next) {
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
-        response.error = 'Invalid user id';
+        response.error = 'Invalid userID ' + userID;
         res.status(200).json(response);
         return;
     }
@@ -414,7 +414,7 @@ exports.searchUser = async function(req, res, next) {
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
-        response.error = 'Invalid user id';
+        response.error = 'Invalid userID ' + userID;
         res.status(200).json(response);
         return;
     }
@@ -447,7 +447,7 @@ exports.changeUsername = async function(req, res, next) {
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
-        response.error = 'Invalid userID';
+        response.error = 'Invalid userID ' + userID;
         res.status(200).json(response);
         return;
     }
@@ -499,7 +499,7 @@ exports.changePassword = async function(req, res, next) {
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
-        response.error = 'Invalid userID';
+        response.error = 'Invalid userID ' + userID;
         res.status(200).json(response);
         return;
     }
