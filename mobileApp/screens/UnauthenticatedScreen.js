@@ -23,6 +23,7 @@ function LoginScreen({ navigation }) {
   // Keeps track of what the user has inputted
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [failedLogin, setFailedLogin] = useState(false);
 
   // Sign in method from context to allow us to login
   const { signIn } = React.useContext(AuthContext);
@@ -82,10 +83,17 @@ function LoginScreen({ navigation }) {
         {/* Login button */}
         <TouchableOpacity
           style={styles.loginBtn}
-          onPress={() => signIn(username, password)}
+          onPress={async () => setFailedLogin(await signIn(username, password))}
         >
           <Text style={styles.loginText}>Login</Text>
         </TouchableOpacity>
+
+        {/* Conditionally renders error message if user enteres invalid login credentials */}
+        {failedLogin ? (
+          <Text style={styles.errorText}>Invalid Username or Password</Text>
+        ) : (
+          <Text></Text>
+        )}
 
         {/* Register prompt text */}
         <View style={styles.signUpView}>
@@ -343,6 +351,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 12,
     color: "white",
+  },
+
+  errorText: {
+    color: "red",
   },
 
   clickableText: {
