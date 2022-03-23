@@ -49,20 +49,31 @@ exports.register = async function(req, res, next)
     // Default response object
     var response = {ok:true}
 
-    // Incoming values
-    const {firstName, lastName, email, phoneNumber, username, password, dob} = req.body;
+    // Required incoming values
+    if (req.body.email == undefined)
+    {
+        response.message = 'email not there!';
+        res.status(200).json(response);
+    }
+    if (req.body.username == undefined)
+    {
+        response.message = 'username not there!';
+        res.status(200).json(response);
+    }
+    if (req.body.password == undefined)
+    {
+        response.message = 'password not there!';
+        res.status(200).json(response);
+    }
+    const email = req.body.email;
+    const username = req.body.username;
+    const password = req.body.password;
 
     // Create a new instance of User model
     var newUser = new User({
-        firstName: firstName,
-        lastName: lastName,
         email: email,
-        phoneNumber: phoneNumber,
-        DOB: dob,
         username: username,
-        password: password,
-        profileImageUrl: 'FILLER',
-        biography: 'FILLER'
+        password: password
     });
 
     // Save the new instance
@@ -77,7 +88,7 @@ exports.register = async function(req, res, next)
         // Otherwise return a success message
         else
         {
-            response.message = 'Succesfully added user ' + newUser.fullName + '!';
+            response.message = 'Succesfully added user!';
             res.status(200).json(response);
         }
     });

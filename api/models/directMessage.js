@@ -11,7 +11,7 @@ const ChatSchema = new Schema({
     postID: {type:Schema.ObjectId, ref:'Post', required:false},
     text: {type:String, maxlength:250},
     userID: {type:Schema.ObjectId, ref:'User', required:true}
-}, {_id:false})
+});
 
 // Define directMessage schema
 const DMSchema = new Schema({
