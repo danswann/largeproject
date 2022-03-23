@@ -42,7 +42,7 @@ function NotificationTab() {
         {key: 3, username: 'Justin Case', message: 'reposted your playlist', timeStamp: '2 days ago'},
         {key: 4, username: 'Black Beard', message: 'liked your playlist', timeStamp: '5 months ago'},
       ]}
-      renderItem={({item}) => <NotificationBox name={item.name} message={item.message} timeStamp={item.timeStamp}/>}
+      renderItem={({item}) => <NotificationBox username={item.username} message={item.message} timeStamp={item.timeStamp}/>}
     />
   </View>
   );
@@ -50,46 +50,6 @@ function NotificationTab() {
 
 function MessageTab() {
   return (
-    // <View style={styles.MainContainer}>
-    //   <TouchableOpacity>
-    //     <View style={styles.MessageContainer}>        
-    //       <View style={{flexDirection: 'row'}}>
-
-    //         {/* profile pic */}
-    //         <Image
-    //           source={require('../assets/images/defaultSmile.png')}
-    //           style={styles.ProfilePic}
-    //         />
-
-    //         {/* name */}
-    //         <View style={{flexDirection: 'column', marginStart: 15}}>
-
-    //           <Text style={{
-    //             color: 'white', 
-    //             fontWeight: 'bold', 
-    //             textDecorationLine: "underline"}}>
-    //             John Smith</Text>
-
-    //           {/* Message */}
-    //           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-
-    //             <Text 
-    //             style={styles.MainText}>
-    //             hey nice playlist</Text>
-
-    //           </View>
-    //         </View>
-    //       </View>
-
-    //       {/* Timestamp */}
-    //       <Text style={{
-    //         color: 'white', 
-    //         textAlign: "right"}}>
-    //         2h ago</Text>
-
-    //     </View>
-    //   </TouchableOpacity>
-    // </View>
     <View style={styles.MainContainer}>
     <FlatList
       data={[
