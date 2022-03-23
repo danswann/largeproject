@@ -9,12 +9,13 @@ const UserSettingsSchema = new Schema({
 
 // Define user schema
 const UserSchema = new Schema({
-    firstName: {type:String, required:true, maxlength: 50},
-    lastName: {type:String, required:true, maxlength: 50},
+    firstName: {type:String, maxlength: 50},
+    lastName: {type:String, maxlength: 50},
     email: {type:String, required:true, unique:true, maxlength:100},
     phoneNumber: {type:String, maxlength:15},
     DOB: {type:Date},
-    username: {type:String, required:true, unique:true, maxlength:20},
+    username: {type:String, required:true, unique:true, maxlength:25},
+    displayName: {type:String, maxlength: 25},
     password: {type:String, required:true},
     profileImageUrl: {type:String},
     biography: {type:String},
