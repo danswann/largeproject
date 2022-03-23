@@ -9,22 +9,11 @@ import {
 } from "react-native";
 
 import MessageBox from "../components/MessageBox";
+import NotificationBox from "../components/NotificationBox";
 
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
-
 const Tab = createMaterialTopTabNavigator();
-
-
-
-function MessagesList() {
-  return (
-    <FlatList
-      data={data}
-      renderItem={({item, index}) => <MessageTab data={item} />}
-    />
-  );
-}
 
 export default function NotificationScreen() {
   return (
@@ -46,55 +35,72 @@ export default function NotificationScreen() {
 function NotificationTab() {
   return (
     <View style={styles.MainContainer}>
-      <Text style={
-        styles.MainText}
-        >View Your Notifications!</Text>
-    </View>
+    <FlatList
+      data={[
+        {key: 1, username: 'John Smith', message: 'followed you', timeStamp: '34 min ago'},
+        {key: 2, username: 'Arby Jones', message: 'commented on your playlist', timeStamp: '1 hr ago'},
+        {key: 3, username: 'Justin Case', message: 'reposted your playlist', timeStamp: '2 days ago'},
+        {key: 4, username: 'Black Beard', message: 'liked your playlist', timeStamp: '5 months ago'},
+      ]}
+      renderItem={({item}) => <NotificationBox name={item.name} message={item.message} timeStamp={item.timeStamp}/>}
+    />
+  </View>
   );
 }
 
 function MessageTab() {
   return (
+    // <View style={styles.MainContainer}>
+    //   <TouchableOpacity>
+    //     <View style={styles.MessageContainer}>        
+    //       <View style={{flexDirection: 'row'}}>
+
+    //         {/* profile pic */}
+    //         <Image
+    //           source={require('../assets/images/defaultSmile.png')}
+    //           style={styles.ProfilePic}
+    //         />
+
+    //         {/* name */}
+    //         <View style={{flexDirection: 'column', marginStart: 15}}>
+
+    //           <Text style={{
+    //             color: 'white', 
+    //             fontWeight: 'bold', 
+    //             textDecorationLine: "underline"}}>
+    //             John Smith</Text>
+
+    //           {/* Message */}
+    //           <View style={{flexDirection: 'row', alignItems: 'center'}}>
+
+    //             <Text 
+    //             style={styles.MainText}>
+    //             hey nice playlist</Text>
+
+    //           </View>
+    //         </View>
+    //       </View>
+
+    //       {/* Timestamp */}
+    //       <Text style={{
+    //         color: 'white', 
+    //         textAlign: "right"}}>
+    //         2h ago</Text>
+
+    //     </View>
+    //   </TouchableOpacity>
+    // </View>
     <View style={styles.MainContainer}>
-      <TouchableOpacity>
-        <View style={styles.MessageContainer}>        
-          <View style={{flexDirection: 'row'}}>
-
-            {/* profile pic */}
-            <Image
-              source={require('../assets/images/defaultSmile.png')}
-              style={styles.ProfilePic}
-            />
-
-            {/* name */}
-            <View style={{flexDirection: 'column', marginStart: 15}}>
-
-              <Text style={{
-                color: 'white', 
-                fontWeight: 'bold', 
-                textDecoration: "underline"}}>
-                John Smith</Text>
-
-              {/* Message */}
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-
-                <Text 
-                style={styles.MainText}>
-                hey nice playlist</Text>
-
-              </View>
-            </View>
-          </View>
-
-          {/* Timestamp */}
-          <Text style={{
-            color: 'white', 
-            textAlign: "right"}}>
-            2h ago</Text>
-
-        </View>
-      </TouchableOpacity>
-    </View>
+    <FlatList
+      data={[
+        {key: 1, name: 'John Smith', message: 'hey nice playlist', timeStamp: '34 min ago'},
+        {key: 2, name: 'Arby Jones', message: 'whats your soundcloud', timeStamp: '1 hr ago'},
+        {key: 3, name: 'Justin Case', message: 'wanna link sounds?', timeStamp: '2 days ago'},
+        {key: 4, name: 'Black Beard', message: 'whats up', timeStamp: '5 months ago'},
+      ]}
+      renderItem={({item}) => <MessageBox name={item.name} message={item.message} timeStamp={item.timeStamp}/>}
+    />
+  </View>
   );
 }
 
