@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -14,7 +14,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
 } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useIsFocused } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AuthContext } from "../Context";
 
@@ -29,6 +29,12 @@ function LoginScreen({ navigation }) {
 
   // Sign in method from context to allow us to login
   const { signIn } = React.useContext(AuthContext);
+
+  //Clears error message when screen is reloaded
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    setFailedLogin(false)
+  }, [isFocused]);
 
   return (
     // Main container
