@@ -138,7 +138,7 @@ function RegisterScreen({ navigation }) {
   {
     if (username === "")
       return "Username field must be filled"
-    else if (username.length < 4)
+    else if (username.length < 3)
       return "Username is too short (At least 3 characters)"
     else if (email === "")
       return "Email field must be filled"
@@ -150,6 +150,7 @@ function RegisterScreen({ navigation }) {
       return "Passwords do not match"
     else
       signUp("", "", email, "", username, password, "")
+      navigation.navigate("EmailVerification", {usernameParam: username, passwordParam: password, emailParam: email})
       return "Verified"
   }
   function verifyEmailFormat(email) //verifies format of string@string.string
@@ -240,7 +241,7 @@ function RegisterScreen({ navigation }) {
           <Text style={styles.loginText}>Register</Text>
         </TouchableOpacity>
 
-        {/* Conditionally renders error message if user enteres invalid login credentials */}
+        {/* Conditionally renders error message if user enters invalid information */}
         {registerState === "Verified" ? (
         <Text></Text>
         ) : (
@@ -262,6 +263,46 @@ function RegisterScreen({ navigation }) {
   );
 }
 
+// Email Verification screen
+function EmailVerificationScreen({ route, navigation }) {
+  const { usernameParam, passwordParam, emailParam } = route.params;
+  const [failedVerification, setFailedVerification] = useState(false);
+  const { signIn } = React.useContext(AuthContext);
+
+  return (
+    <View style={styles.container}>
+      {/* Soundlink logo */}
+      <Image
+        style={styles.image}
+        resizeMethod="resize"
+        resizeMode="contain"
+        source={require("../assets/images/soundlinklogo.png")}
+      />
+      <Text style={styles.signUpText}>
+          We've just sent an email to:
+      </Text>
+      <Text style={styles.emailText}>
+        {JSON.stringify(emailParam)}
+      </Text>
+      <Text style={styles.signUpText}>
+          Please verify your email before continuing.
+      </Text>
+      <TouchableOpacity
+          style={styles.loginBtn}
+          onPress={async () => setFailedVerification(await signIn(JSON.stringify(usernameParam), JSON.stringify(passwordParam)))}
+      >
+        <Text style={styles.loginText}>Continue</Text>
+      </TouchableOpacity>
+      {/* Conditionally renders error message if user is unverified */}
+      {failedVerification ? (
+          <Text style={styles.errorText}>Email is not verified</Text>
+        ) : (
+          <Text></Text>
+        )}
+    </View>
+  )
+}
+
 // Navigation between login and register screens
 function UnauthenticatedScreen() {
   const Stack = createNativeStackNavigator();
@@ -272,6 +313,7 @@ function UnauthenticatedScreen() {
     >
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
+      <Stack.Screen name="EmailVerification" component={EmailVerificationScreen} initialParams={{ usernameParam: "", passwordParam: "", emailParam: "Test" }}/>
     </Stack.Navigator>
   );
 }
@@ -369,4 +411,12 @@ const styles = StyleSheet.create({
   loginText: {
     color: "white",
   },
+
+  emailText: {
+    color: "white",
+    fontWeight: 'bold',
+    fontSize: 12,
+    marginTop: 20,
+  },
+
 });
