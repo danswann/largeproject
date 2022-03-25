@@ -12,6 +12,9 @@ import MessageBox from "../components/MessageBox";
 import NotificationBox from "../components/NotificationBox";
 
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
 
 const Tab = createMaterialTopTabNavigator();
 
