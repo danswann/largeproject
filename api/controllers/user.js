@@ -1,5 +1,8 @@
 const User = require('../models/user');
 const Notification = require('../models/notification');
+const crypto = require('crypto');
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 function checkObjectId (id) {
     const ObjectId = require('mongoose').Types.ObjectId;
@@ -73,7 +76,9 @@ exports.register = async function(req, res, next)
     var newUser = new User({
         email: email,
         username: username,
-        password: password
+        password: password,
+        emailToken: crypto.randomBytes(64).toString('hex'),
+        isVerified: false
     });
 
     // Save the new instance
@@ -88,10 +93,79 @@ exports.register = async function(req, res, next)
         // Otherwise return a success message
         else
         {
+            // Creates a new message json object with info of email
+            const msg = {
+                to: newUser.email,
+                from: 'soundlink.donotreply2@gmail.com', 
+                subject: 'Please verify your email for Soundlink',
+                text: `
+                    Thank you for registering for Soundlink.
+                    Please click the following link in order to verify your account:
+                    http://localhost:5000/api/user/verifyEmail?token=${newUser.emailToken}
+                `,
+                html: `
+                    <p>Thank you for registering for Soundlink.</p>
+                    <p>Please click the following link in order to verify your account:</p>
+                    <a href = "http://localhost:5000/api/user/verifyEmail?token=${newUser.emailToken}">Verify your account</a>
+                `
+            }
+
+            // Sends the email through sendgrid
+            sgMail.send(msg).then(() => {
+                console.log('Email sent')
+            }).catch((error) => {
+                console.error(error)
+            })
+
             response.message = 'Succesfully added user!';
             res.status(200).json(response);
         }
     });
+}
+
+exports.verifyEmail = async function(req, res, next)
+{
+    // Default response object
+    var response = {ok:true};
+
+    try {
+        // Searches for user based on the email token provided after the link
+        // Example: https://cop4331-large.herokuapp.com/api/user/verifyEmail?token=XXXXXXXXXXXXXXXXXXXXXXXX
+        
+        const user = await User.findOne({emailToken: req.query.token});
+        if (user) {
+            // Sets the user's email token to null and verified to true if link is pressed
+            user.emailToken = null;
+            user.isVerified = true;
+
+            await user.save(function (err) {
+                if(err)
+                {
+                    response.ok = false;
+                    response.error = err;
+                    res.status(200).json(response);
+                } 
+                else
+                {
+                    response.ok = false;
+                    response.status = "Email confirmed";
+                    res.status(200).json(response); 
+                }
+            });
+        } 
+        else
+        {
+            // If user not found, then error return.
+            response.ok = false;
+            response.error = "User not found";
+            res.status(200).json(response);
+        } 
+
+    } catch (err) {
+        response.ok = false;
+        response.error = err.message;
+        res.status(200).json(response);
+    }
 }
 
 exports.followUser = async function(req, res, next)

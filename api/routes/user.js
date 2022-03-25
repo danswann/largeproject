@@ -12,5 +12,6 @@ router.post('/showFollowers', userController.showFollowers);
 router.post('/showFollowings', userController.showFollowings);
 router.post('/changeUsername', userController.changeUsername);
 router.post('/changePassword', userController.changePassword);
+router.get('/verifyEmail', userController.verifyEmail);
 
 module.exports = router;
