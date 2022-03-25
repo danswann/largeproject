@@ -19,6 +19,7 @@ export default function App() {
     isLoading: true,
     username: null,
     userToken: null,
+    userVerified: false,
   };
 
   // Reducer function
@@ -35,6 +36,7 @@ export default function App() {
           ...prevState,
           username: action.id,
           userToken: action.token,
+          userVerified: action.verified,
           isLoading: false,
         };
       case "LOGOUT":
@@ -42,13 +44,13 @@ export default function App() {
           ...prevState,
           username: null,
           userToken: null,
+          userVerified: null,
           isLoading: false,
         };
       case "REGISTER":
         return {
           ...prevState,
-          username: action.id,
-          userToken: action.token,
+          userVerified: null,
           isLoading: false,
         };
     }
@@ -66,6 +68,7 @@ export default function App() {
         return new Promise((res, rej) => {
           // User token will store the users unique id
           let userToken;
+          let userVerified;
           const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -77,10 +80,11 @@ export default function App() {
               console.log(data.ok);
               // data.ok will be true if a valid user is attempting to log in
               if (data.ok === true) {
-                // We then set the valid users token to verify them
+                // We then set the valid users token and email to verify them
                 userToken = data.user._id;
-                // We then pass the user token to authenticate the user, if userToken is null then you can't log in
-                dispatch({ type: "LOGIN", id: username, token: userToken });
+                userVerified = data.user.isVerified
+                // We then check if the user is valid and the email has been verified
+                dispatch({ type: "LOGIN", id: username, token: userToken, verified: userVerified });
                 res(false);
               } else {
                 console.log("Invalid username or password");
@@ -145,7 +149,8 @@ export default function App() {
     // Use authcontext provider to track the users authentication status across the whole app
     <AuthContext.Provider value={authContext}>
       <NavigationContainer>
-        {loginState.userToken ? (
+        { /* Transitions to authenticated screen once user data is valid*/}
+        {(loginState.userToken != null && loginState.userVerified) ? (
           <LoggedInStack.Navigator screenOptions={{ headerShown: false }}>
             <LoggedInStack.Screen
               name="Authenticated"

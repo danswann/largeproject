@@ -23,7 +23,9 @@ const UserSchema = new Schema({
     followers: [{type:Schema.ObjectId, ref:'User'}],
     following: [{type:Schema.ObjectId, ref:'User'}],
     bookmarks: [{type:Schema.ObjectId, ref:'Post'}],
-    settings: {type:UserSettingsSchema, required:true, default:()=>({})}
+    settings: {type:UserSettingsSchema, required:true, default:()=>({})},
+    isVerified: {type:Boolean, default:false},
+    emailToken: {type:String}
 });
 
 // Define virtual functions
