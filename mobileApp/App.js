@@ -19,6 +19,7 @@ export default function App() {
     isLoading: true,
     username: null,
     userToken: null,
+    userVerified: false,
   };
 
   // Reducer function
@@ -67,6 +68,7 @@ export default function App() {
         return new Promise((res, rej) => {
           // User token will store the users unique id
           let userToken;
+          let userVerified;
           const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -116,16 +118,8 @@ export default function App() {
         };
         fetch(`${API_URL}/api/user/register`, requestOptions)
           .then((response) => response.text())
-          .then((data) => {
-            console.log(data.ok);
-            // data.ok will be true if a user has been successfully added to database
-            if (data.ok === true) {
-              // We then continue the registration process
-              dispatch({ type: "REGISTER"});
-            } else {
-              console.log("Registration Failed");
-            }
-          });
+          .then((data) => console.log(data));
+        dispatch({ type: "REGISTER", id: "user", token: "usertoken" });
       },
       signOut: () => {
         dispatch({ type: "LOGOUT" });
