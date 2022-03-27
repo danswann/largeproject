@@ -10,9 +10,10 @@ import {
 
 import MessageBox from "../components/MessageBox";
 import NotificationBox from "../components/NotificationBox";
+import ChatScreen from "../screens/ChatScreen";
 
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, StackActions} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 
@@ -52,6 +53,19 @@ function NotificationTab() {
 }
 
 function MessageTab() {
+  const Stack = createNativeStackNavigator();
+  return (
+    <Stack.Navigator
+      initialRouteName="MessageList"
+      screenOptions={{ headerShown: false }}
+    >
+      <Stack.Screen name="MessageList" component={MessageList} />
+      <Stack.Screen name="MessageChat" component={ChatScreen} />
+    </Stack.Navigator>
+  );
+}
+
+function MessageList( { navigation }) {
   return (
     <View style={styles.MainContainer}>
     <FlatList
@@ -61,11 +75,12 @@ function MessageTab() {
         {key: 3, name: 'Justin Case', message: 'wanna link sounds?', timeStamp: '2 days ago'},
         {key: 4, name: 'Black Beard', message: 'whats up', timeStamp: '5 months ago'},
       ]}
-      renderItem={({item}) => <MessageBox name={item.name} message={item.message} timeStamp={item.timeStamp}/>}
+      renderItem={({item}) => <MessageBox name={item.name} message={item.message} timeStamp={item.timeStamp} navigation={navigation}/>}
     />
   </View>
   );
 }
+
 
 // COMPONENT STYLES
 const styles = StyleSheet.create({

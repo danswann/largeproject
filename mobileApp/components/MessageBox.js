@@ -4,12 +4,12 @@ import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 
 
 // COMPONENT BODY
-export default function MessageBox({ navigation }) {
+export default function MessageBox(props) {
   return (
     <TouchableOpacity 
         style={{minWidth: "100%"}}
         onPress={() =>
-            NavigationContainer.navigate('ChatScreen.js')}>
+            props.navigation.navigate('MessageChat')}>
         <View style={styles.MessageContainer}>        
             <View style={{flexDirection: 'row'}}>
                 {/* profile pic */}

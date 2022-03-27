@@ -9,7 +9,7 @@ import {
 } from "react-native";
 
 import ChatBox from "../components/ChatBox";
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigationHelpersContext } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
@@ -17,7 +17,8 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 
 const Tab = createMaterialTopTabNavigator();
 
-export default function NotificationScreen() {
+export default function ChatScreen() {
+
   return (
     <View>
         <Text>
