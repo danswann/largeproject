@@ -454,3 +454,34 @@ exports.homeFeed = async function(req, res, next) {
         res.status(200).json(response);
     }
 }
+
+exports.editCaption = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true};
+
+    // Incoming values
+    const {postID, caption} = req.body;
+
+    if (!checkObjectId(postID)) {
+        response.ok = false;
+        response.error = 'Invalid postID ' + postID;
+        res.status(200).json(response);
+        return;
+    }
+
+    const updateCaption = await Post.findOneAndUpdate({_id:postID},{caption:caption});
+
+    // If the post exists and the caption was updates, return ok:true
+    if (updateCaption)
+    {
+        response.action = 'caption successfully updated';
+        res.status(200).json(response);
+    }
+    // Otherwise return ok:false and the error message
+    else
+    {
+        response.ok = false;
+        response.error = 'Invalid id or cannot edit caption';
+        res.status(200).json(response);
+    }
+}
