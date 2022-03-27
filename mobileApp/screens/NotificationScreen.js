@@ -60,7 +60,7 @@ function MessageTab() {
       screenOptions={{ headerShown: false }}
     >
       <Stack.Screen name="MessageList" component={MessageList} />
-      <Stack.Screen name="MessageChat" component={ChatScreen} />
+      <Stack.Screen name="MessageChat" component={ChatScreen} initialParams={{name: "Test", messages: [] }}/>
     </Stack.Navigator>
   );
 }
@@ -70,12 +70,22 @@ function MessageList( { navigation }) {
     <View style={styles.MainContainer}>
     <FlatList
       data={[
-        {key: 1, name: 'John Smith', message: 'hey nice playlist', timeStamp: '34 min ago'},
-        {key: 2, name: 'Arby Jones', message: 'whats your soundcloud', timeStamp: '1 hr ago'},
-        {key: 3, name: 'Justin Case', message: 'wanna link sounds?', timeStamp: '2 days ago'},
-        {key: 4, name: 'Black Beard', message: 'whats up', timeStamp: '5 months ago'},
+        {key: 1, name: 'John Smith', messages: [
+          { key: 1, message: 'yo', timeStamp:'3 days ago', sentByMe: false},
+          { key: 2, message: 'yooooo', timeStamp:'3 days ago', sentByMe: true},
+          { key: 3, message: 'hey nice playlist', timeStamp:'34 min ago', sentByMe: false},
+        ]},
+        {key: 2, name: 'Arby Jones', messages: [
+          { key: 1, message: 'whats your soundcloud', timeStamp: '1 hr ago', sentByMe: true},
+        ]},
+        {key: 3, name: 'Justin Case', messages: [
+          { key: 1, message: 'wanna link sounds?', timeStamp: '2 days ago', sentByMe: false},
+        ]},
+        {key: 4, name: 'Black Beard', messages: [
+          { key: 1, message: 'whats up', timeStamp: '5 months ago', sentByMe: false},
+        ]},
       ]}
-      renderItem={({item}) => <MessageBox name={item.name} message={item.message} timeStamp={item.timeStamp} navigation={navigation}/>}
+      renderItem={({item}) => <MessageBox name={item.name} messages={item.messages} navigation={navigation}/>}
     />
   </View>
   );

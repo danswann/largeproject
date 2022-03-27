@@ -17,13 +17,15 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 
 const Tab = createMaterialTopTabNavigator();
 
-export default function ChatScreen() {
-
+export default function ChatScreen({ route, navigation }) {
+  const { name, messages } = route.params;
   return (
     <View>
-        <Text>
-            Chat Screen
-        </Text>
+      <Text>{name}</Text>
+      <FlatList
+        data= {messages}
+        renderItem={({item}) => <ChatBox message={item.message} timeStamp={item.timeStamp} sentByMe={item.sentByMe}/>}
+      />
     </View>
   );
 }

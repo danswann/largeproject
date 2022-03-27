@@ -8,8 +8,9 @@ export default function MessageBox(props) {
   return (
     <TouchableOpacity 
         style={{minWidth: "100%"}}
-        onPress={() =>
-            props.navigation.navigate('MessageChat')}>
+        onPress={() => {
+            props.navigation.navigate('MessageChat', {name: props.name, messages: props.messages})
+        }}>
         <View style={styles.MessageContainer}>        
             <View style={{flexDirection: 'row'}}>
                 {/* profile pic */}
@@ -22,12 +23,12 @@ export default function MessageBox(props) {
                     <Text style={{color: 'white', fontWeight: 'bold', textDecorationLine: "underline"}}>{props.name}</Text>
                     {/* Message */}
                     <View style={{flexDirection: 'row', alignItems: 'center', }}>
-                        <Text style={styles.MainText}>{props.message}</Text>
+                        <Text style={styles.MainText}>{props.messages[props.messages.length - 1].message}</Text>
                     </View>
                 </View>
             </View>
             {/* Timestamp */}
-            <Text style={{color: 'white', textAlign: "right", marginTop: 5, marginRight: 10}}>{props.timeStamp}</Text>
+            <Text style={{color: 'white', textAlign: "right", marginTop: 5, marginRight: 10}}>{props.messages[props.messages.length - 1].timeStamp}</Text>
         </View>
     </TouchableOpacity>
   );
