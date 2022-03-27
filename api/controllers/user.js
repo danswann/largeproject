@@ -101,12 +101,12 @@ exports.register = async function(req, res, next)
                 text: `
                     Thank you for registering for Soundlink.
                     Please click the following link in order to verify your account:
-                    http://localhost:5000/api/user/verifyEmail?token=${newUser.emailToken}
+                    https://cop4331-large.herokuapp.com/api/user/verifyEmail?token=${newUser.emailToken}
                 `,
                 html: `
                     <p>Thank you for registering for Soundlink.</p>
                     <p>Please click the following link in order to verify your account:</p>
-                    <a href = "http://localhost:5000/api/user/verifyEmail?token=${newUser.emailToken}">Verify your account</a>
+                    <a href = "https://cop4331-large.herokuapp.com/api/user/verifyEmail?token=${newUser.emailToken}">Verify your account</a>
                 `
             }
 
