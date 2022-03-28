@@ -23,8 +23,9 @@ exports.newPost = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
-    const {playlistID, caption, mentionedUsers, userID} = req.body;
-
+    const {playlistID, caption, mentionedUsers} = req.body;
+    const userID = req.user.userID;
+    
     // Check if mentionedUsers[i] is a valid object id
     for (let i = 0; i < mentionedUsers.length; i++)
     {
@@ -86,6 +87,7 @@ exports.newPost = async function(req, res, next) {
                     }
                 });
             }
+            response.msg = req.user;
             response.message = 'Succesfully added post!';
             res.status(200).json(response);
         }

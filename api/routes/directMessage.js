@@ -1,6 +1,11 @@
+const auth = require('../middleware/auth.js');
 const express = require('express');
 const router = express.Router();
 
+// Call middleware function
+// router.use(auth.jwtAuth);
+
+// Functions using middleware
 const directMessageController = require('../controllers/directMessage');
 router.post('/newChat', directMessageController.newChat);
 router.post('/sendMessage', directMessageController.sendMessage);

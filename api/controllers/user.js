@@ -1,8 +1,10 @@
 const User = require('../models/user');
 const Notification = require('../models/notification');
+const RefreshToken = require('../models/refreshtokens');
 const crypto = require('crypto');
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const jwt = require('jsonwebtoken');
 
 function checkObjectId (id) {
     const ObjectId = require('mongoose').Types.ObjectId;
@@ -17,6 +19,73 @@ function checkObjectId (id) {
     else
     {
         return false;
+    }
+}
+
+exports.refreshToken = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true};
+
+    // Incoming value
+    const refreshToken = req.body.refreshToken;
+
+    // If refreshToken is empty, then return ok:false
+    if (refreshToken == null)
+    {
+        response.ok = false;
+        response.error = 'refreshToken not found (null)';
+        return res.status(200).json(response);
+    }
+
+    // Check if refreshToken is in the database
+    const token = await RefreshToken.findOne({refreshToken:refreshToken});
+
+    // If it is not, then return ok:false
+    if (token == undefined)
+    {
+        response.ok = false;
+        response.error = 'refreshToken not in database';
+        return res.status(200).json(response);
+    }
+
+    // If refreshToken is in database, verify it's signiture
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+        // If not verifable return error
+        if (err)
+        {
+            response.ok = false;
+            response.error = err;
+            return res.status(200).json(response);
+        }
+        // If verifiable, then return a newly generated access token
+        const accessToken = jwt.sign({ userID: user.userID }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10m' });
+        response.userID = user.userID;
+        response.token = accessToken;
+        res.status(200).json(response);
+    });
+}
+
+exports.deleteToken = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true};
+
+    // Incoming value
+    const refreshToken = req.body.refreshToken;
+
+    // Delete refresh token from database
+    const filter = {refreshToken: refreshToken};
+    const token = await RefreshToken.deleteOne(filter);
+
+    // If refreshToken deleted, returk ok:true
+    if (token.deletedCount > 0)
+    {
+        response.msg = 'token deleted';
+        res.status(200).json(response);
+    }
+    else
+    {
+        response.msg = 'token not found';
+        res.status(200).json(response);
     }
 }
 
@@ -35,6 +104,40 @@ exports.login = async function(req, res, next) {
     // If the user exists, return ok:true and the user's details
     if(user)
     {
+        // Create token
+        const token = jwt.sign(
+            {userID: user._id},
+            process.env.ACCESS_TOKEN_SECRET,
+            {
+                expiresIn: "15m",
+            }
+        );
+
+        const refreshToken = jwt.sign(
+            {userID: user._id},
+            process.env.REFRESH_TOKEN_SECRET,
+            {
+                expiresIn: "1D",
+            }
+        );
+
+        var newRefreshToken = new RefreshToken({
+            refreshToken: refreshToken
+        });
+
+        // Save the new instance
+        newRefreshToken.save(function (err) {
+            // If an error occurs, return ok:false and the error message
+            if(err)
+            {
+                response.ok = false;
+                response.error = err;
+                res.status(200).json(response);
+            }
+        });
+
+        response.token = token;
+        response.refreshToken = refreshToken;
         response.user = user.toJSON();
         res.status(200).json(response);
     }
@@ -96,7 +199,7 @@ exports.register = async function(req, res, next)
             // Creates a new message json object with info of email
             const msg = {
                 to: newUser.email,
-                from: 'soundlink.donotreply2@gmail.com', 
+                from: 'soundlink.donotreply2@gmail.com',
                 subject: 'Please verify your email for Soundlink',
                 text: `
                     Thank you for registering for Soundlink.
@@ -131,7 +234,7 @@ exports.verifyEmail = async function(req, res, next)
     try {
         // Searches for user based on the email token provided after the link
         // Example: https://cop4331-large.herokuapp.com/api/user/verifyEmail?token=XXXXXXXXXXXXXXXXXXXXXXXX
-        
+
         const user = await User.findOne({emailToken: req.query.token});
         if (user) {
             // Sets the user's email token to null and verified to true if link is pressed
@@ -144,22 +247,22 @@ exports.verifyEmail = async function(req, res, next)
                     response.ok = false;
                     response.error = err;
                     res.status(200).json(response);
-                } 
+                }
                 else
                 {
                     response.ok = false;
                     response.status = "Email confirmed";
-                    res.status(200).json(response); 
+                    res.status(200).json(response);
                 }
             });
-        } 
+        }
         else
         {
             // If user not found, then error return.
             response.ok = false;
             response.error = "User not found";
             res.status(200).json(response);
-        } 
+        }
 
     } catch (err) {
         response.ok = false;
