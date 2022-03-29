@@ -293,11 +293,11 @@ function EmailVerificationScreen({ route, navigation }) {
   {
     if(!loading) {
       loading = true
-      result = setFailedVerification(await signIn(JSON.stringify(usernameParam), JSON.stringify(passwordParam)))
+      setFailedVerification(await signIn(JSON.parse(JSON.stringify(usernameParam)), JSON.parse(JSON.stringify(passwordParam))))
       loading = false
     }
   }
-  
+
   return (
     <View style={styles.container}>
       {/* Soundlink logo */}
