@@ -14,15 +14,28 @@ export default function ProfileBox(props) {
             uri: "https://media.comicbook.com/2020/10/my-hero-academia-bakugo-1240308.jpeg?auto=webp",
           }}
         />
-        {/* Username */}
-        <Text style={styles.UsernameText}>{props.username}</Text>
+
+        {/* Username and bio (bio length is limited need to fix)*/}
+        <View style={styles.UsernameBioContainer}>
+          <Text style={styles.UsernameText}>{props.username}</Text>
+          <Text style={styles.BioText}>{props.bio}</Text>
+        </View>
         {/* Edit profile button */}
         <TouchableOpacity style={styles.EditProfileBtn}>
           <Text style={styles.MainText}>Edit Profile</Text>
         </TouchableOpacity>
-        <View style={{ flexDirection: "column" }}>
-          <Text style={styles.MainText}>This is my bio</Text>
-        </View>
+      </View>
+      {/* Profile stats */}
+      <View style={styles.ProfileStatsContainer}>
+        <Text style={styles.ProfileStatsText}>
+          {props.postCount + "\nPosts"}
+        </Text>
+        <Text style={styles.ProfileStatsText}>
+          {props.postCount + "\nPosts"}
+        </Text>
+        <Text style={styles.ProfileStatsText}>
+          {props.postCount + "\nPosts"}
+        </Text>
       </View>
     </View>
   );
@@ -35,16 +48,36 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   ProfileMainInfoContainer: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-    marginTop: 40,
-    marginLeft: 40,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 25,
+    alignSelf: "stretch",
+    padding: 20,
   },
   ProfileHeadInfoContainer: {
     flexDirection: "row",
     alignItems: "flex-start",
-    justifyContent: "flex-start",
+    justifyContent: "space-around",
+    alignSelf: "stretch",
+  },
+  UsernameBioContainer: {
+    maxWidth: 155,
+    maxHeight: 60,
+  },
+  ProfileStatsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "gray",
+    alignSelf: "stretch",
+    borderRadius: 10,
+  },
+  ProfileStatsText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 12,
+    textAlign: "center",
   },
   ProfilePic: {
     height: 75,
@@ -53,14 +86,20 @@ const styles = StyleSheet.create({
   },
   UsernameText: {
     color: "white",
-    marginLeft: 10,
     fontWeight: "bold",
     textAlign: "left",
     fontSize: 18,
   },
+  BioText: {
+    color: "white",
+    marginLeft: 2,
+    marginTop: 10,
+    textAlign: "left",
+    fontSize: 12,
+    alignSelf: "flex-start",
+  },
   EditProfileBtn: {
     backgroundColor: "#595959",
-    marginLeft: 20,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 25,
