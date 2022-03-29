@@ -14,7 +14,7 @@ export default function ChatScreen({ route, navigation }) {
   const { name, messages } = route.params;
   return (
     <View style={styles.MainContainer}>
-      <Text>{name}</Text>
+      <Text style={styles.nameText}>{name}</Text>
       <FlatList
         data= {messages}
         renderItem={({item}) => <ChatBox message={item.message} timeStamp={item.timeStamp} sentByMe={item.sentByMe}/>}
@@ -36,6 +36,10 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     // alignItems: "center",
     backgroundColor: "#23192B",
+  },
+
+  nameText: {
+    color: 'white',
   },
 
   sendContainer: {
