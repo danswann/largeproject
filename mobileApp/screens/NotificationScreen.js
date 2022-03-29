@@ -65,29 +65,29 @@ function MessageTab() {
   );
 }
 
-function MessageList( { navigation }) {
+function MessageList({ navigation }) {
   return (
     <View style={styles.MainContainer}>
-    <FlatList
-      data={[
-        {key: 1, name: 'John Smith', messages: [
-          { key: 1, message: 'yo', timeStamp:'3 days ago', sentByMe: false},
-          { key: 2, message: 'yooooo', timeStamp:'3 days ago', sentByMe: true},
-          { key: 3, message: 'hey nice playlist', timeStamp:'34 min ago', sentByMe: false},
-        ]},
-        {key: 2, name: 'Arby Jones', messages: [
-          { key: 1, message: 'whats your soundcloud', timeStamp: '1 hr ago', sentByMe: true},
-        ]},
-        {key: 3, name: 'Justin Case', messages: [
-          { key: 1, message: 'wanna link sounds?', timeStamp: '2 days ago', sentByMe: false},
-        ]},
-        {key: 4, name: 'Black Beard', messages: [
-          { key: 1, message: 'whats up', timeStamp: '5 months ago', sentByMe: false},
-        ]},
-      ]}
-      renderItem={({item}) => <MessageBox name={item.name} messages={item.messages} navigation={navigation}/>}
-    />
-  </View>
+      <FlatList
+        data={[
+          {key: 1, name: 'John Smith', messages: [
+            { key: 1, message: 'yo', timeStamp:'3 days ago', sentByMe: false},
+            { key: 2, message: 'yooooo', timeStamp:'3 days ago', sentByMe: true},
+            { key: 3, message: 'hey nice playlist', timeStamp:'34 min ago', sentByMe: false},
+          ]},
+          {key: 2, name: 'Arby Jones', messages: [
+            { key: 1, message: 'whats your soundcloud', timeStamp: '1 hr ago', sentByMe: true},
+          ]},
+          {key: 3, name: 'Justin Case', messages: [
+            { key: 1, message: 'wanna link sounds?', timeStamp: '2 days ago', sentByMe: false},
+          ]},
+          {key: 4, name: 'Black Beard', messages: [
+            { key: 1, message: 'whats up', timeStamp: '5 months ago', sentByMe: false},
+          ]},
+        ]}
+        renderItem={({item}) => <MessageBox name={item.name} messages={item.messages} navigation={navigation}/>}
+      />
+    </View>
   );
 }
 

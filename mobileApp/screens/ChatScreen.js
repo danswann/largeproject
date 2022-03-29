@@ -20,7 +20,7 @@ const Tab = createMaterialTopTabNavigator();
 export default function ChatScreen({ route, navigation }) {
   const { name, messages } = route.params;
   return (
-    <View>
+    <View style={styles.MainContainer}>
       <Text>{name}</Text>
       <FlatList
         data= {messages}
@@ -29,3 +29,13 @@ export default function ChatScreen({ route, navigation }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  MainContainer: {
+    flex: 1,
+    justifyContent: "flex-start",
+    // alignItems: "center",
+    backgroundColor: "#23192B",
+  },
+  
+})
