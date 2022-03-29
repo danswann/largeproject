@@ -36,6 +36,16 @@ function LoginScreen({ navigation }) {
     setFailedLogin(false)
   }, [isFocused]);
 
+  loading = false
+  async function tryLogin()
+  {
+    if(!loading) {
+      loading = true
+      result = setFailedLogin(await signIn(username, password))
+      loading = false
+    }
+  }
+
   return (
     // Main container
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -91,7 +101,7 @@ function LoginScreen({ navigation }) {
         {/* Login button */}
         <TouchableOpacity
           style={styles.loginBtn}
-          onPress={async () => setFailedLogin(await signIn(username, password))}
+          onPress={() => tryLogin()}
         >
           <Text style={styles.loginText}>Login</Text>
         </TouchableOpacity>
@@ -157,6 +167,21 @@ function RegisterScreen({ navigation }) {
   {
     var reg = /\S+@\S+\.\S+/;
     return reg.test(email);
+  }
+
+  loading = false
+  async function tryRegister()
+  {
+    if(!loading) {
+      loading = true
+      result = setRegisterState(await verifyRegisterData(
+        username,
+        email,
+        password,
+        confirmPassword
+      ))
+      loading = false
+    }
   }
 
   return (
@@ -230,13 +255,7 @@ function RegisterScreen({ navigation }) {
         {/* Register button */}
         <TouchableOpacity
           style={styles.loginBtn}
-          onPress={async () => setRegisterState(await verifyRegisterData(
-              username,
-              email,
-              password,
-              confirmPassword
-            ))
-          }
+          onPress={() => tryRegister()}
         >
           <Text style={styles.loginText}>Register</Text>
         </TouchableOpacity>
@@ -269,6 +288,16 @@ function EmailVerificationScreen({ route, navigation }) {
   const [failedVerification, setFailedVerification] = useState(false);
   const { signIn } = React.useContext(AuthContext);
 
+  loading = false
+  async function tryEmail()
+  {
+    if(!loading) {
+      loading = true
+      result = setFailedVerification(await signIn(JSON.stringify(usernameParam), JSON.stringify(passwordParam)))
+      loading = false
+    }
+  }
+  
   return (
     <View style={styles.container}>
       {/* Soundlink logo */}
@@ -289,7 +318,7 @@ function EmailVerificationScreen({ route, navigation }) {
       </Text>
       <TouchableOpacity
           style={styles.loginBtn}
-          onPress={async () => setFailedVerification(await signIn(JSON.stringify(usernameParam), JSON.stringify(passwordParam)))}
+          onPress={() => tryEmail()}
       >
         <Text style={styles.loginText}>Continue</Text>
       </TouchableOpacity>
