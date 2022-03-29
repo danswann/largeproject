@@ -7,27 +7,14 @@ export default function ProfileBox(props) {
     <View style={styles.ProfileMainInfoContainer}>
       {/* Container for username, profile pic, edit profile button */}
       <View style={styles.ProfileHeadInfoContainer}>
-        <View>
-          {/* Profile pic */}
-          <Image
-            style={styles.ProfilePic}
-            source={{
-              uri: "https://media.comicbook.com/2020/10/my-hero-academia-bakugo-1240308.jpeg?auto=webp",
-            }}
-          />
-          {/* Profile stats */}
-          <View style={styles.ProfileStatsContainer}>
-            <Text style={styles.ProfileStatsText}>
-              {props.postCount + "\nPosts"}
-            </Text>
-            <Text style={styles.ProfileStatsText}>
-              {props.postCount + "\nPosts"}
-            </Text>
-            <Text style={styles.ProfileStatsText}>
-              {props.postCount + "\nPosts"}
-            </Text>
-          </View>
-        </View>
+        {/* Profile pic */}
+        <Image
+          style={styles.ProfilePic}
+          source={{
+            uri: "https://media.comicbook.com/2020/10/my-hero-academia-bakugo-1240308.jpeg?auto=webp",
+          }}
+        />
+
         {/* Username and bio (bio length is limited need to fix)*/}
         <View style={styles.UsernameBioContainer}>
           <Text style={styles.UsernameText}>{props.username}</Text>
@@ -37,6 +24,18 @@ export default function ProfileBox(props) {
         <TouchableOpacity style={styles.EditProfileBtn}>
           <Text style={styles.MainText}>Edit Profile</Text>
         </TouchableOpacity>
+      </View>
+      {/* Profile stats */}
+      <View style={styles.ProfileStatsContainer}>
+        <Text style={styles.ProfileStatsText}>
+          {props.postCount + "\nPosts"}
+        </Text>
+        <Text style={styles.ProfileStatsText}>
+          {props.postCount + "\nPosts"}
+        </Text>
+        <Text style={styles.ProfileStatsText}>
+          {props.postCount + "\nPosts"}
+        </Text>
       </View>
     </View>
   );
@@ -49,16 +48,18 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   ProfileMainInfoContainer: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-    marginTop: 40,
-    marginLeft: 30,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 25,
+    alignSelf: "stretch",
+    padding: 20,
   },
   ProfileHeadInfoContainer: {
     flexDirection: "row",
     alignItems: "flex-start",
-    justifyContent: "flex-start",
+    justifyContent: "space-around",
+    alignSelf: "stretch",
   },
   UsernameBioContainer: {
     maxWidth: 155,
@@ -68,8 +69,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 120,
     backgroundColor: "gray",
+    alignSelf: "stretch",
     borderRadius: 10,
   },
   ProfileStatsText: {
