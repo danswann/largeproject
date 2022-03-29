@@ -7,6 +7,7 @@ export default function ChatBox(props) {
         <View style={props.sentByMe ? (styles.rightMessage) : (styles.leftMessage)}>
             <Text style={styles.MainText}>{props.message + " " + props.timeStamp}</Text>
         </View>
+
     )
 }
 const styles = StyleSheet.create({
@@ -30,6 +31,7 @@ const styles = StyleSheet.create({
     },
 
     leftMessage: {
+        flex: 1,
         backgroundColor: "#573C6B",
         flexDirection: "row",
         justifyContent: "flex-start",
