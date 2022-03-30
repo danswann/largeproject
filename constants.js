@@ -1,5 +1,4 @@
-require('dotenv').config();
-
+require("dotenv").config();
 
 exports.PORT = process.env.PORT || 5000;
 exports.MONGODB_URI = process.env.MONGODB_URI;
