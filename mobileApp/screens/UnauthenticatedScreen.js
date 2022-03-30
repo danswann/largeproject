@@ -1,4 +1,4 @@
-import { StatusBar } from "expo-status-bar";
+
 import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
@@ -15,6 +15,7 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import { NavigationContainer, useIsFocused } from "@react-navigation/native";
+import { StatusBar, ActivityIndicator } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AuthContext } from "../Context";
 
@@ -26,6 +27,7 @@ function LoginScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [failedLogin, setFailedLogin] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Sign in method from context to allow us to login
   const { signIn } = React.useContext(AuthContext);
@@ -36,13 +38,12 @@ function LoginScreen({ navigation }) {
     setFailedLogin(false)
   }, [isFocused]);
 
-  loading = false
   async function tryLogin()
   {
     if(!loading) {
-      loading = true
-      result = setFailedLogin(await signIn(username, password))
-      loading = false
+      setLoading(true)
+      setFailedLogin(await signIn(username, password))
+      setLoading(false)
     }
   }
 
@@ -50,6 +51,8 @@ function LoginScreen({ navigation }) {
     // Main container
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
+        {/* Sets colors of status bar icons to white*/}
+        <StatusBar barStyle={'light-content'} backgroundColor={"#23192B"}/>
         {/* Soundlink logo */}
         <Image
           style={styles.image}
@@ -103,9 +106,11 @@ function LoginScreen({ navigation }) {
           style={styles.loginBtn}
           onPress={() => tryLogin()}
         >
-          <Text style={styles.loginText}>Login</Text>
+          <View style={{flexDirection:"row"}}>
+            {loading ? (<ActivityIndicator size="small" color="white" style={{marginRight:5}} />) : (<View></View>)}
+            <Text style={styles.loginText}>Login</Text>
+          </View>
         </TouchableOpacity>
-
         {/* Conditionally renders error message if user enteres invalid login credentials */}
         {failedLogin ? (
           <Text style={styles.errorText}>Invalid Username or Password</Text>
@@ -136,13 +141,10 @@ function RegisterScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [phoneNumber, setPhone] = useState("");
-  const [dob, setDob] = useState("");
   const [registerState, setRegisterState] = useState("");
   const { signUp } = React.useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
 
   function verifyRegisterData(username, email, password, confirmPassword)
   {
@@ -169,18 +171,17 @@ function RegisterScreen({ navigation }) {
     return reg.test(email);
   }
 
-  loading = false
   async function tryRegister()
   {
     if(!loading) {
-      loading = true
-      result = setRegisterState(await verifyRegisterData(
+      setLoading(true)
+      setRegisterState(await verifyRegisterData(
         username,
         email,
         password,
         confirmPassword
       ))
-      loading = false
+      setLoading(false)
     }
   }
 
@@ -218,6 +219,7 @@ function RegisterScreen({ navigation }) {
             placeholderTextColor="white"
             clearButtonMode="while-editing"
             selectionColor={"#573C6B"}
+            keyboardType="email-address"
             autoCompleteType="email"
             onChangeText={(email) => setEmail(email)}
           />
@@ -257,7 +259,10 @@ function RegisterScreen({ navigation }) {
           style={styles.loginBtn}
           onPress={() => tryRegister()}
         >
-          <Text style={styles.loginText}>Register</Text>
+          <View style={{flexDirection:"row"}}>
+            {loading ? (<ActivityIndicator size="small" color="white" style={{marginRight:5}} />) : (<View></View>)}
+            <Text style={styles.loginText}>Register</Text>
+          </View>
         </TouchableOpacity>
 
         {/* Conditionally renders error message if user enters invalid information */}
@@ -287,14 +292,15 @@ function EmailVerificationScreen({ route, navigation }) {
   const { usernameParam, passwordParam, emailParam } = route.params;
   const [failedVerification, setFailedVerification] = useState(false);
   const { signIn } = React.useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
 
-  loading = false
   async function tryEmail()
   {
     if(!loading) {
-      loading = true
-      setFailedVerification(await signIn(JSON.parse(JSON.stringify(usernameParam)), JSON.parse(JSON.stringify(passwordParam))))
-      loading = false
+      setLoading(true)
+      if (await signIn(JSON.parse(JSON.stringify(usernameParam)), JSON.parse(JSON.stringify(passwordParam))))
+        setFailedVerification(true);
+      setLoading(false)
     }
   }
 
@@ -320,7 +326,10 @@ function EmailVerificationScreen({ route, navigation }) {
           style={styles.loginBtn}
           onPress={() => tryEmail()}
       >
-        <Text style={styles.loginText}>Continue</Text>
+        <View style={{flexDirection:"row"}}>
+            {loading ? (<ActivityIndicator size="small" color="white" style={{marginRight:5}} />) : (<View></View>)}
+            <Text style={styles.loginText}>Continue</Text>
+        </View>
       </TouchableOpacity>
       {/* Conditionally renders error message if user is unverified */}
       {failedVerification ? (
