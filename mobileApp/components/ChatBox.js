@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: 25,
         width: 20,
         height: 25,
-        borderWidth: 100,
+        // borderWidth: 100,
         borderColor: "transparent",
         // right: -100,
     },
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
         borderBottomRightRadius: 25,
         width: 20,
         height: 25,
-        borderWidth: 100,
+        // borderWidth: 100,
         borderColor: "transparent",
     },
 
