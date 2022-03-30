@@ -3,39 +3,46 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 
 export default function ProfileBox(props) {
   return (
-    // Main container for the profile info
-    <View style={styles.ProfileMainInfoContainer}>
-      {/* Container for username, profile pic, edit profile button */}
-      <View style={styles.ProfileHeadInfoContainer}>
-        {/* Profile pic */}
-        <Image
-          style={styles.ProfilePic}
-          source={{
-            uri: "https://media.comicbook.com/2020/10/my-hero-academia-bakugo-1240308.jpeg?auto=webp",
-          }}
-        />
+    // Container for all content on page
+    <View style={styles.MainContainer}>
+      {/* Main container for the profile info */}
+      <View style={styles.ProfileMainInfoContainer}>
+        {/* Container for username, profile pic, edit profile button */}
+        <View style={styles.ProfileHeadInfoContainer}>
+          {/* Profile pic */}
+          <Image
+            style={styles.ProfilePic}
+            source={{
+              uri: "https://media.comicbook.com/2020/10/my-hero-academia-bakugo-1240308.jpeg?auto=webp",
+            }}
+          />
 
-        {/* Username and bio (bio length is limited need to fix)*/}
-        <View style={styles.UsernameBioContainer}>
-          <Text style={styles.UsernameText}>{props.username}</Text>
-          <Text style={styles.BioText}>{props.bio}</Text>
+          {/* Username and bio (bio length is limited need to fix)*/}
+          <View style={styles.UsernameBioContainer}>
+            <Text style={styles.UsernameText}>{props.username}</Text>
+            <Text style={styles.BioText}>{props.bio}</Text>
+          </View>
+          {/* Edit profile button */}
+          <TouchableOpacity style={styles.EditProfileBtn}>
+            <Text style={styles.MainText}>Edit Profile</Text>
+          </TouchableOpacity>
         </View>
-        {/* Edit profile button */}
-        <TouchableOpacity style={styles.EditProfileBtn}>
-          <Text style={styles.MainText}>Edit Profile</Text>
-        </TouchableOpacity>
+        {/* Profile stats */}
+        <View style={styles.ProfileStatsContainer}>
+          <Text style={styles.ProfileStatsText}>
+            {props.postCount + "\nPosts"}
+          </Text>
+          <Text style={styles.ProfileStatsText}>
+            {props.followerCount + "\nFollowers"}
+          </Text>
+          <Text style={styles.ProfileStatsText}>
+            {props.followingCount + "\nFollowing"}
+          </Text>
+        </View>
       </View>
-      {/* Profile stats */}
-      <View style={styles.ProfileStatsContainer}>
-        <Text style={styles.ProfileStatsText}>
-          {props.postCount + "\nPosts"}
-        </Text>
-        <Text style={styles.ProfileStatsText}>
-          {props.postCount + "\nPosts"}
-        </Text>
-        <Text style={styles.ProfileStatsText}>
-          {props.postCount + "\nPosts"}
-        </Text>
+      {/* Container for posts and nav between posts and likes */}
+      <View>
+        <Text style={styles.MainText}>Grid goes here</Text>
       </View>
     </View>
   );
@@ -47,31 +54,37 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 12,
   },
+  MainContainer: {
+    flexDirection: "column",
+    alignItems: "center",
+  },
   ProfileMainInfoContainer: {
     flexDirection: "column",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
     marginTop: 25,
-    alignSelf: "stretch",
     padding: 20,
   },
   ProfileHeadInfoContainer: {
     flexDirection: "row",
     alignItems: "flex-start",
-    justifyContent: "space-around",
-    alignSelf: "stretch",
+    justifyContent: "space-between",
   },
   UsernameBioContainer: {
+    flexDirection: "column",
     maxWidth: 155,
     maxHeight: 60,
+    marginLeft: 10,
   },
   ProfileStatsContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "gray",
+    justifyContent: "space-around",
+    backgroundColor: "#595959",
     alignSelf: "stretch",
     borderRadius: 10,
+    padding: 5,
+    marginTop: 15,
   },
   ProfileStatsText: {
     color: "white",
