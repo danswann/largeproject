@@ -13,6 +13,7 @@ export default function ChatBox(props) {
 const styles = StyleSheet.create({
     MainText: {
         color: "white",
+        flex: 1,
     },
 
     rightMessage: {
@@ -20,7 +21,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "flex-end",
         marginStart: 10,
-        marginEnd: 10,
+        marginEnd: 1,
         marginTop: 15,
         borderBottomLeftRadius: 25,
         width: 20,
@@ -31,8 +32,7 @@ const styles = StyleSheet.create({
     },
 
     leftMessage: {
-        flex: 1,
-        backgroundColor: "#573C6B",
+        backgroundColor: "gray",
         flexDirection: "row",
         justifyContent: "flex-start",
         marginStart: 10,
