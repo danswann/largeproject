@@ -13,22 +13,46 @@ export default function MessageBox(props) {
         }}>
         <View style={styles.MessageContainer}>        
             <View style={{flexDirection: 'row'}}>
+
                 {/* profile pic */}
                 <Image
                     source={require('../assets/images/defaultSmile.png')}
                     style={styles.ProfilePic}
                 />
-                <View style={{flexDirection: 'column', marginStart: 15, marginTop: 5}}>
+
+                <View style={{
+                    flexDirection: 'column', 
+                    marginStart: 15, 
+                    marginTop: 5}}>
+
                     {/* name */}
-                    <Text style={{color: 'white', fontWeight: 'bold', textDecorationLine: "underline"}}>{props.name}</Text>
+                    <Text style={{
+                        color: 'white', 
+                        fontWeight: 'bold', 
+                        textDecorationLine: "underline"}}>
+                        {props.name}
+                    </Text>
+
                     {/* Message */}
-                    <View style={{flexDirection: 'row', alignItems: 'center', }}>
-                        <Text style={styles.MainText}>{props.messages[props.messages.length - 1].message}</Text>
+                    <View style={{
+                        flexDirection: 'row', 
+                        alignItems: 'center', }}>
+                        <Text style={
+                            styles.MainText}>
+                            {props.messages[props.messages.length - 1].message}
+                        </Text>
                     </View>
                 </View>
             </View>
+
             {/* Timestamp */}
-            <Text style={{color: 'white', textAlign: "right", marginTop: 5, marginRight: 10}}>{props.messages[props.messages.length - 1].timeStamp}</Text>
+            <Text style={{
+                color: 'white', 
+                textAlign: "right", 
+                marginTop: 5, 
+                marginRight: 10}}>
+                {props.messages[props.messages.length - 1].timeStamp}
+            </Text>
         </View>
     </TouchableOpacity>
   );

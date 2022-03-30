@@ -78,11 +78,11 @@ export default function App() {
             .then((response) => response.json())
             .then((data) => {
               console.log(data.ok);
-              // data.ok will be true if a valid user is attempting to log in
-              if (data.ok === true) {
-                // We then set the valid users token and email to verify them
+              userVerified = data.user.isVerified
+              // data.ok and userVerified will be true if a valid user is attempting to log in
+              if (data.ok === true && userVerified) {
+                // We then set the valid users token to verify them
                 userToken = data.user._id;
-                userVerified = data.user.isVerified
                 // We then check if the user is valid and the email has been verified
                 dispatch({ type: "LOGIN", id: username, token: userToken, verified: userVerified });
                 res(false);
