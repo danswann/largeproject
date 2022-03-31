@@ -27,8 +27,10 @@ const UserSchema = new Schema({
     isVerified: {type:Boolean, default:false},
     emailToken: {type:String},
     spotify: {
+        connected: {type:Boolean, required:true, default:false},
         accessToken: {type:String},
-        refreshToken: {type:String}
+        refreshToken: {type:String},
+        expiration: {type:Date}
     }
 });
 
