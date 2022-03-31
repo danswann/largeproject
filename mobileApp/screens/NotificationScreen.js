@@ -19,7 +19,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Tab = createMaterialTopTabNavigator();
 
-export default function NotificationScreen() {
+export default function NotificationScreen({ navigation }) {
   return (
     <Tab.Navigator screenOptions={{
       tabBarLabelStyle: { fontSize: 12, color: "white" },
@@ -31,7 +31,7 @@ export default function NotificationScreen() {
       },
     }}>
       <Tab.Screen name="Notifications" component={NotificationTab} />
-      <Tab.Screen name="Messages" component={MessageTab} />
+      <Tab.Screen name="Messages" component={MessageTab} navigation={navigation}/>
     </Tab.Navigator>
   );
 }
@@ -52,20 +52,7 @@ function NotificationTab() {
   );
 }
 
-function MessageTab() {
-  const Stack = createNativeStackNavigator();
-  return (
-    <Stack.Navigator
-      initialRouteName="MessageList"
-      screenOptions={{ headerShown: false }}
-    >
-      <Stack.Screen name="MessageList" component={MessageList} />
-      <Stack.Screen name="MessageChat" component={ChatScreen} initialParams={{name: "Test", messages: [] }}/>
-    </Stack.Navigator>
-  );
-}
-
-function MessageList({ navigation }) {
+function MessageTab({ navigation}) {
   return (
     <View style={styles.MainContainer}>
       <FlatList
@@ -90,7 +77,6 @@ function MessageList({ navigation }) {
     </View>
   );
 }
-
 
 // COMPONENT STYLES
 const styles = StyleSheet.create({

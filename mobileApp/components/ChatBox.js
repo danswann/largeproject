@@ -13,35 +13,35 @@ export default function ChatBox(props) {
 const styles = StyleSheet.create({
     MainText: {
         color: "white",
+        // flex: 1,
     },
 
     rightMessage: {
         backgroundColor: "#573C6B",
         flexDirection: "row",
-        justifyContent: "flex-end",
+        alignSelf: "flex-end",
         marginStart: 10,
         marginEnd: 10,
         marginTop: 15,
         borderBottomLeftRadius: 25,
         width: 20,
         height: 25,
-        borderWidth: 100,
+        // borderWidth: 100,
         borderColor: "transparent",
-        right: -170,
+        // right: -100,
     },
 
     leftMessage: {
-        flex: 1,
-        backgroundColor: "#573C6B",
+        backgroundColor: "gray",
         flexDirection: "row",
-        justifyContent: "flex-start",
+        alignSelf: "flex-start",
         marginStart: 10,
         marginEnd: 10,
         marginTop: 15,
         borderBottomRightRadius: 25,
         width: 20,
         height: 25,
-        borderWidth: 100,
+        // borderWidth: 100,
         borderColor: "transparent",
     },
 

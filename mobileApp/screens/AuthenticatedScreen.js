@@ -11,6 +11,7 @@ import SearchScreen from "./SearchScreen";
 import PostScreen from "./PostScreen";
 import NotificationScreen from "./NotificationScreen";
 import ProfileScreen from "./ProfileScreen";
+import ChatScreen from "./ChatScreen"
 
 const Tab = createBottomTabNavigator();
 
@@ -54,6 +55,7 @@ const AuthenticatedScreen = () => {
           at will show as a badge */}
       <Tab.Screen name="Notification" component={NotificationScreen} options={{ tabBarBadge: 3}} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Chat" component={ChatScreen} options={{tabBarButton: () => null}}/>
     </Tab.Navigator>
   );
 };

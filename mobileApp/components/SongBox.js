@@ -4,22 +4,23 @@ import { Text, View, StyleSheet, Image, TouchableOpacity, } from "react-native";
 // COMPONENT BODY
 export default function SongBox(props) {
     return (
+        
         <View style={styles.SongContainer}>        
-            <View style={{flexDirection: 'row'}}>
+            <View style={{flexDirection: 'row', maxWidth:"60%"}}>
                 {/* Song Cover */}
                 <Image
                     source={require('../assets/images/testSongCover.jpg')}
                     style={styles.SongCover}
                 />
-                <View style={{flexDirection: 'column', alignContent:"center", marginStart: 3, marginTop: 5}}>
+                <View style={{flexDirection: 'column', alignContent: "flex-start", marginStart: 3, marginTop: 5}}>
                     {/* Song Name */}
-                    <Text style={{color: 'white', fontWeight: 'bold', fontSize: 11}}>{props.songName}</Text>
+                    <Text numberOfLines={1} style={{color: 'white', fontWeight: 'bold', fontSize: 11}}>{props.songName}</Text>
                     {/* Song artist */}
-                    <Text style={{color: 'white', fontSize: 10,}}>{props.songArtist}</Text>
+                    <Text numberOfLines={1} style={{color: 'white', fontSize: 10, }}>{props.songArtist}</Text>
                 </View>
             </View>
             {/* Song Length */}
-            <Text style={{color: 'white', textAlign: "right", textAlignVertical:"bottom", marginBottom: 5, marginRight: 10, fontSize: 10}}>{props.songLength}</Text>
+            <Text style={{color: 'white', textAlign: "right", textAlignVertical:"bottom", marginBottom: 5, marginHorizontal: 5, fontSize: 10}}>{props.songLength}</Text>
         </View>
     );
 }
@@ -31,9 +32,9 @@ const styles = StyleSheet.create({
     },
     
     SongContainer: {
-        backgroundColor: "#333333",
+        backgroundColor: "#573C6B",
         flexDirection: "row",
-        justifyContent: "space-between",
+        justifyContent:"space-between",
         marginVertical: 1,
     },
 
@@ -42,18 +43,5 @@ const styles = StyleSheet.create({
         height: 40,
         marginVertical: 5,
         marginHorizontal: 5
-    },
-    
-    PlaylistContainer: {
-        backgroundColor: "#23192B",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginTop: 3,
-    },
-
-    PlaylistPic: {
-        width: 150,
-        height: 150,
-        marginVertical: 10,
     },
 });

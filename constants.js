@@ -1,5 +1,4 @@
-require('dotenv').config();
-
+require("dotenv").config();
 
 exports.PORT = process.env.PORT || 5000;
 exports.DOMAIN_ROOT = process.env.DOMAIN_ROOT || 'http://localhost:5000';

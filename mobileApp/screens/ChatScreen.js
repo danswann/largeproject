@@ -1,5 +1,5 @@
 import React from "react";
-import {StyleSheet, Text, TextInput, View, TouchableOpacity, FlatList, Image} from "react-native";
+import {StyleSheet, BackHangler, Text, TextInput, View, TouchableOpacity, FlatList, Image} from "react-native";
 
 import ChatBox from "../components/ChatBox";
 import { NavigationContainer, NavigationHelpersContext } from '@react-navigation/native';
@@ -14,7 +14,10 @@ export default function ChatScreen({ route, navigation }) {
   const { name, messages } = route.params;
   return (
     <View style={styles.MainContainer}>
-      <Text style={styles.nameText}>{name}</Text>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate("Notification")}>
+          <Text>back</Text>
+      </TouchableOpacity>
+      <Text style={styles.nameText}>{name}</Text>      
       <FlatList
         data= {messages}
         renderItem={({item}) => <ChatBox message={item.message} timeStamp={item.timeStamp} sentByMe={item.sentByMe}/>}
@@ -40,6 +43,10 @@ const styles = StyleSheet.create({
 
   nameText: {
     color: 'white',
+    textAlign: 'center',
+    paddingTop: 12,
+    paddingBottom: 10,
+    fontSize: 25,
   },
 
   sendContainer: {
@@ -55,6 +62,7 @@ const styles = StyleSheet.create({
   },
 
   textInput: {
+    justifyContent: "center",
     height: 50,
     flex: 1,
     padding: 10,

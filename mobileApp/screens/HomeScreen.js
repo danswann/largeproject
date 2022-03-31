@@ -23,9 +23,8 @@ export default function HomeScreen() {
 // COMPONENT STYLES
 const HomeScreenStyles = StyleSheet.create({
   HomeScreenStyles: {
-    flex: 1,
     justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#242424",
+    alignItems:"center",
+    backgroundColor: "#23192B",
   },
 });
