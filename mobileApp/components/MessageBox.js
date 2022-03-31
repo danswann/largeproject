@@ -9,7 +9,7 @@ export default function MessageBox(props) {
     <TouchableOpacity 
         style={{minWidth: "100%"}}
         onPress={() => {
-            props.navigation.navigate('MessageChat', {name: props.name, messages: props.messages})
+            props.navigation.navigate('Chat', {name: props.name, messages: props.messages})
         }}>
         <View style={styles.MessageContainer}>        
             <View style={{flexDirection: 'row'}}>
