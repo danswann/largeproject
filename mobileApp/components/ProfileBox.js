@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 
@@ -39,34 +39,6 @@ export default function ProfileBox(props) {
           <Text style={styles.ProfileStatsText}>
             {props.followingCount + "\nFollowing"}
           </Text>
-        </View>
-      </View>
-      {/* Container for nav */}
-      <View style={styles.NavContainer}>
-        <Ionicons name="grid" size={20} color="white" />
-        <Ionicons name="heart" size={20} color="white" />
-      </View>
-      {/* Grid container */}
-      <View style={styles.GridColumnContainer}>
-        <View style={styles.GridRowContainer}>
-          <Image
-            style={styles.Post}
-            source={{
-              uri: "https://media.architecturaldigest.com/photos/5890e88033bd1de9129eab0a/1:1/w_870,h_870,c_limit/Artist-Designed%20Album%20Covers%202.jpg",
-            }}
-          />
-          <Image
-            style={styles.Post}
-            source={{
-              uri: "https://upload.wikimedia.org/wikipedia/en/3/35/The_Eminem_Show.jpg",
-            }}
-          />
-          <Image
-            style={styles.Post}
-            source={{
-              uri: "https://m.media-amazon.com/images/I/81iSM6Nk0EL._SL1469_.jpg",
-            }}
-          />
         </View>
       </View>
     </View>
@@ -111,26 +83,6 @@ const styles = StyleSheet.create({
     padding: 5,
     marginTop: 15,
   },
-  NavContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-around",
-    alignSelf: "stretch",
-    marginTop: 10,
-  },
-  GridColumnContainer: {
-    marginTop: 40,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "space-around",
-    alignSelf: "stretch",
-  },
-  GridRowContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-around",
-    alignSelf: "stretch"
-  },
   ProfileStatsText: {
     color: "white",
     fontWeight: "bold",
@@ -163,9 +115,5 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     width: 100,
     height: 30,
-  },
-  Post: {
-    height: 100,
-    width: 100,
   },
 });
