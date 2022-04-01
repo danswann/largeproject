@@ -5,7 +5,7 @@ import ChatBox from "../components/ChatBox";
 import { NavigationContainer, NavigationHelpersContext } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-
+import { Ionicons } from "@expo/vector-icons";
 
 
 const Tab = createMaterialTopTabNavigator();
@@ -14,9 +14,14 @@ export default function ChatScreen({ route, navigation }) {
   const { name, messages } = route.params;
   return (
     <View style={styles.MainContainer}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate("Notification")}>
-          <Text>back</Text>
-      </TouchableOpacity>
+      {/* back button */}
+      <View style={styles.backButton}>
+        <TouchableOpacity onPress={() => navigation.navigate("Notification")} hitSlop={{top: 100, bottom: 100, left: 8, right: 5}}>
+          <Ionicons style={{ color: "white", marginRight: 5 }} name="chevron-back-outline" size={25} />
+        </TouchableOpacity>
+      </View>
+      
+      {/* name on top */}
       <Text style={styles.nameText}>{name}</Text>      
       <FlatList
         data= {messages}
@@ -50,14 +55,15 @@ const styles = StyleSheet.create({
   },
 
   sendContainer: {
+    alignSelf: "center",
     justifyContent: "center",
     borderWidth: 1,
     borderRadius: 30,
     borderColor: "#573C6B",
     backgroundColor: "gray",
-    width: "90%",
+    width: "95%",
     height: 40,
-    marginBottom: 5,
+    marginBottom: 4,
     marginVertical: 5,
   },
 
@@ -68,6 +74,17 @@ const styles = StyleSheet.create({
     padding: 10,
     marginLeft: 10,
     color: "black"
-  }
+  },
+
+  backButton: {
+    paddingLeft: 5,
+    paddingTop: 10,
+    // backgroundColor: 'white',
+    // opacity: 0.25,
+  },
+
+  buttonText: {
+    color: 'white',
+  },
   
 });

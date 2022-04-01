@@ -25,7 +25,7 @@ exports.newPost = async function(req, res, next) {
     // Incoming values
     const {playlistID, caption, mentionedUsers} = req.body;
     const userID = req.user.userID;
-    
+
     // Check if mentionedUsers[i] is a valid object id
     for (let i = 0; i < mentionedUsers.length; i++)
     {
@@ -484,6 +484,40 @@ exports.editCaption = async function(req, res, next) {
     {
         response.ok = false;
         response.error = 'Invalid id or cannot edit caption';
+        res.status(200).json(response);
+    }
+}
+
+exports.getAllUsersPost = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true};
+
+    // Incoming values
+    const userID = req.body.userID;
+
+    // Check if userID is valid object id
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid userID ' + userID;
+        res.status(200).json(response);
+        return;
+    }
+
+    // Find post by userID
+    const filter = {userID:userID};
+    const posts = await Post.find(filter);
+
+    // If the post exists, return ok:true
+    if(posts)
+    {
+        response.post = posts;
+        res.status(200).json(response);
+    }
+    // Otherwise return ok:false and the error message
+    else
+    {
+        response.ok = false;
+        response.error = 'No posts made by UserID or error';
         res.status(200).json(response);
     }
 }

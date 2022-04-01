@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useLinkProps } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import HeaderBackground from "../components/HeaderBackground";
@@ -16,7 +16,8 @@ import ChatScreen from "./ChatScreen"
 const Tab = createBottomTabNavigator();
 
 // Collection of all the screens in the app once the users is authenticated
-const AuthenticatedScreen = () => {
+const AuthenticatedScreen = ({ route, navigation }) => {
+  const userID = route.params.userID
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -54,7 +55,7 @@ const AuthenticatedScreen = () => {
           but we need to make it so that a new notification that hasn't been looked
           at will show as a badge */}
       <Tab.Screen name="Notification" component={NotificationScreen} options={{ tabBarBadge: 3}} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} initialParams={{userID: userID}}/>
       <Tab.Screen name="Chat" component={ChatScreen} options={{tabBarButton: () => null}}/>
     </Tab.Navigator>
   );
