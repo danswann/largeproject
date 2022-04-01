@@ -144,7 +144,6 @@ export default function App() {
       </View>
     );
   }
-  console.log(loginState);
   return (
     // Use authcontext provider to track the users authentication status across the whole app
     <AuthContext.Provider value={authContext}>
@@ -155,6 +154,7 @@ export default function App() {
             <LoggedInStack.Screen
               name="Authenticated"
               component={AuthenticatedScreen}
+              initialParams={{userID: loginState.userToken}}
             />
           </LoggedInStack.Navigator>
         ) : (
