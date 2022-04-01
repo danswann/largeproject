@@ -682,7 +682,7 @@ exports.changeUsername = async function(req, res, next) {
 
 exports.changePassword = async function(req, res, next) {
     // Default response object
-    var response = {ok:true}
+    var response = {ok:true};
 
     // Incoming values
     const {userID, password} = req.body;
@@ -711,6 +711,31 @@ exports.changePassword = async function(req, res, next) {
     {
         response.ok = false;
         response.error = 'User not found';
+        res.status(200).json(response);
+    }
+}
+
+exports.searchByUsername = async function(req, res, next) {
+    // Default reponse object
+    var response = {ok:true};
+
+    // Incoming values
+    var partialUsername = req.body.username;
+    var searchKey = new RegExp(partialUsername);
+    
+    // Using $regex in order to get partial matching, 'i' option makes it case-sensitive
+    var filter = {username: {$regex: searchKey, $options: 'i'}};
+    const projection = {password: 0};
+
+    const user = await User.find(filter, projection);
+
+    if (user.length != 0) {
+        response.user = user;
+        res.status(200).json(response);
+    }
+    else {
+        response.ok = false;
+        response.error = 'No users matching field';
         res.status(200).json(response);
     }
 }
