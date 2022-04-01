@@ -55,14 +55,15 @@ const styles = StyleSheet.create({
   },
 
   sendContainer: {
+    alignSelf: "center",
     justifyContent: "center",
     borderWidth: 1,
     borderRadius: 30,
     borderColor: "#573C6B",
     backgroundColor: "gray",
-    width: "90%",
+    width: "95%",
     height: 40,
-    marginBottom: 5,
+    marginBottom: 4,
     marginVertical: 5,
   },
 
