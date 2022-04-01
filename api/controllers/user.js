@@ -130,13 +130,13 @@ exports.login = async function(req, res, next) {
             // If an error occurs, return ok:false and the error message
             if(err)
             {
-                req.session.userID = user._id;
                 response.ok = false;
                 response.error = err;
                 res.status(200).json(response);
             }
         });
 
+        req.session.userID = user._id;
         response.token = token;
         response.refreshToken = refreshToken;
         response.user = user.toJSON();

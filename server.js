@@ -62,6 +62,9 @@ app.use('/api/notification', notificationRouter);
 const directMessageRouter = require('./api/routes/directMessage');
 app.use('/api/directMessage', directMessageRouter);
 
+const spotifyRouter = require('./api/routes/spotify');
+app.use('/api/spotify', spotifyRouter);
+
 
 // Configure paths for static files
 if(process.env.NODE_ENV === 'production')

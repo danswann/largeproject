@@ -25,7 +25,13 @@ const UserSchema = new Schema({
     bookmarks: [{type:Schema.ObjectId, ref:'Post'}],
     settings: {type:UserSettingsSchema, required:true, default:()=>({})},
     isVerified: {type:Boolean, default:false},
-    emailToken: {type:String}
+    emailToken: {type:String},
+    spotify: {
+        connected: {type:Boolean, required:true, default:false},
+        accessToken: {type:String},
+        refreshToken: {type:String},
+        expiration: {type:Date}
+    }
 });
 
 // Define virtual functions

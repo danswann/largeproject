@@ -14,7 +14,7 @@ export default function ChatScreen({ route, navigation }) {
   const { name, messages } = route.params;
   return (
     <View style={styles.MainContainer}>
-      <TouchableOpacity style={styles.backButton}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate("Notification")}>
           <Text>back</Text>
       </TouchableOpacity>
       <Text style={styles.nameText}>{name}</Text>      
