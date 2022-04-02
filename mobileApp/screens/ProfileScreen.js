@@ -9,22 +9,21 @@ import { Ionicons } from "@expo/vector-icons";
 // COMPONENT BODY
 export default function ProfileScreen({ route, navigation }) {
   const userID = route.params.userID
-  const [username, setUsername] = useState("");
-  const [bio, setBio] = useState("");
-  const [postCount, setPostCount] = useState(0);
-  const [followerCount, setFollowerCount] = useState(0);
-  const [followingCount, setFollowingCount] = useState(0);
+  const [username, setUsername] = useState([""]);
+  const [bio, setBio] = useState([""]);
+  const [postCount, setPostCount] = useState([0]);
+  const [followingCount, setFollowingCount] = useState([0]);
+  const [followerCount, setFollowerCount] = useState([0]);
   const [posts, setPosts] = useState([]);
-  
+  const [postGridComplete, setPostGridComplete] = useState([]);
 
-  //When profile screen is focused update data
   const isFocused = useIsFocused();
   useEffect(() => {
     getDataFromID()
-    //Does not work yet
-    //getPostsfromID() 
+    getPostsfromID()
+    dividePostsIntoRows()
   }, [isFocused]);
-
+  
   //Gets user data from api
   function getDataFromID()
   {
@@ -41,8 +40,10 @@ export default function ProfileScreen({ route, navigation }) {
           console.log(response.error)
           return
         }
+
         setUsername(response.user.username)
         setBio(response.user.biography)
+
         if(response.user.followers != null)
           setFollowerCount(response.user.followers.length)
         if(response.user.following != null)
@@ -57,7 +58,7 @@ export default function ProfileScreen({ route, navigation }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({userID: userID})
     };
-    fetch(`${API_URL}/api/user/getAllUsersPost`, requestOptions)
+    fetch(`${API_URL}/api/post/getAllUsersPost`, requestOptions)
       .then((response) => response.json())
       .then((response) => {
         if(!response.ok)
@@ -68,6 +69,39 @@ export default function ProfileScreen({ route, navigation }) {
         setPosts(response.post)
         setPostCount(posts.length)
       })
+  }
+  function dividePostsIntoRows()
+  {
+    var count = 0
+    var rowNum = 0
+    var postGrid = []
+    var postRow = []
+    if(posts.length == 0) {
+      setPostGridComplete([])
+      return
+    }
+    //Fills grid with post ids in retrieved posts
+    for(var i = 0; i < posts.length; i++)
+    {
+      //new row if row has three items
+      if (count == 3)
+      {
+        count = 0
+        postGrid[rowNum] = {key: rowNum, row: [postRow[0], postRow[1], postRow[2]]}
+        rowNum++
+      }
+      //add item to current row
+      postRow[count] = {key: count, postID: posts[i]._id}
+      count++
+    }
+    // Finishes row with empty
+    while (count != 3) 
+    {
+      postRow[count] = {postID: 0} //Spot is empty
+      count++
+    }
+    postGrid[rowNum] = {key: rowNum, row: postRow}
+    setPostGridComplete(postGrid)
   }
   return (
     <View style={styles.MainContainer}>
@@ -86,15 +120,14 @@ export default function ProfileScreen({ route, navigation }) {
       </View>
       {/* Grid container */}
       <View style={styles.GridColumnContainer}>
+        {(postCount == 0 ? 
+        <Text style={{color: "white"}}>This user has no posts</Text> :
         <FlatList
-            data={[ //dummy data, correct data will be the const posts
-              {key: 1, row: [{key: 1, postID:1}, {key: 2, postID:2}, {key: 3, postID:3}]},
-              {key: 2, row: [{key: 1, postID:1}, {key: 2, postID:2}, {key: 3, postID:3}]},
-              {key: 3, row: [{key: 1, postID:1}, {key: 2, postID:2}, {key: 3, postID:3}]},
-            ]} 
-            renderItem={({item}) => <RowBox row={item.row}/>}
-          />
-       </View>
+          data={postGridComplete} 
+          renderItem={({item}) => <RowBox row={item.row}/>}
+        />
+        )}
+      </View>
     </View>
   );
 }
