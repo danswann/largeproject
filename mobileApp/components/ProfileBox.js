@@ -1,4 +1,3 @@
-
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 
@@ -24,7 +23,12 @@ export default function ProfileBox(props) {
             <Text style={styles.BioText}>{props.bio}</Text>
           </View>
           {/* Edit profile button */}
-          <TouchableOpacity style={styles.EditProfileBtn} onPress={() => {props.navigation.navigate("EditProfile")}}>
+          <TouchableOpacity
+            style={styles.EditProfileBtn}
+            onPress={() => {
+              props.navigation.navigate("EditProfile");
+            }}
+          >
             <Text style={styles.MainText}>Edit Profile</Text>
           </TouchableOpacity>
         </View>
@@ -33,9 +37,16 @@ export default function ProfileBox(props) {
           <Text style={styles.ProfileStatsText}>
             {props.postCount + "\nPosts"}
           </Text>
-          <Text style={styles.ProfileStatsText}>
-            {props.followerCount + "\nFollowers"}
-          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              props.navigation.navigate("FollowersList");
+            }}
+          >
+            <Text style={styles.ProfileStatsText}>
+              {props.followerCount + "\nFollowers"}
+            </Text>
+          </TouchableOpacity>
+
           <Text style={styles.ProfileStatsText}>
             {props.followingCount + "\nFollowing"}
           </Text>

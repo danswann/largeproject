@@ -11,14 +11,15 @@ import SearchScreen from "./SearchScreen";
 import PostScreen from "./PostScreen";
 import NotificationScreen from "./NotificationScreen";
 import ProfileScreen from "./ProfileScreen";
-import ChatScreen from "./ChatScreen"
-import EditProfileScreen from "./EditProfileScreen"
+import ChatScreen from "./ChatScreen";
+import EditProfileScreen from "./EditProfileScreen";
+import FollowersListScreen from "./FollowersListScreen";
 
 const Tab = createBottomTabNavigator();
 
 // Collection of all the screens in the app once the users is authenticated
 const AuthenticatedScreen = ({ route, navigation }) => {
-  const userID = route.params.userID
+  const userID = route.params.userID;
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -50,16 +51,47 @@ const AuthenticatedScreen = ({ route, navigation }) => {
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Search" component={SearchScreen} initialParams={{userID: userID}}/>
+      <Tab.Screen
+        name="Search"
+        component={SearchScreen}
+        initialParams={{ userID: userID }}
+      />
       <Tab.Screen name="Post" component={PostScreen} />
       {/* Notifications will be the only icon with a badge, right now the default is 3 
           but we need to make it so that a new notification that hasn't been looked
           at will show as a badge */}
-      <Tab.Screen name="Notification" component={NotificationScreen} options={{ tabBarBadge: 3}} />
-      <Tab.Screen name="Profile" component={ProfileScreen} initialParams={{userID: userID}}/>
-      <Tab.Screen name="Chat" component={ChatScreen} options={{tabBarButton: () => null}}/>
-      <Tab.Screen name="EditProfile" component={EditProfileScreen} options={{tabBarButton: () => null}}/>
-      <Tab.Screen name="OtherProfile" component={ProfileScreen} options={{tabBarButton: () => null}} initialParams={{userID: 0}}/>
+      <Tab.Screen
+        name="Notification"
+        component={NotificationScreen}
+        options={{ tabBarBadge: 3 }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        initialParams={{ userID: userID }}
+      />
+      <Tab.Screen
+        name="Chat"
+        component={ChatScreen}
+        options={{ tabBarButton: () => null }}
+      />
+      <Tab.Screen
+        name="EditProfile"
+        component={EditProfileScreen}
+        options={{ tabBarButton: () => null }}
+      />
+      <Tab.Screen
+        name="OtherProfile"
+        component={ProfileScreen}
+        options={{ tabBarButton: () => null }}
+        initialParams={{ userID: 0 }}
+      />
+      <Tab.Screen
+        name="FollowersList"
+        component={FollowersListScreen}
+        options={{ tabBarButton: () => null }}
+        initialParams={{ userID: userID }}
+      />
     </Tab.Navigator>
   );
 };
