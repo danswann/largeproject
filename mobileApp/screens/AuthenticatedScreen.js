@@ -49,7 +49,7 @@ const AuthenticatedScreen = ({ route, navigation }) => {
         title: "",
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Home" component={HomeScreen} initialParams={{userID: userID}}/>
       <Tab.Screen name="Search" component={SearchScreen} initialParams={{userID: userID}}/>
       <Tab.Screen name="Post" component={PostScreen} />
       {/* Notifications will be the only icon with a badge, right now the default is 3 
