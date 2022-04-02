@@ -24,7 +24,7 @@ export default function ProfileBox(props) {
             <Text style={styles.BioText}>{props.bio}</Text>
           </View>
           {/* Edit profile button */}
-          <TouchableOpacity style={styles.EditProfileBtn}>
+          <TouchableOpacity style={styles.EditProfileBtn} onPress={() => {props.navigation.navigate("EditProfile")}}>
             <Text style={styles.MainText}>Edit Profile</Text>
           </TouchableOpacity>
         </View>

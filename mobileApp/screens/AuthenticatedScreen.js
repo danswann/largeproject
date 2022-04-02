@@ -12,6 +12,7 @@ import PostScreen from "./PostScreen";
 import NotificationScreen from "./NotificationScreen";
 import ProfileScreen from "./ProfileScreen";
 import ChatScreen from "./ChatScreen"
+import EditProfileScreen from "./EditProfileScreen"
 
 const Tab = createBottomTabNavigator();
 
@@ -57,7 +58,7 @@ const AuthenticatedScreen = ({ route, navigation }) => {
       <Tab.Screen name="Notification" component={NotificationScreen} options={{ tabBarBadge: 3}} />
       <Tab.Screen name="Profile" component={ProfileScreen} initialParams={{userID: userID}}/>
       <Tab.Screen name="Chat" component={ChatScreen} options={{tabBarButton: () => null}}/>
-      <Tab.Screen name="EditProfile" component={EditProfileScreen} />
+      <Tab.Screen name="EditProfile" component={EditProfileScreen} options={{tabBarButton: () => null}}/>
     </Tab.Navigator>
   );
 };

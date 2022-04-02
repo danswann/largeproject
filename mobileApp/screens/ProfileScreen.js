@@ -112,6 +112,7 @@ export default function ProfileScreen({ route, navigation }) {
         postCount={postCount}
         followerCount={followerCount}
         followingCount={followingCount}
+        navigation={navigation}
       />
       {/* Container for nav */}
       <View style={styles.NavContainer}>
