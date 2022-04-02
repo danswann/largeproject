@@ -64,7 +64,12 @@ export default function SearchResultBox(props) {
         />
         <Text numberOfLines={1} style={styles.MainText}>{props.username}</Text>
       </View>
-      {(!followed ?
+      {(props.myUserID == props.userID ?
+      <TouchableOpacity style={styles.buttonFollowed}>
+        <Text style={styles.buttonText}>That's you!</Text>
+      </TouchableOpacity>
+      :
+      (!followed ?
       <TouchableOpacity style={styles.button} 
       onPress={() => {
         followUser()
@@ -78,7 +83,7 @@ export default function SearchResultBox(props) {
       }}>
         <Text style={styles.buttonText}>Followed</Text>
       </TouchableOpacity>
-      )}
+      ))}
     </TouchableOpacity>
   );
 }

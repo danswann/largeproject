@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, StyleSheet, TouchableHighlight } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { AuthContext } from "../Context";
 
@@ -8,14 +8,12 @@ export default function HeaderProfile() {
   const { signOut } = React.useContext(AuthContext);
   return (
     <View style={HeaderProfileStyles.HeaderProfileStyles}>
-      <Text style={{ color: "white", marginRight: 10 }}>
-        <Ionicons name="person-circle" size={25} />
-      </Text>
-      <TouchableHighlight onPress={() => signOut()} underlayColor="#573C6B">
-        <Text style={{ color: "white", marginRight: 10 }}>
-          <Ionicons name="log-out-outline" size={25} />
-        </Text>
-      </TouchableHighlight>
+      <TouchableOpacity style={{marginRight: 10}} onPress={() => {}} >
+        <Ionicons name="person-circle" size={25} style={{ color: "white"}}/>
+      </TouchableOpacity>
+      <TouchableOpacity style={{marginRight: 10}} onPress={() => signOut()} >
+        <Ionicons name="log-out-outline" size={25} style={{ color: "white"}}/>
+      </TouchableOpacity>
     </View>
   );
 }

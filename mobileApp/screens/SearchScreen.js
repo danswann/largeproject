@@ -2,6 +2,7 @@ import {React, useState, useEffect} from "react";
 import { Text, TextInput, View, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator } from "react-native";
 import { API_URL } from "../constants/Info";
 import SearchResultBox from "../components/SearchResultBox";
+import { useIsFocused } from "@react-navigation/native";
 
 // COMPONENT BODY
 export default function SearchScreen({route, navigation}) {
@@ -9,6 +10,8 @@ export default function SearchScreen({route, navigation}) {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
+  const isFocused = useIsFocused();
+
   //Gets user data from api
   function getResults(input)
   {
@@ -31,7 +34,8 @@ export default function SearchScreen({route, navigation}) {
           setSearching(false)
           setResults([])
         }
-        setLoading(false)
+        if(isFocused)
+          setLoading(false)
       })
   }
   return (
@@ -53,7 +57,6 @@ export default function SearchScreen({route, navigation}) {
           data={results}
           renderItem={({item}) => <SearchResultBox username={item.username} followers={item.followers} userID = {item._id} myUserID = {userID} navigation = {navigation}/>}
           keyExtractor={(item, index) => index.toString()}
-          initialNumToRender = {5}
         />
       </View>
     </View>
