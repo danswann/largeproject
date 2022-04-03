@@ -44,9 +44,8 @@ exports.callback = async function(req, res, next) {
 
     // Update the current user's document to reflect that they have connected their Spotify
     // account and assign them the access and refresh tokens from Spotify
-    const currentUser = await User.findOne({_id: '6249f3aa13c129b5c51daaf0'}, 'spotify');
     console.log(currentUser);
-    //const currentUser = await User.findOne({_id: req.session.userID}, 'spotify');
+    const currentUser = await User.findOne({_id: req.session.userID}, 'spotify');
     currentUser.spotify.connected = true;
     currentUser.spotify.accessToken = result.body['access_token'];
     currentUser.spotify.refreshToken = result.body['refresh_token'];
@@ -54,7 +53,7 @@ exports.callback = async function(req, res, next) {
     await currentUser.save();
 
     // Redirect to a success message on the main website
-    res.redirect(C.DOMAIN_ROOT + '/message/spotifyconnect?result=yes');
+    res.redirect(C.DOMAIN_ROOT + '/message/spotifyconnect/success');
 }
 
 /**
