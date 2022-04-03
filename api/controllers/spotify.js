@@ -70,8 +70,6 @@ exports.getMyPlaylists = async function(req, res, next) {
     // Input userID
     const { userID } = req.body;
 
-    console.log(userID);
-
     // Get a SpotifyWebApi instance
     const swa = await SpotifyManager.getHandle(userID);
 
@@ -84,6 +82,7 @@ exports.getMyPlaylists = async function(req, res, next) {
     catch(err) {
         response.ok = false;
         response.error = err.name + ": " + err.message;
+        console.log(err);
     }
 
     // Return results
