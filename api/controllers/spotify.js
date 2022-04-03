@@ -9,24 +9,20 @@ exports.getAuthLink = async function(req, res, next) {
     // Default response object
     var response = {ok:true};
 
-    console.log("Test 1:");
-    console.log(req.body);
-    console.log("Test 2");
-    console.log(req.body.userID);
-    console.log(req.session.id);
-
     // Save userID in very short-lived session for use with the callback from Spotify's website
-    req.session.userID = req.body?.userID;
+    const userID = req.body?.userID;
+    console.log("Test 1:");
+    console.log(userID);
 
     // Get a SpotifyWebApi instance
-    const swa = await SpotifyManager.getHandle(req.session.UserID);
+    const swa = await SpotifyManager.getHandle();
 
     // List of Spotify API permissions required by our app
     const scopes = ['playlist-read-private'];
 
     // Try to generate the authorization URL
     try {
-        response.link = swa.createAuthorizeURL(scopes);
+        response.link = swa.createAuthorizeURL(scopes, userID);
     }
     catch(err) {
         response.ok = false;
@@ -46,14 +42,14 @@ exports.callback = async function(req, res, next) {
     
     // Use the code returned by Spotify to get tokens
     const code = req.query.code;
+    const userID = req.query.state;
     const result = await swa.authorizationCodeGrant(code);
 
     // Update the current user's document to reflect that they have connected their Spotify
     // account and assign them the access and refresh tokens from Spotify
-    console.log("Test 3");
-    console.log(req.session.userID);
-    console.log(req.session.id);
-    const currentUser = await User.findOne({_id: req.session.userID}, 'spotify');
+    console.log("Test 2");
+    console.log(userID);
+    const currentUser = await User.findOne({_id: userID}, 'spotify');
     currentUser.spotify.connected = true;
     currentUser.spotify.accessToken = result.body['access_token'];
     currentUser.spotify.refreshToken = result.body['refresh_token'];
