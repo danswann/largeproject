@@ -136,7 +136,6 @@ exports.login = async function(req, res, next) {
             }
         });
 
-        req.session.userID = user._id;
         response.token = token;
         response.refreshToken = refreshToken;
         response.user = user.toJSON();

@@ -4,8 +4,6 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 const session = require('express-session');
-const sqlite = require('better-sqlite3');
-const SqliteStore = require('better-sqlite3-session-store')(session);
 
 // Set constants
 const C = require('./constants.js');
@@ -24,7 +22,6 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Set up session and sqlite3-backed session store
-const sessdb = new sqlite('sessions.db');
 app.use(session({
     secret: C.EXPRESS_SESSION_SECRET,
     resave: false,
@@ -33,11 +30,8 @@ app.use(session({
         path: '/',
         httpOnly: true,
         secure: false,
-        maxAge: null
+        maxAge: 1000 * 60 * 10
     },
-    store: new SqliteStore({
-        client: sessdb
-    })
 }));
 
 // Customizer headers

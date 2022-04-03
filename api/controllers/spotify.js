@@ -9,8 +9,11 @@ exports.getAuthLink = async function(req, res, next) {
     // Default response object
     var response = {ok:true};
 
-    // Get the SpotifyWebApi instance associated with this session
-    const swa = await SpotifyManager.getHandle(req.session);
+    // Save userID in very short-lived session for use with the callback from Spotify's website
+    req.session.userID = req.body?.userID;
+
+    // Get a SpotifyWebApi instance
+    const swa = await SpotifyManager.getHandle(req.session.UserID);
 
     // List of Spotify API permissions required by our app
     const scopes = ['playlist-read-private'];
@@ -32,8 +35,8 @@ exports.getAuthLink = async function(req, res, next) {
  * Handles the callback from Spotify's website after a user grants permissions to our app
  */
 exports.callback = async function(req, res, next) {
-    // Get the SpotifyWebApi instance associated with this session
-    const swa = await SpotifyManager.getHandle(req.session);
+    // Get a SpotifyWebApi instance
+    const swa = await SpotifyManager.getHandle();
     
     // Use the code returned by Spotify to get tokens
     const code = req.query.code;
@@ -59,8 +62,11 @@ exports.getMyPlaylists = async function(req, res, next) {
     // Default response object
     var response = {ok:true}
 
-    // Get the SpotifyWebApi instance associated with this session
-    const swa = await SpotifyManager.getHandle(req.session);
+    // Input userID
+    const { userID } = req.body;
+
+    // Get a SpotifyWebApi instance
+    const swa = await SpotifyManager.getHandle(userID);
 
     // Get the current user's playlists from Spotify
     //TODO: loop to get all playlists instead of just the first 50
