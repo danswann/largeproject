@@ -12,7 +12,7 @@ exports.getHandle = async function(userID) {
 
     // If the user has already connected their Spotify account, fetch their access and refresh tokens from the database
     if(userID) {
-    const currentUser = User.findOne({_id: userID}, 'spotify');
+        const currentUser = await User.findById(userID, 'spotify');
         if(currentUser.spotify?.connected) {
             // If the token has expired, refresh it and update the backing document
             if(Date.now() + 5000 > currentUser.spotify.expiration) {
