@@ -1,5 +1,6 @@
 const C = require('../../constants');
 const SpotifyManager = require('../spotify/manager');
+const User = require('../models/user');
 
 /**
  * Returns a URL that a user can visit to authorize our app to access their Spotify account
@@ -40,7 +41,7 @@ exports.callback = async function(req, res, next) {
 
     // Update the current user's document to reflect that they have connected their Spotify
     // account and assign them the access and refresh tokens from Spotify
-    const currentUser = User.findOne({_id: session.userID}, 'spotify');
+    const currentUser = User.findOne({_id: req.session.userID}, 'spotify');
     currentUser.spotify.connected = true;
     currentUser.spotify.accessToken = result.body['access_token'];
     currentUser.spotify.refreshToken = result.body['refresh_token'];
