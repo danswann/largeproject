@@ -44,7 +44,6 @@ exports.callback = async function(req, res, next) {
 
     // Update the current user's document to reflect that they have connected their Spotify
     // account and assign them the access and refresh tokens from Spotify
-    console.log(currentUser);
     const currentUser = await User.findOne({_id: req.session.userID}, 'spotify');
     currentUser.spotify.connected = true;
     currentUser.spotify.accessToken = result.body['access_token'];
