@@ -13,6 +13,7 @@ exports.getAuthLink = async function(req, res, next) {
     console.log(req.body);
     console.log("Test 2");
     console.log(req.body.userID);
+    console.log(req.session.id);
 
     // Save userID in very short-lived session for use with the callback from Spotify's website
     req.session.userID = req.body?.userID;
@@ -51,6 +52,7 @@ exports.callback = async function(req, res, next) {
     // account and assign them the access and refresh tokens from Spotify
     console.log("Test 3");
     console.log(req.session.userID);
+    console.log(req.session.id);
     const currentUser = await User.findOne({_id: req.session.userID}, 'spotify');
     currentUser.spotify.connected = true;
     currentUser.spotify.accessToken = result.body['access_token'];
