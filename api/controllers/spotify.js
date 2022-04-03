@@ -1,5 +1,6 @@
 const C = require('../../constants');
 const SpotifyManager = require('../spotify/manager');
+const User = require('../models/user');
 
 /**
  * Returns a URL that a user can visit to authorize our app to access their Spotify account
