@@ -1,25 +1,57 @@
-import React from "react";
-import { Text, View, StyleSheet,TouchableOpacity,} from "react-native";
+import {React, useState, useEffect, useCallback} from "react";
+import { Text, View, StyleSheet, TouchableOpacity, Linking,} from "react-native";
+import { API_URL } from "../constants/Info";
 
 // COMPONENT BODY
 export default function PostScreen({}) {
+
+  const [URL, setURL] = useState("")
+
+
+  const OpenURLButton = ({children}) => {
+    authSpotify()
+    const handlePress = useCallback(async () => {
+      // Checking if the link is supported for links with custom URL scheme.
+      const supported = await Linking.canOpenURL(URL);
+  
+      if (supported) {
+        // Opening the link with some app, if the URL scheme is "http" the web link should be opened
+        // by some browser in the mobile
+        await Linking.openURL(URL);
+      } else {
+        console.log("Don't know how to open this URL: " + {URL});
+      }
+    }, [URL]);
+  
+    return (
+    <TouchableOpacity style={styles.spotifyBtn} onPress={handlePress}>
+        <Text style={styles.mainText}>{children}</Text>
+    </TouchableOpacity> 
+    );
+  };
+
+  function authSpotify() {
+    const requestOptions = {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    };
+    fetch(`${API_URL}/api/spotify/getAuthLink`, requestOptions)
+      .then((response) => response.json())
+      .then((response) => {
+        if(response.ok)
+          setURL(response.link)
+        else
+          console.log(response.error)
+      })
+  }
   return (
     // Main container
     <View style={styles.container}>
 
       <Text style={styles.mainText}>What've you been listening to?</Text>
-
       {/* Spotify button */}
-      <TouchableOpacity style={styles.spotifyBtn}>
-        <Text style={styles.btnText}>Import a playlist from Spotify</Text>
-      </TouchableOpacity>
-      
-      <Text style={styles.mainText}>or</Text>
+      <OpenURLButton>Connect your Spotify!</OpenURLButton>
 
-      {/* Search button */}
-      <TouchableOpacity style={styles.searchBtn}>
-        <Text style={styles.btnText}>Search for playlists</Text>
-      </TouchableOpacity>
     </View>
   );
 }

@@ -28,11 +28,13 @@ export default function HomeScreen({ route, navigation }) {
       .then((response) => response.json())
       .then((response) => {
         if(response.ok)
-          setFeed(response.posts)
+          if(isFocused)
+            setFeed(response.posts)
         else
         {
-          setFeed([])
-          console.log(response.error)
+          if(isFocused)
+            setFeed([])
+          console.log(response.error) //This keeps spitting out undefined
         }
         if(isFocused)
           setLoading(false)
