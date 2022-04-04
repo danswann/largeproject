@@ -78,13 +78,15 @@ export default function App() {
             .then((response) => response.json())
             .then((data) => {
               console.log(data.ok);
-              userVerified = data.user.isVerified
               // data.ok and userVerified will be true if a valid user is attempting to log in
-              if (data.ok === true && userVerified) {
-                // We then set the valid users token to verify them
-                userToken = data.user._id;
-                // We then check if the user is valid and the email has been verified
-                dispatch({ type: "LOGIN", id: username, token: userToken, verified: userVerified });
+              if (data.ok === true ) {
+                userVerified = data.user.isVerified
+                if(userVerified) {
+                  // We then set the valid users token to verify them
+                  userToken = data.user._id;
+                  // We then check if the user is valid and the email has been verified
+                  dispatch({ type: "LOGIN", id: username, token: userToken, verified: userVerified });
+                }
                 res(false);
               } else {
                 console.log("Invalid username or password");
