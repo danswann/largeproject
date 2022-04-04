@@ -1,12 +1,14 @@
 import { NavigationContainer } from "@react-navigation/native";
 import {React, useState, useEffect} from "react";
 import { API_URL } from "../constants/Info";
+import { useIsFocused } from "@react-navigation/native";
 import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 
 
 // COMPONENT BODY
 export default function SearchResultBox(props) {
   const [followed, setFollowed] = useState(checkFollowed());
+  const isFocused = useIsFocused();
   function checkFollowed()
   {
     if(props.followers.find(user => user === props.myUserID))
@@ -25,7 +27,8 @@ export default function SearchResultBox(props) {
       .then((response) => response.json())
       .then((response) => {
         if(response.ok)
-          setFollowed(true)
+          if(isFocused)
+            setFollowed(true)
         else
           console.log(response.error)
         
@@ -42,7 +45,8 @@ export default function SearchResultBox(props) {
       .then((response) => response.json())
       .then((response) => {
         if(response.ok)
-          setFollowed(false)
+          if(isFocused)
+            setFollowed(false)
         else
           console.log(response.error)
         

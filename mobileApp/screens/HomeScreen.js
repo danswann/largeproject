@@ -9,17 +9,11 @@ export default function HomeScreen({ route, navigation }) {
   const userID = route.params.userID
   const [currentIndex, setCurrentIndex] = useState(0);
   const [feed, setFeed] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  let mounted = false
   const isFocused = useIsFocused();
   useEffect(() => {
     getFeed()
-    if(mounted)
-      setLoading(true)
-    return function cleanup() { //if user navigates away before an api call is finished, this prevents error
-      mounted = false
-  }
   }, [isFocused]);
 
   function getFeed()
@@ -33,16 +27,17 @@ export default function HomeScreen({ route, navigation }) {
       .then((response) => response.json())
       .then((response) => {
         if(response.ok)
-          setFeed(response.posts)
+          if(isFocused)
+            setFeed(response.posts)
         else
         {
-          if(mounted)
+          if(isFocused)
           {
             setFeed([])
             console.log(response.error) //This keeps spitting out undefined
           }
         }
-        if(mounted)
+        if(isFocused)
           setLoading(false)
       })
   }
@@ -61,7 +56,7 @@ export default function HomeScreen({ route, navigation }) {
       </View>) :
       (<FlatList
         data={feed}
-        renderItem={({item}) => <PostBox postID={item._id} myUserID={userID} userID={item.userID} message={item.caption} timeStamp={item.timeStamp} playlistID={item.playlistID} likedBy={item.likedBy} comments={item.comments}/>}
+        renderItem={({item}) => <PostBox navigation={navigation} postID={item._id} userID={item.userID} myUserID={userID}/>}
         keyExtractor={(item, index) => index.toString()}
       />))
       :
