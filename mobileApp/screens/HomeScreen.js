@@ -2,6 +2,7 @@ import {React , useState, useEffect} from "react";
 import { Text, View, StyleSheet, FlatList, Image, ActivityIndicator } from "react-native";
 import { API_URL } from "../constants/Info";
 import PostBox from "../components/PostBox";
+import { useIsFocused } from "@react-navigation/native";
 
 // COMPONENT BODY
 export default function HomeScreen({ route, navigation }) {
@@ -11,15 +12,15 @@ export default function HomeScreen({ route, navigation }) {
   const [loading, setLoading] = useState(false);
 
   let mounted = false
-
+  const isFocused = useIsFocused();
   useEffect(() => {
+    getFeed()
     if(mounted)
       setLoading(true)
-    getFeed()
     return function cleanup() { //if user navigates away before an api call is finished, this prevents error
       mounted = false
   }
-  }, []);
+  }, [isFocused]);
 
   function getFeed()
   {
@@ -32,8 +33,7 @@ export default function HomeScreen({ route, navigation }) {
       .then((response) => response.json())
       .then((response) => {
         if(response.ok)
-          if(mounted)
-            setFeed(response.posts)
+          setFeed(response.posts)
         else
         {
           if(mounted)

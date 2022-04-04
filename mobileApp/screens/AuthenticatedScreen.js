@@ -22,6 +22,7 @@ const AuthenticatedScreen = ({ route, navigation }) => {
   const userID = route.params.userID;
   return (
     <Tab.Navigator
+      backBehavior={"history"}
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
