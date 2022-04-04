@@ -11,6 +11,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   KeyboardAvoidingView,
+  FlatList,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { StatusBar, ActivityIndicator } from "react-native";
@@ -23,9 +24,15 @@ export default function EditProfileScreen({navigation}) {
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>      
       <View style={styles.MainContainer}>
-      
+
         {/* display username up top */}
         <Text style={styles.nameText}>MobileUser</Text>
+
+        {/* profile pic */}
+        <Image
+            source={require('../assets/images/defaultSmile.png')}
+            style={styles.ProfilePic}
+        />        
 
         {/* back button */}
         <View style={styles.backButton}>
@@ -81,7 +88,8 @@ export default function EditProfileScreen({navigation}) {
               setConfirmPassword(confirmPassword)
             }
           />
-        </View>        
+        </View>
+        {/* <FlatList>renderItem={({item}) => <EditProfileBox/>}</FlatList> */}
       </View>
 
     </TouchableWithoutFeedback>
@@ -121,6 +129,14 @@ const styles = StyleSheet.create({
     width: "75%",
     height: 45,
     marginBottom: 20,
+  },
+  
+  ProfilePic: {
+    width: 60,
+    height: 60,
+    borderRadius: 70,
+    marginVertical: 10,
+    marginHorizontal: 10
   },
 
   backButton: {

@@ -7,7 +7,6 @@ export default function EditProfileBox(props) {
       <TouchableOpacity style={{minWidth: "100%"}}>
           <View>        
               <View style={{flexDirection: 'row'}}>
-
                   {/* profile pic */}
                   <Image
                       source={require('../assets/images/defaultSmile.png')}
