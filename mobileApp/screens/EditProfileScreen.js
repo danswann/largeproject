@@ -23,8 +23,8 @@ export default function EditProfileScreen({navigation}) {
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>      
       <View style={styles.MainContainer}>
-
-
+      
+        {/* display username up top */}
         <Text style={styles.nameText}>MobileUser</Text>
 
         {/* back button */}
