@@ -2,7 +2,6 @@ import {React, useState, useEffect} from "react";
 import { Text, TextInput, View, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator } from "react-native";
 import { API_URL } from "../constants/Info";
 import SearchResultBox from "../components/SearchResultBox";
-import { useIsFocused } from "@react-navigation/native";
 
 // COMPONENT BODY
 export default function SearchScreen({route, navigation}) {
@@ -10,12 +9,20 @@ export default function SearchScreen({route, navigation}) {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
-  const isFocused = useIsFocused();
+
+  let mounted = true; 
+  useEffect(() => {
+    return function cleanup() //if user navigates away before an api call is finished, this prevents error
+    {
+      mounted = false;
+    }
+  },);
 
   //Gets user data from api
   function getResults(input)
   {
-    setLoading(true)
+    if (mounted)
+      setLoading(true)
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -26,15 +33,20 @@ export default function SearchScreen({route, navigation}) {
       .then((response) => {
         if(response.ok && input != "")
         {
-          setSearching(true)
-          setResults(response.user.slice(0,5))
+          if(mounted)
+          {
+            setSearching(true)
+            setResults(response.user.slice(0,5))
+          }
         }
         else
         {
-          setSearching(false)
-          setResults([])
+          if (mounted) {
+            setSearching(false)
+            setResults([])
+          }
         }
-        if(isFocused)
+        if(mounted)
           setLoading(false)
       })
   }

@@ -2,7 +2,6 @@ import {React , useState, useEffect} from "react";
 import { Text, View, StyleSheet, FlatList, Image, ActivityIndicator } from "react-native";
 import { API_URL } from "../constants/Info";
 import PostBox from "../components/PostBox";
-import { useIsFocused } from "@react-navigation/native";
 
 // COMPONENT BODY
 export default function HomeScreen({ route, navigation }) {
@@ -11,14 +10,19 @@ export default function HomeScreen({ route, navigation }) {
   const [feed, setFeed] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const isFocused = useIsFocused();
+  let mounted = false
+
   useEffect(() => {
+    if(mounted)
+      setLoading(true)
     getFeed()
-  }, [isFocused]);
+    return function cleanup() { //if user navigates away before an api call is finished, this prevents error
+      mounted = false
+  }
+  }, []);
 
   function getFeed()
   {
-    setLoading(true)
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -28,15 +32,17 @@ export default function HomeScreen({ route, navigation }) {
       .then((response) => response.json())
       .then((response) => {
         if(response.ok)
-          if(isFocused)
+          if(mounted)
             setFeed(response.posts)
         else
         {
-          if(isFocused)
+          if(mounted)
+          {
             setFeed([])
-          console.log(response.error) //This keeps spitting out undefined
+            console.log(response.error) //This keeps spitting out undefined
+          }
         }
-        if(isFocused)
+        if(mounted)
           setLoading(false)
       })
   }
