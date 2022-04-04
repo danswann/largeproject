@@ -14,6 +14,8 @@ exports.getHandle = async function(userID) {
     if(userID) {
         const currentUser = await User.findById(userID, 'spotify');
         if(currentUser.spotify?.connected) {
+            swa.setAccessToken(currentUser.spotify.accessToken);
+            swa.setRefreshToken(currentUser.spotify.refreshToken);
             // If the token has expired, refresh it and update the backing document
             if(Date.now() + 5000 > currentUser.spotify.expiration) {
                 const response = await swa.refreshAccessToken();
@@ -21,9 +23,9 @@ exports.getHandle = async function(userID) {
                 if(response.body['refresh_token']) currentUser.spotify.refreshToken = response.body['refresh_token'];
                 currentUser.spotify.expiration = Date.now() + response.body['expires_in'] * 1000;
                 await currentUser.save();
+                swa.setAccessToken(currentUser.spotify.accessToken);
+                swa.setRefreshToken(currentUser.spotify.refreshToken);
             }
-            swa.setAccessToken(currentUser.spotify.accessToken);
-            swa.setRefreshToken(currentUser.spotify.refreshToken);
         }
     }
     return swa;
