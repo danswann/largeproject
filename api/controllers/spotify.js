@@ -74,16 +74,22 @@ exports.getMyPlaylists = async function(req, res, next) {
     const swa = await SpotifyManager.getHandle(userID);
 
     // Get the current user's playlists from Spotify
-    //TODO: loop to get all playlists instead of just the first 50
-    try {
-        const result = await swa.getUserPlaylists(options={limit:50});
-        response.playlists = result.body.items.map(x => ({name: x.name, id:x.id}));
-    }
-    catch(err) {
-        response.ok = false;
-        response.error = err.name + ": " + err.message;
-        console.log(err);
-    }
+    response.playlists = [];
+    var offset = 0;
+    var total = 0;
+    do {
+        try {
+            const result = await swa.getUserPlaylists(options={offset:offset, limit:50});
+            response.playlists = response.playlists.concat(result.body.items.map(x => ({name:x.name, id:x.id, image:x.images[0]?.url})));
+            offset += 50;
+            total = result.body.total;
+
+        } catch(err) {
+            response.ok = false;
+            response.error = err.name + ": " + err.message;
+        }
+
+    } while(total > offset);
 
     // Return results
     res.status(200).json(response);
