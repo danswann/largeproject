@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 
 export default function ProfileBox(props) {
+  console.log(props);
   return (
     // Container for all content on page
     <View style={styles.MainContainer}>
@@ -39,7 +40,10 @@ export default function ProfileBox(props) {
           </Text>
           <TouchableOpacity
             onPress={() => {
-              props.navigation.navigate("FollowersList");
+              props.navigation.navigate({
+                name: "FollowersList",
+                params: { userID: props.userID },
+              });
             }}
           >
             <Text style={styles.ProfileStatsText}>
