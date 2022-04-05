@@ -326,7 +326,7 @@ export default function PostBox(props) {
                     <TextInput
                         value={commentInput}
                         style={styles.textInput}
-                        placeholder="Make a comment..."
+                        placeholder="Add a comment..."
                         placeholderTextColor="#12081A"
                         onChangeText={(text) => setCommentInput(text)}
                         multiline={true}
@@ -454,9 +454,11 @@ const styles = StyleSheet.create({
         minHeight: 40,
         flex: 1,
         padding: 5,
+        marginTop: 5,
         marginRight: 5,
         marginLeft: 10,
-        color: "#12081A"
+        color: "#12081A",
+        alignSelf: "center",
     },
 
     MakeCommentContainer: {

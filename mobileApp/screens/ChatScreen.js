@@ -12,7 +12,9 @@ import {
   TouchableOpacity, 
   FlatList, 
   Image,
-  ScrollView} from "react-native";
+  ActivityIndicator,
+  ScrollView,
+  TouchableHighlight} from "react-native";
 
 import ChatBox from "../components/ChatBox";
 import { NavigationContainer, NavigationHelpersContext } from '@react-navigation/native';
@@ -30,9 +32,9 @@ export default function ChatScreen({ route, navigation }) {
       {/* back button */}
       <View style={styles.backButton}>
         <TouchableOpacity onPress={() => navigation.navigate("Notification")}>
-        <View style={{width: 25, height: 25}}>
-          <Ionicons style={{ color: "white", marginRight: 5 }} name="chevron-back-outline" size={25} />
-        </View>            
+          <View style={{width: 25, height: 25}}>
+            <Ionicons style={{ color: "white", marginRight: 5 }} name="chevron-back-outline" size={25} />
+          </View>            
         </TouchableOpacity>
       </View>
       
@@ -49,7 +51,13 @@ export default function ChatScreen({ route, navigation }) {
               style={styles.textInput}
               placeholder="Send a message..."
               placeholderTextColor="white"
+              multiline={true}
           />
+          <TouchableOpacity onPress={() => {[sendMessage()]}}>
+            <View style={{marginHorizontal: 10}}>
+              <Ionicons style={styles.sendButton} name="arrow-forward-outline" size={25} color={"white"}/>
+            </View>
+          </TouchableOpacity>
       </View>             
     </View>  
 
@@ -85,6 +93,7 @@ const styles = StyleSheet.create({
     height: 40,
     marginBottom: 4,
     marginVertical: 5,
+    flexDirection: "row",
   },
 
   textInput: {
@@ -93,7 +102,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     marginLeft: 10,
-    color: "black"
+    color: "white"
   },
 
   backButton: {
@@ -101,6 +110,13 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     // backgroundColor: 'white',
     // opacity: 0.25,
+  },
+
+  sendButton: {
+    justifyContent: "flex-end",
+    marginRight: 5,
+    marginBottom: 15,
+    textAlign: "right"
   },
 
   buttonText: {
