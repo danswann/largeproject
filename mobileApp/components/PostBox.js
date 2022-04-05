@@ -360,7 +360,7 @@ export default function PostBox(props) {
                     <View style={{flexDirection: 'column'}}>
                         <View style={{flexDirection: 'row', justifyContent: "flex-end"}}>
                             <Text style={{color: '#A57FC1', textAlign: "right", fontSize: 9}}>{likeCount}</Text>
-                            <Text style={{color: 'white', textAlign: "right", fontSize: 9}}> people liked this post</Text>
+                            <Text style={{color: 'white', textAlign: "right", fontSize: 9}}> likes</Text>
                         </View>
                         <View style={{flexDirection: 'row', justifyContent: "flex-end"}}>
                             <Text style={{color: '#A57FC1', textAlign: "right", fontSize: 9}}>{commentCount}</Text>
