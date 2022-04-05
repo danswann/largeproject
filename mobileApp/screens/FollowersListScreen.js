@@ -9,6 +9,7 @@ export default function FollowersListScreen({ route }) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ userID: route.params.userID }),
   };
+  console.log(route.params.userID);
   fetch(`${API_URL}/api/user/showFollowers`, requestOptions)
     .then((response) => response.json())
     .then((response) => {

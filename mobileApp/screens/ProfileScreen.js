@@ -1,5 +1,12 @@
-import {React, useState, useEffect} from "react";
-import { Text, View, StyleSheet, FlatList, Dimensions, Image, } from "react-native";
+import { React, useState, useEffect } from "react";
+import {
+  Text,
+  View,
+  StyleSheet,
+  FlatList,
+  Dimensions,
+  Image,
+} from "react-native";
 import ProfileBox from "../components/ProfileBox";
 import RowBox from "../components/RowBox";
 import { API_URL } from "../constants/Info";
@@ -8,7 +15,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 // COMPONENT BODY
 export default function ProfileScreen({ route, navigation }) {
-  const userID = route.params.userID
+  const userID = route.params.userID;
   const [username, setUsername] = useState([""]);
   const [bio, setBio] = useState([""]);
   const [postCount, setPostCount] = useState([0]);
@@ -19,89 +26,83 @@ export default function ProfileScreen({ route, navigation }) {
 
   const isFocused = useIsFocused();
   useEffect(() => {
-    getDataFromID()
-    getPostsfromID()
-    dividePostsIntoRows()
+    getDataFromID();
+    getPostsfromID();
+    dividePostsIntoRows();
   }, [isFocused]);
-  
+
   //Gets user data from api
-  function getDataFromID()
-  {
+  function getDataFromID() {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({userID: userID})
+      body: JSON.stringify({ userID: userID }),
     };
     fetch(`${API_URL}/api/user/searchUser`, requestOptions)
       .then((response) => response.json())
       .then((response) => {
-        if(!response.ok)
-        {
-          console.log(response.error)
-          return
+        if (!response.ok) {
+          console.log(response.error);
+          return;
         }
+        setUsername(response.user.username);
+        setBio(response.user.biography);
 
-        setUsername(response.user.username)
-        setBio(response.user.biography)
-
-        if(response.user.followers != null)
-          setFollowerCount(response.user.followers.length)
-        if(response.user.following != null)
-          setFollowingCount(response.user.following.length)
-      })
+        if (response.user.followers != null)
+          setFollowerCount(response.user.followers.length);
+        if (response.user.following != null)
+          setFollowingCount(response.user.following.length);
+      });
   }
   //Gets user posts from api
-  function getPostsfromID()
-  {
+  function getPostsfromID() {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({userID: userID})
+      body: JSON.stringify({ userID: userID }),
     };
     fetch(`${API_URL}/api/post/getAllUsersPost`, requestOptions)
       .then((response) => response.json())
       .then((response) => {
-        if(!response.ok)
-        {
-          console.log(response.error)
-          return
+        if (!response.ok) {
+          console.log(response.error);
+          return;
         }
-        setPosts(response.post)
-        setPostCount(posts.length)
-      })
+        setPosts(response.post);
+        setPostCount(posts.length);
+      });
   }
-  function dividePostsIntoRows()
-  {
-    var count = 0
-    var rowNum = 0
-    var postGrid = []
-    var postRow = []
-    if(posts.length == 0) {
-      setPostGridComplete([])
-      return
+  function dividePostsIntoRows() {
+    var count = 0;
+    var rowNum = 0;
+    var postGrid = [];
+    var postRow = [];
+    if (posts.length == 0) {
+      setPostGridComplete([]);
+      return;
     }
     //Fills grid with post ids in retrieved posts
-    for(var i = 0; i < posts.length; i++)
-    {
+    for (var i = 0; i < posts.length; i++) {
       //new row if row has three items
-      if (count == 3)
-      {
-        count = 0
-        postGrid[rowNum] = {key: rowNum, row: [postRow[0], postRow[1], postRow[2]]}
-        rowNum++
+      if (count == 3) {
+        count = 0;
+        postGrid[rowNum] = {
+          key: rowNum,
+          row: [postRow[0], postRow[1], postRow[2]],
+        };
+        rowNum++;
       }
       //add item to current row
-      postRow[count] = {key: count, postID: posts[i]._id}
-      count++
+      postRow[count] = { key: count, postID: posts[i]._id };
+      count++;
     }
     // Finishes row with empty
-    while (count != 3) 
-    {
-      postRow[count] = {postID: 0} //Spot is empty
-      count++
+    while (count != 3) {
+      postRow[count] = { postID: 0 }; //Spot is empty
+      count++;
     }
-    postGrid[rowNum] = {key: rowNum, row: postRow}
-    setPostGridComplete(postGrid)
+    postGrid[rowNum] = { key: rowNum, row: postRow };
+    setPostGridComplete(postGrid);
   }
   return (
     <View style={styles.MainContainer}>
@@ -112,6 +113,7 @@ export default function ProfileScreen({ route, navigation }) {
         postCount={postCount}
         followerCount={followerCount}
         followingCount={followingCount}
+        userID={userID}
         navigation={navigation}
       />
       {/* Container for nav */}
@@ -121,12 +123,13 @@ export default function ProfileScreen({ route, navigation }) {
       </View>
       {/* Grid container */}
       <View style={styles.GridColumnContainer}>
-        {(postCount == 0 ? 
-        <Text style={{color: "white"}}>This user has no posts</Text> :
-        <FlatList
-          data={postGridComplete} 
-          renderItem={({item}) => <RowBox row={item.row}/>}
-        />
+        {postCount == 0 ? (
+          <Text style={{ color: "white" }}>This user has no posts</Text>
+        ) : (
+          <FlatList
+            data={postGridComplete}
+            renderItem={({ item }) => <RowBox row={item.row} />}
+          />
         )}
       </View>
     </View>
@@ -156,5 +159,4 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignSelf: "stretch",
   },
-
 });
