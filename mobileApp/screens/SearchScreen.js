@@ -1,71 +1,85 @@
-import {React, useState, useEffect} from "react";
-import { Text, TextInput, View, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator } from "react-native";
+import { React, useState, useEffect } from "react";
+import {
+  Text,
+  TextInput,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  ActivityIndicator,
+} from "react-native";
 import { API_URL } from "../constants/Info";
 import SearchResultBox from "../components/SearchResultBox";
 import { useIsFocused } from "@react-navigation/native";
 
 // COMPONENT BODY
-export default function SearchScreen({route, navigation}) {
-  const userID = route.params.userID
+export default function SearchScreen({ route, navigation }) {
+  const userID = route.params.userID;
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
 
   const isFocused = useIsFocused();
-  useEffect(() => {
-
-  }, [isFocused]);
+  useEffect(() => {}, [isFocused]);
 
   //Gets user data from api
-  function getResults(input)
-  {
-    if (isFocused)
-      setLoading(true)
+  function getResults(input) {
+    if (isFocused) setLoading(true);
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({username: input})
+      body: JSON.stringify({ username: input }),
     };
     fetch(`${API_URL}/api/user/searchByUsername`, requestOptions)
       .then((response) => response.json())
       .then((response) => {
-        if(response.ok && input != "")
-        {
-          if(isFocused)
-          {
-            setSearching(true)
-            setResults(response.user.slice(0,5))
-          }
-        }
-        else
-        {
+        if (response.ok && input != "") {
           if (isFocused) {
-            setSearching(false)
-            setResults([])
+            setSearching(true);
+            setResults(response.user.slice(0, 5));
+          }
+        } else {
+          if (isFocused) {
+            setSearching(false);
+            setResults([]);
           }
         }
-        if(isFocused)
-          setLoading(false)
-      })
+        if (isFocused) setLoading(false);
+      });
   }
   return (
     // Main container
     <View style={styles.container}>
-      
       {/* Search field */}
-      <View style={(!searching ? (styles.inputView) : (styles.inputViewSearching))}>
+      <View style={!searching ? styles.inputView : styles.inputViewSearching}>
         <TextInput
           style={styles.textInput}
           placeholder="Search posts"
           placeholderTextColor="#573C6B"
           onChangeText={(text) => getResults(text)}
         />
-        {loading ? (<ActivityIndicator size="small" color="#573C6B" style={{marginRight: 20}} />) : (<></>)}
+        {loading ? (
+          <ActivityIndicator
+            size="small"
+            color="#573C6B"
+            style={{ marginRight: 20 }}
+          />
+        ) : (
+          <></>
+        )}
       </View>
       <View style={styles.searchResultsContainer}>
         <FlatList
           data={results}
-          renderItem={({item}) => <SearchResultBox username={item.username} followers={item.followers} userID = {item._id} myUserID = {userID} navigation = {navigation}/>}
+          renderItem={({ item }) => (
+            <SearchResultBox
+              username={item.username}
+              followers={item.followers}
+              userID={item._id}
+              myUserID={userID}
+              navigation={navigation}
+            />
+          )}
           keyExtractor={(item, index) => index.toString()}
         />
       </View>
@@ -75,7 +89,6 @@ export default function SearchScreen({route, navigation}) {
 
 // COMPONENT STYLES
 const styles = StyleSheet.create({
-
   container: {
     flex: 1,
     justifyContent: "flex-start",
@@ -101,9 +114,9 @@ const styles = StyleSheet.create({
     height: 45,
     marginTop: 40,
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "center",
   },
-  
+
   inputViewSearching: {
     borderWidth: 1,
     borderTopRightRadius: 30,
@@ -113,7 +126,7 @@ const styles = StyleSheet.create({
     width: "85%",
     height: 45,
     marginTop: 40,
-    flexDirection: "row"
+    flexDirection: "row",
   },
 
   textInput: {
@@ -121,6 +134,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     marginLeft: 20,
-    color: "black"
-  }
+    color: "black",
+  },
 });

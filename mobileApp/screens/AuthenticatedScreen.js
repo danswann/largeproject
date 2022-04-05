@@ -1,5 +1,11 @@
-import {React, useState, useEffect} from "react";
-import { KeyboardAvoidingView, Keyboard, StyleSheet, Text, View } from "react-native";
+import { React, useState, useEffect } from "react";
+import {
+  KeyboardAvoidingView,
+  Keyboard,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { NavigationContainer, useLinkProps } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -21,9 +27,12 @@ const Tab = createBottomTabNavigator();
 const AuthenticatedScreen = ({ route, navigation }) => {
   const userID = route.params.userID;
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{height:"100%", width:"100%"}}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ height: "100%", width: "100%" }}
+    >
       <Tab.Navigator
-        backBehavior={"history"}        
+        backBehavior={"history"}
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
@@ -45,8 +54,8 @@ const AuthenticatedScreen = ({ route, navigation }) => {
           tabBarActiveTintColor: "#573C6B",
           tabBarInactiveTintColor: "white",
           // keyboardHidesTabBar: true,
-          tabBarHideOnKeyboard:true,
-          tabBarStyle: { backgroundColor: "black", borderTopColor: "gray"},
+          tabBarHideOnKeyboard: true,
+          tabBarStyle: { backgroundColor: "black", borderTopColor: "gray" },
           tabBarShowLabel: false,
           headerBackground: HeaderBackground,
           headerLeft: HeaderTitle,
@@ -54,9 +63,21 @@ const AuthenticatedScreen = ({ route, navigation }) => {
           title: "",
         })}
       >
-        <Tab.Screen name="Home" component={HomeScreen} initialParams={{userID: userID}}/>
-        <Tab.Screen name="Search" component={SearchScreen} initialParams={{userID: userID}}/>
-        <Tab.Screen name="Post" component={PostScreen} initialParams={{userID: userID}}/>
+        <Tab.Screen
+          name="Home"
+          component={HomeScreen}
+          initialParams={{ userID: userID }}
+        />
+        <Tab.Screen
+          name="Search"
+          component={SearchScreen}
+          initialParams={{ userID: userID }}
+        />
+        <Tab.Screen
+          name="Post"
+          component={PostScreen}
+          initialParams={{ userID: userID }}
+        />
         {/* Notifications will be the only icon with a badge, right now the default is 3 
             but we need to make it so that a new notification that hasn't been looked
             at will show as a badge */}
@@ -90,10 +111,10 @@ const AuthenticatedScreen = ({ route, navigation }) => {
           name="FollowersList"
           component={FollowersListScreen}
           options={{ tabBarButton: () => null }}
-          initialParams={{ userID: userID }}
+          initialParams={{ userID: 0 }}
         />
       </Tab.Navigator>
-    </KeyboardAvoidingView>    
+    </KeyboardAvoidingView>
   );
 };
 
