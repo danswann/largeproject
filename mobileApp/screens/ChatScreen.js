@@ -11,7 +11,8 @@ import {
   View, 
   TouchableOpacity, 
   FlatList, 
-  Image} from "react-native";
+  Image,
+  ScrollView} from "react-native";
 
 import ChatBox from "../components/ChatBox";
 import { NavigationContainer, NavigationHelpersContext } from '@react-navigation/native';
@@ -23,33 +24,34 @@ import { Ionicons } from "@expo/vector-icons";
 const Tab = createMaterialTopTabNavigator();
 
 export default function ChatScreen({ route, navigation }) {
-  const { name, messages } = route.params;
-  // const [fadeAnim] = useState(new Animated.Value(0));
+  const { name, messages } = route.params;  
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={styles.MainContainer}>
-        {/* back button */}
-        <View style={styles.backButton}>
-          <TouchableOpacity onPress={() => navigation.navigate("Notification")} hitSlop={{top: 100, bottom: 100, left: 8, right: 5}}>
-            <Ionicons style={{ color: "white", marginRight: 5 }} name="chevron-back-outline" size={25} />
-          </TouchableOpacity>
-        </View>
-        
-        {/* name on top */}
-        <Text style={styles.nameText}>{name}</Text>      
-        <FlatList
-          data= {messages}
-          renderItem={({item}) => <ChatBox message={item.message} timeStamp={item.timeStamp} sentByMe={item.sentByMe}/>}
-        />
-        <View style={styles.sendContainer}>
-            <TextInput
-                style={styles.textInput}
-                placeholder="Send a message..."
-                placeholderTextColor="white"
-            />
-        </View>      
+    <View style={styles.MainContainer}>
+      {/* back button */}
+      <View style={styles.backButton}>
+        <TouchableOpacity onPress={() => navigation.navigate("Notification")}>
+        <View style={{width: 25, height: 25}}>
+          <Ionicons style={{ color: "white", marginRight: 5 }} name="chevron-back-outline" size={25} />
+        </View>            
+        </TouchableOpacity>
       </View>
-    </TouchableWithoutFeedback>
+      
+      {/* name on top */}
+      <Text style={styles.nameText}>{name}</Text>      
+      <FlatList
+        data= {messages}
+        renderItem={({item}) => <ChatBox message={item.message} timeStamp={item.timeStamp} sentByMe={item.sentByMe}/>}
+      />
+
+      {/* message input */}      
+      <View style={styles.sendContainer}>
+          <TextInput
+              style={styles.textInput}
+              placeholder="Send a message..."
+              placeholderTextColor="white"
+          />
+      </View>             
+    </View>  
 
   );
 }
@@ -60,6 +62,8 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     // alignItems: "center",
     backgroundColor: "#23192B",
+    width: "100%",
+    height: "100%",
   },
 
   nameText: {

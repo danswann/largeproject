@@ -25,31 +25,49 @@ export default function EditProfileScreen({navigation}) {
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>      
       <View style={styles.MainContainer}>
 
-        {/* display username up top */}
-        <Text style={styles.nameText}>MobileUser</Text>
+        <View style={styles.Header}>
 
-        {/* profile pic */}
-        <Image
-            source={require('../assets/images/defaultSmile.png')}
-            style={styles.ProfilePic}
-        />        
+          {/* back button */}
+          <View style={styles.backButton}>
+            <TouchableOpacity onPress={() => navigation.navigate("Profile")} hitSlop={{top: 100, bottom: 100, left: 8, right: 5}}>
+              <Ionicons style={{ color: "white", marginRight: 5 }} name="chevron-back-outline" size={25} />
+            </TouchableOpacity>
+          </View>  
 
-        {/* back button */}
-        <View style={styles.backButton}>
-          <TouchableOpacity onPress={() => navigation.navigate("Profile")} hitSlop={{top: 100, bottom: 100, left: 8, right: 5}}>
-            <Ionicons style={{ color: "white", marginRight: 5 }} name="chevron-back-outline" size={25} />
-          </TouchableOpacity>
-        </View>   
+          <View style={{flexDirection: "row"}}>
+            {/* profile pic */}
+            <Image
+                source={require('../assets/images/defaultSmile.png')}
+                style={styles.ProfilePic}
+            />        
 
-        {/* done button */}
-        <View style={styles.backButton}>
-          <TouchableOpacity 
-            onPress={() => navigation.navigate("Profile")} 
-            hitSlop={{top: 100, bottom: 100, left: 8, right: 5}}>
-            <Text style={styles.doneButton}>Done</Text>
-          </TouchableOpacity>
-        </View>           
+            {/* display username up top */}
+            <Text style={styles.nameText}>MobileUser</Text> 
+          </View>
+   
+
+          {/* done button */}
+          <View style={styles.backButton}>
+            <TouchableOpacity 
+              onPress={() => navigation.navigate("Profile")} 
+              hitSlop={{top: 100, bottom: 100, left: 8, right: 5}}>
+              <Text style={styles.doneButton}>Done</Text>
+            </TouchableOpacity>
+          </View>
+        </View>                   
     
+        {/* edit bio field */}
+        <View style={styles.bioView}>
+          <TextInput
+            style={styles.TextInput}
+            placeholder="Edit Bio"
+            placeholderTextColor="white"
+            selectionColor={"#573C6B"}            
+            multiline={true}
+            onChangeText={(editBio) => setBiography(editBio)
+            }
+          />
+        </View>
 
         {/* edit username field */}
         <View style={styles.inputView}>
@@ -89,6 +107,8 @@ export default function EditProfileScreen({navigation}) {
             }
           />
         </View>
+
+
         {/* <FlatList>renderItem={({item}) => <EditProfileBox/>}</FlatList> */}
       </View>
 
@@ -103,6 +123,15 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     backgroundColor: "#23192B",
+  },
+
+  Header: {
+    // backgroundColor: "red",
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    // alignContent: "space-between",
+    alignItems: "stretch",
   },
 
   nameText: {
@@ -130,13 +159,23 @@ const styles = StyleSheet.create({
     height: 45,
     marginBottom: 20,
   },
+
+  bioView: {
+    backgroundColor: "black",
+    borderWidth: 1,
+    borderRadius: 30,
+    borderColor: "#573C6B",
+    width: "75%",
+    height: 100,
+    marginBottom: 20,
+  },
   
   ProfilePic: {
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
     borderRadius: 70,
     marginVertical: 10,
-    marginHorizontal: 10
+    marginHorizontal: 10,
   },
 
   backButton: {
@@ -147,7 +186,8 @@ const styles = StyleSheet.create({
   doneButton: {
     textDecorationLine: "underline",
     color: 'white',
-    fontSize: 15,      
+    fontSize: 20,
+    marginRight: 10,      
   },
 
 });

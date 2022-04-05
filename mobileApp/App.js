@@ -4,8 +4,6 @@ import { Text, View, StyleSheet, ActivityIndicator } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AuthenticatedScreen from "./screens/AuthenticatedScreen";
-import LoginScreen from "./screens/LoginScreen";
-import RegisterScreen from "./screens/RegisterScreen";
 import { AuthContext } from "./Context";
 import UnauthenticatedScreen from "./screens/UnauthenticatedScreen";
 import { API_URL } from "./constants/Info";

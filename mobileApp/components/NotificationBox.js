@@ -1,19 +1,21 @@
-import React from "react";
+import {React, useState, useEffect} from "react";
 import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 
 // COMPONENT BODY
 export default function NotificationBox(props) {
-  return (
-    <TouchableOpacity style={{minWidth: "100%"}}>
-        <View style={styles.NotificationContainer}>        
-            <View style={{flexDirection: 'row'}}>
+    const [notification, setPlaylistPicture] = useState(false);    
 
+    return (
+        
+        <View style={styles.NotificationContainer}>        
+
+            <TouchableOpacity style={{flexDirection: 'row'}}>
                 {/* profile pic */}
                 <Image
                     source={require('../assets/images/defaultSmile.png')}
                     style={styles.ProfilePic}
                 /> 
-
+            
                 <View style={{flexDirection: 'column', marginStart: 15, marginTop: 5}}>
 
                     {/* name */}
@@ -25,18 +27,19 @@ export default function NotificationBox(props) {
                         <Text style={styles.MainText}>{props.message}</Text>
                     </View>
                 </View>
-            </View>
+            </TouchableOpacity>
 
             {/* Timestamp */}
             <Text style={{color: 'white', textAlign: "right", marginTop: 5, marginRight: 10}}>{props.timeStamp}</Text>
 
             {/* Playlist Image */}
+            {(props.message === "followed you" ? <></> : 
             <Image
                 source={require('../assets/images/testCover.jpg')}
                 style={styles.PostPic}
-            />
+            />)}
         </View>
-    </TouchableOpacity>
+        
   );
 }
 
