@@ -111,7 +111,7 @@ const AuthenticatedScreen = ({ route, navigation }) => {
           name="FollowersList"
           component={FollowersListScreen}
           options={{ tabBarButton: () => null }}
-          initialParams={{ userID: 0 }}
+          initialParams={{ userID: 0, myUserID: userID }}
         />
       </Tab.Navigator>
     </KeyboardAvoidingView>
