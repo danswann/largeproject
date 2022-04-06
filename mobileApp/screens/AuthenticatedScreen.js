@@ -54,7 +54,7 @@ const AuthenticatedScreen = ({ route, navigation }) => {
           tabBarActiveTintColor: "#573C6B",
           tabBarInactiveTintColor: "white",
           // keyboardHidesTabBar: true,
-          tabBarHideOnKeyboard: (Platform.OS === "ios" ? true : false),
+          tabBarHideOnKeyboard: Platform.OS === "ios" ? true : false,
           tabBarStyle: { backgroundColor: "black", borderTopColor: "gray" },
           tabBarShowLabel: false,
           headerBackground: HeaderBackground,
@@ -112,6 +112,7 @@ const AuthenticatedScreen = ({ route, navigation }) => {
           component={FollowersListScreen}
           options={{ tabBarButton: () => null }}
           initialParams={{ userID: 0, myUserID: userID }}
+          backBehavior={"history"}
         />
       </Tab.Navigator>
     </KeyboardAvoidingView>
