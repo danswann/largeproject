@@ -29,6 +29,10 @@ export default function PostBox(props) {
     const [commentInput, setCommentInput] = useState("");
     const isFocused = useIsFocused();
 
+    const updatePostComments = () => {
+        getPostDataFromID()
+    }
+
     useEffect(() => {
         getPostData()
     }, [isFocused]);
@@ -36,8 +40,8 @@ export default function PostBox(props) {
     async function getPostData()
     {
         setLoading(true)
-        await getPostDataFromID()
-        await getDataFromID()
+        getPostDataFromID()
+        getDataFromID()
         if (isFocused)
             setLoading(false)
     }
@@ -186,7 +190,7 @@ export default function PostBox(props) {
             else
             {
                 setCommentInput("")
-                getPostDataFromID()
+                updatePostComments()
                 setCommentLoading(false)
             }
         })
@@ -316,7 +320,8 @@ export default function PostBox(props) {
                     <Text style={{color: "white", marginLeft: 20,  marginTop: 10, fontSize: 12}}>Comments: </Text>
                     <FlatList
                         data={comments}
-                        renderItem={({item}) => <CommentBox userID={item.userID} comment={item.comment} timeStamp={item.timeStamp}/>}
+                        initialScrollIndex={0}
+                        renderItem={({item}) => <CommentBox myUserID={props.myUserID} userID={item.userID} postID={props.postID} commentID={item._id} comment={item.comment} timeStamp={item.timeStamp} update={updatePostComments}/>}
                         listKey={(item, index) => `_key${index.toString()}`}
                         keyExtractor={(item, index) => `_key${index.toString()}`}
                     />

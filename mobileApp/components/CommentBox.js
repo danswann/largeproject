@@ -1,16 +1,44 @@
 import {React, useState, useEffect} from "react";
-import { Text, View, StyleSheet, Image, TouchableOpacity, } from "react-native";
+import { Text, View, StyleSheet, Image, TouchableOpacity, ActivityIndicator, TouchableWithoutFeedback} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { API_URL } from "../constants/Info";
 import { useIsFocused } from "@react-navigation/native";
 
 // COMPONENT BODY
 export default function CommentBox(props) {
   const [username, setUsername] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [tapped, setTapped] = useState(false);
 
   const isFocused = useIsFocused();
   useEffect(() => {
     getUsername()
   }, [isFocused]);
+
+  //checks if user owns this comment before allowing access to delete button
+  function checkUser(){
+    if(tapped)
+      setTapped(false)
+    else if(props.myUserID == props.userID)
+      setTapped(true)
+  }
+
+  //comment on post
+  function deleteComment(){
+    setDeleteLoading(true)
+    const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({postID: props.postID, commentID: props.commentID})
+    };
+    fetch(`${API_URL}/api/post/deleteComment`, requestOptions)
+    .then((response) => response.json())
+    .then((response) => {
+      props.update()
+      if(!response.ok)
+        console.log(response.error)
+  })
+  };
 
   function getUsername()
   {
@@ -59,25 +87,34 @@ export default function CommentBox(props) {
     return "A few moments ago"
   }
   return (
-    <View style={styles.MessageContainer}>        
-      <View style={{flexDirection: 'row'}}>
-        {/* profile pic */}
-        <Image
-          source={require('../assets/images/defaultSmile.png')}
-          style={styles.ProfilePic}
-        />
-        <View style={{flexDirection: 'column', marginStart: 5, marginTop: 10, }}>
-          {/* name */}
-          <Text style={{color: 'white', fontWeight: 'bold', fontSize: 12, textDecorationLine: "underline"}}>{username}</Text>
-          {/* Comment */}
-          <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 5, marginBottom: 10}}>
-            <Text style={styles.MainText}>{props.comment}</Text>
+    <TouchableWithoutFeedback onPress={() => {checkUser()}}>
+      <View style={styles.MessageContainer}>        
+        <View style={{flexDirection: 'row', maxWidth: "60%"}}>
+          {/* profile pic */}
+          <Image
+            source={require('../assets/images/defaultSmile.png')}
+            style={styles.ProfilePic}
+          />
+          <View style={{flexDirection: 'column', marginStart: 5, marginTop: 10, }}>
+            {/* name */}
+            <Text style={{color: 'white', fontWeight: 'bold', fontSize: 12, textDecorationLine: "underline"}}>{username}</Text>
+            {/* Comment */}
+            <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 5, marginBottom: 10}}>
+              <Text style={styles.MainText}>{props.comment}</Text>
+            </View>
           </View>
         </View>
+        <View style={{flexDirection: 'column', alignItems:"flex-end"}}>
+          {/* Timestamp */}
+          <Text style={{color: 'white', textAlign: "right", marginVertical: 10, marginRight: 20, fontSize: 11}}>{getTimeSince()}</Text>
+          <TouchableOpacity onPress={() => {deleteComment()}}>
+            <View style={{marginHorizontal:10}}>
+                {(tapped ? (deleteLoading ?  <ActivityIndicator size={20} color="white"/> : <Ionicons name="trash-outline" size={20} color={"red"}/>) : <></>)}
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
-      {/* Timestamp */}
-      <Text style={{color: 'white', textAlign: "right", marginTop: 10, marginRight: 20, fontSize: 11}}>{getTimeSince()}</Text>
-    </View>
+    </TouchableWithoutFeedback>
 )}
 
 const styles = StyleSheet.create({
