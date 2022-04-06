@@ -47,6 +47,7 @@ exports.callback = async function(req, res, next) {
     swa.setAccessToken(result.body['access_token']);
     swa.setRefreshToken(result.body['refresh_token']);
     
+    // Get additional data from Spotify profile
     const me = await swa.getMe();
 
     // Update the current user's document to reflect that they have connected their Spotify
@@ -60,10 +61,12 @@ exports.callback = async function(req, res, next) {
         currentUser.spotify.id = me.body['id'];
         currentUser.spotify.image = me.body['images'][0]?.url;
         await currentUser.save();
+        // Redirect to a success message on the main website
         res.redirect(C.DOMAIN_ROOT + '/message/spotifyconnect/success');
+        return;
     }
 
-    // Redirect to a success message on the main website
+    // Redirect to a failure message on the main website
     res.redirect(C.DOMAIN_ROOT + '/message/spotifyconnect/failure');
 }
 
@@ -87,7 +90,7 @@ exports.getMyPlaylists = async function(req, res, next) {
     do {
         try {
             const result = await swa.getUserPlaylists(options={offset:offset, limit:50});
-            response.playlists = response.playlists.concat(result.body.items.map(x => ({name:x.name, id:x.id, image:x.images[0]?.url})));
+            response.playlists = response.playlists.concat(result.body.items.map(x => ({name:x.name, id:x.id, image:x.images[0]?.url||'http://placehold.jp/3d4070/ffffff/100x100.png?text=Local%0APlaylist'})));
             offset += 50;
             total = result.body.total;
 
