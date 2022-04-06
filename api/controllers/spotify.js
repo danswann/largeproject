@@ -10,15 +10,13 @@ exports.getAuthLink = async function(req, res, next) {
     var response = {ok:true};
 
     // Save userID in very short-lived session for use with the callback from Spotify's website
-    const userID = req.body?.userID;
-    console.log("Test 1:");
-    console.log(userID);
+    const { userID } = req.body;
 
     // Get a SpotifyWebApi instance
     const swa = await SpotifyManager.getHandle();
 
     // List of Spotify API permissions required by our app
-    const scopes = ['playlist-read-private'];
+    const scopes = ['playlist-read-private', 'user-read-private', 'user-read-email'];
 
     // Try to generate the authorization URL
     try {
@@ -45,19 +43,31 @@ exports.callback = async function(req, res, next) {
     const userID = req.query.state;
     const result = await swa.authorizationCodeGrant(code);
 
+    // Use the new tokens to fetch one-time info about the user (name, picture)
+    swa.setAccessToken(result.body['access_token']);
+    swa.setRefreshToken(result.body['refresh_token']);
+    
+    // Get additional data from Spotify profile
+    const me = await swa.getMe();
+
     // Update the current user's document to reflect that they have connected their Spotify
     // account and assign them the access and refresh tokens from Spotify
-    console.log("Test 2");
-    console.log(userID);
     const currentUser = await User.findOne({_id: userID}, 'spotify');
-    currentUser.spotify.connected = true;
-    currentUser.spotify.accessToken = result.body['access_token'];
-    currentUser.spotify.refreshToken = result.body['refresh_token'];
-    currentUser.spotify.expiration = Date.now() + result.body['expires_in'] * 1000;
-    await currentUser.save();
+    if(currentUser) {
+        currentUser.spotify.connected = true;
+        currentUser.spotify.accessToken = result.body['access_token'];
+        currentUser.spotify.refreshToken = result.body['refresh_token'];
+        currentUser.spotify.expiration = Date.now() + result.body['expires_in'] * 1000;
+        currentUser.spotify.id = me.body['id'];
+        currentUser.spotify.image = me.body['images'][0]?.url;
+        await currentUser.save();
+        // Redirect to a success message on the main website
+        res.redirect(C.DOMAIN_ROOT + '/message/spotifyconnect/success');
+        return;
+    }
 
-    // Redirect to a success message on the main website
-    res.redirect(C.DOMAIN_ROOT + '/message/spotifyconnect/success');
+    // Redirect to a failure message on the main website
+    res.redirect(C.DOMAIN_ROOT + '/message/spotifyconnect/failure');
 }
 
 /**
@@ -74,16 +84,22 @@ exports.getMyPlaylists = async function(req, res, next) {
     const swa = await SpotifyManager.getHandle(userID);
 
     // Get the current user's playlists from Spotify
-    //TODO: loop to get all playlists instead of just the first 50
-    try {
-        const result = await swa.getUserPlaylists(options={limit:50});
-        response.playlists = result.body.items.map(x => ({name: x.name, id:x.id}));
-    }
-    catch(err) {
-        response.ok = false;
-        response.error = err.name + ": " + err.message;
-        console.log(err);
-    }
+    response.playlists = [];
+    var offset = 0;
+    var total = 0;
+    do {
+        try {
+            const result = await swa.getUserPlaylists(options={offset:offset, limit:50});
+            response.playlists = response.playlists.concat(result.body.items.map(x => ({name:x.name, id:x.id, image:x.images[0]?.url||'http://placehold.jp/3d4070/ffffff/100x100.png?text=Local%0APlaylist'})));
+            offset += 50;
+            total = result.body.total;
+
+        } catch(err) {
+            response.ok = false;
+            response.error = err.name + ": " + err.message;
+        }
+
+    } while(total > offset);
 
     // Return results
     res.status(200).json(response);

@@ -28,6 +28,8 @@ const UserSchema = new Schema({
     emailToken: {type:String},
     spotify: {
         connected: {type:Boolean, required:true, default:false},
+        id: {type:String},
+        image: {type:String},
         accessToken: {type:String},
         refreshToken: {type:String},
         expiration: {type:Date}
