@@ -42,6 +42,7 @@ export default function PostBox(props) {
         setLoading(true)
         getPostDataFromID()
         getDataFromID()
+        
         if (isFocused)
             setLoading(false)
     }
@@ -54,7 +55,7 @@ export default function PostBox(props) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({postID: props.postID})
         };
-        await fetch(`${API_URL}/api/post/getPost`, requestOptions)
+        fetch(`${API_URL}/api/post/getPost`, requestOptions)
             .then((response) => response.json())
             .then((response) => {
                 if(!response.ok)
@@ -69,9 +70,9 @@ export default function PostBox(props) {
                     setTimeStamp(response.post.timeStamp)
                     setLikedBy(response.post.likedBy)
                     setComments(response.post.comments)
-                    setLikeCount(likedBy.length)
-                    setCommentCount(comments.length)
-                    setLiked(likedBy.find(user => user === props.myUserID))
+                    setLikeCount(response.post.likedBy.length)
+                    setCommentCount(response.post.comments.length)
+                    setLiked(response.post.likedBy.find(user => user === props.myUserID))
                     setLikeLoading(false)
                 }
             })
@@ -139,7 +140,7 @@ export default function PostBox(props) {
             setCommentsExpanded(true)
     }
     //like post
-    function likePost(){
+    async function likePost(){
         setLikeLoading(true)
         const requestOptions = {
             method: "POST",
@@ -155,16 +156,7 @@ export default function PostBox(props) {
                 return
             }
             if(isFocused){
-                if(response.action == "post successfully liked")
-                {
-                    setLiked(true)
-                    getPostDataFromID()
-                }
-                else
-                {
-                    setLiked(false)
-                    getPostDataFromID()
-                }
+                getPostDataFromID()
             }
         })
     };
