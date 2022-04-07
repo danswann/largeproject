@@ -50,9 +50,18 @@ export default function ProfileBox(props) {
             </Text>
           </TouchableOpacity>
 
-          <Text style={styles.ProfileStatsText}>
-            {props.followingCount + "\nFollowing"}
-          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              props.navigation.navigate({
+                name: "FollowingList",
+                params: { userID: props.userID },
+              });
+            }}
+          >
+            <Text style={styles.ProfileStatsText}>
+              {props.followingCount + "\nFollowing"}
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>

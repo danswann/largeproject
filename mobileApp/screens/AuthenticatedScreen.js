@@ -20,6 +20,7 @@ import ProfileScreen from "./ProfileScreen";
 import ChatScreen from "./ChatScreen";
 import EditProfileScreen from "./EditProfileScreen";
 import FollowersListScreen from "./FollowersListScreen";
+import FollowingListScreen from "./FollowingListScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -110,6 +111,13 @@ const AuthenticatedScreen = ({ route, navigation }) => {
         <Tab.Screen
           name="FollowersList"
           component={FollowersListScreen}
+          options={{ tabBarButton: () => null }}
+          initialParams={{ userID: 0, myUserID: userID }}
+          backBehavior={"history"}
+        />
+        <Tab.Screen
+          name="FollowingList"
+          component={FollowingListScreen}
           options={{ tabBarButton: () => null }}
           initialParams={{ userID: 0, myUserID: userID }}
           backBehavior={"history"}
