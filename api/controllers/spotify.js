@@ -90,7 +90,12 @@ exports.getMyPlaylists = async function(req, res, next) {
     do {
         try {
             const result = await swa.getUserPlaylists(options={offset:offset, limit:50});
-            response.playlists = response.playlists.concat(result.body.items.map(x => ({name:x.name, id:x.id, image:x.images[0]?.url||'http://placehold.jp/3d4070/ffffff/100x100.png?text=Local%0APlaylist'})));
+            response.playlists = response.playlists.concat(result.body.items.map(x => ({
+                name:x.name,
+                id:x.id,
+                image:x.images[0]?.url||'http://placehold.jp/3d4070/ffffff/100x100.png?text=Local%0APlaylist',
+                public:x.public
+            })));
             offset += 50;
             total = result.body.total;
 
