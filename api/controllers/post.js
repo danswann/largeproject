@@ -423,7 +423,7 @@ exports.homeFeed = async function(req, res, next) {
     {
         // Find post by postID
         const filter2 = {userID: followingArray.following};
-        const post = await Post.find(filter2).sort({ timeStamp: 'desc'}).skip(currentIndex).limit(numberOfPosts);
+        const post = await Post.find(filter2).sort({ timeStamp: 'desc'}).skip(currentIndex).limit(numberOfPosts).lean();
 
         if(post)
         {
@@ -440,9 +440,16 @@ exports.homeFeed = async function(req, res, next) {
                 response.message = 'numberOfPosts was defaulted to 5';
             }
             response.length = post.length;
-            response.posts = post.toObject();
+            response.posts = post;
             for(p of response.posts) {
-                p.playlist = await Spotify.getPlaylistData(p.userID, p.playlistID);
+                try {
+                    p.playlist = await Spotify.getPlaylistData(p.userID, p.playlistID);
+                } catch(err) {
+                    response.ok = false;
+                    response.error = 'Could not fetch playlist with ID "' + p.playlistID + '" and author "' + p.userID + '"';
+                    res.status(200).json(response);
+                    return;
+                }
             };
             res.status(200).json(response);
         }
