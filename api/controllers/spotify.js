@@ -1,5 +1,6 @@
 const C = require('../../constants');
 const SpotifyManager = require('../spotify/manager');
+const Spotify = require('../spotify/main');
 const User = require('../models/user');
 
 /**
@@ -52,7 +53,7 @@ exports.callback = async function(req, res, next) {
 
     // Update the current user's document to reflect that they have connected their Spotify
     // account and assign them the access and refresh tokens from Spotify
-    const currentUser = await User.findOne({_id: userID}, 'spotify');
+    const currentUser = await User.findById(userID, 'spotify');
     if(currentUser) {
         currentUser.spotify.connected = true;
         currentUser.spotify.accessToken = result.body['access_token'];
@@ -80,6 +81,14 @@ exports.getMyPlaylists = async function(req, res, next) {
     // Input userID
     const { userID } = req.body;
 
+    const currentUser = await User.findById(userID, 'spotify');
+    if(!currentUser) {
+        response.ok = false;
+        response.error = 'Invalid User ID';
+        res.status(200).json(response);
+        return;
+    }
+
     // Get a SpotifyWebApi instance
     const swa = await SpotifyManager.getHandle(userID);
 
@@ -93,8 +102,9 @@ exports.getMyPlaylists = async function(req, res, next) {
             response.playlists = response.playlists.concat(result.body.items.map(x => ({
                 name:x.name,
                 id:x.id,
-                image:x.images[0]?.url||'http://placehold.jp/3d4070/ffffff/100x100.png?text=Local%0APlaylist',
-                public:x.public
+                image:x.images[0]?.url||'http://placehold.jp/3d4070/ffffff/100x100.png?text=No%0Art',
+                public:x.public,
+                owner: x.owner.id
             })));
             offset += 50;
             total = result.body.total;
@@ -106,6 +116,35 @@ exports.getMyPlaylists = async function(req, res, next) {
 
     } while(total > offset);
 
+    // Filter to only playlist's owned by the current user
+    response.playlists = response.playlists.filter(x => x.owner == currentUser.spotify.id);
+    // Remove extra fields
+    response.playlists = response.playlists.map(({owner, ...rest}) => {return rest});
+
     // Return results
+    res.status(200).json(response);
+}
+
+/**
+ * Gets details on a single playlist from a user by ID
+ */
+exports.getPlaylistData = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true}
+
+    // Input userID and playlistID
+    const { userID, playlistID } = req.body;
+    
+    // Get playlist data
+    try {
+        response.playlist = await Spotify.getPlaylistData(userID, playlistID);
+    } catch(err) {
+        response.ok = false;
+        response.error = err.name + ": " + err.message;
+        res.status(200).json(response);
+        return;
+    }
+
+    // Return result
     res.status(200).json(response);
 }

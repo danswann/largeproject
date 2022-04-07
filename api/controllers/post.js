@@ -1,5 +1,6 @@
 const Post = require('../models/post');
 const Notification = require('../models/notification');
+const Spotify = require('../spotify/main');
 const User = require('../models/user');
 
 function checkObjectId (id) {
@@ -361,7 +362,9 @@ exports.getPost = async function(req, res, next) {
     // If the post exists, return ok:true
     if(post)
     {
-        response.post = post;
+        response.post = post.toObject();
+        response.post.playlist = await Spotify.getPlaylistData(post.userID, post.playlistID);
+        console.log(response.post.playlist);
         res.status(200).json(response);
     }
     // Otherwise return ok:false and the error message
@@ -437,7 +440,10 @@ exports.homeFeed = async function(req, res, next) {
                 response.message = 'numberOfPosts was defaulted to 5';
             }
             response.length = post.length;
-            response.posts = post;
+            response.posts = post.toObject();
+            for(p of response.posts) {
+                p.playlist = await Spotify.getPlaylistData(p.userID, p.playlistID);
+            };
             res.status(200).json(response);
         }
         // Otherwise return ok:false and the error message
