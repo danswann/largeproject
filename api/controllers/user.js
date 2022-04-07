@@ -517,8 +517,9 @@ exports.showFollowers = async function(req, res, next) {
             else
             {
                 response.ok = false;
-                response.error = 'follower id not found';
+                response.error = 'follower id not found ' + user.followers[i];
                 res.status(200).json(response);
+                return;
             }
         }
         // Returns followers array with ok response
@@ -577,8 +578,9 @@ exports.showFollowings = async function(req, res, next) {
             else
             {
                 response.ok = false;
-                response.error = 'followering id not found';
+                response.error = 'followering id not found ' + user.following[i];
                 res.status(200).json(response);
+                return;
             }
         }
         // Returns following array with ok response
@@ -721,7 +723,7 @@ exports.searchByUsername = async function(req, res, next) {
     // Incoming values
     var partialUsername = req.body.username;
     var searchKey = new RegExp(partialUsername);
-    
+
     // Using $regex in order to get partial matching, 'i' option makes it case-sensitive
     var filter = {username: {$regex: searchKey, $options: 'i'}};
     const projection = {password: 0};
