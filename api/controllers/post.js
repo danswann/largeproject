@@ -254,44 +254,36 @@ exports.deletePost = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
-    const {postID} = req.body;
+    const userID = req.body.userID;
+    const postID = req.body.postID;
+
+    // Check if userID is valid object id
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid userID ' + userID;
+        return res.status(200).json(response);
+    }
 
     // Check if postID is valid object id
     if(!checkObjectId(postID)) {
         response.ok = false;
         response.error = 'Invalid postID ' + postID;
-        res.status(200).json(response);
-        return;
+        return res.status(200).json(response);
     }
 
-    const post = await Post.deleteOne({_id:postID});
+    const post = await Post.deleteOne({_id:postID, userID:userID});
 
     // If the post exists, return ok:true
-    if(post)
+    if(post.deletedCount > 0)
     {
-        // Removes post from users' bookmark array
-        const filter = {};
-        const update = {$pullAll:{bookmarks:[postID]}};
-        const user = await User.updateMany(filter, update);
-
-        if (user)
-        {
-            response.action = 'post successfully deleted';
-            res.status(200).json(response);
-        }
-        // Otherwise return ok:false and the error message
-        else
-        {
-            response.ok = false;
-            response.error = 'Invalid user id or cannot remove from bookmarks';
-            res.status(200).json(response);
-        }
+        response.action = 'post successfully deleted';
+        res.status(200).json(response);
     }
     // Otherwise return ok:false and the error message
     else
     {
         response.ok = false;
-        response.error = 'Invalid id or cannot delete';
+        response.error = 'Cannot delete (postID not in database)';
         res.status(200).json(response);
     }
 }
@@ -301,7 +293,17 @@ exports.deleteComment = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
-    const {postID, commentID} = req.body;
+    const userID = req.body.userID;
+    const postID = req.body.postID;
+    const commentID = req.body.commentID;
+
+    // Check if userID is valid object id
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid userID ' + userID;
+        res.status(200).json(response);
+        return;
+    }
 
     // Check if postID is valid object id
     if(!checkObjectId(postID)) {
@@ -321,7 +323,7 @@ exports.deleteComment = async function(req, res, next) {
 
     // find post by postID
     const filter = {_id:postID};
-    const update = { $pull: {comments: {_id:commentID}}};
+    const update = { $pull: {comments: {_id:commentID, userID:userID}}};
     const options = {new: true};
     const post = await Post.findOneAndUpdate(filter, update, options);
 
@@ -475,16 +477,28 @@ exports.editCaption = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
-    const {postID, caption} = req.body;
+    const userID = req.body.userID;
+    const postID = req.body.postID;
+    const caption = req.body.caption;
 
+    if (!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid userID ' + userID;
+        return res.status(200).json(response);
+    }
     if (!checkObjectId(postID)) {
         response.ok = false;
         response.error = 'Invalid postID ' + postID;
-        res.status(200).json(response);
-        return;
+        return res.status(200).json(response);
+    }
+    if (caption == null)
+    {
+        response.ok = false;
+        response.error = 'caption null';
+        return res.status(200).json(response);
     }
 
-    const updateCaption = await Post.findOneAndUpdate({_id:postID},{caption:caption});
+    const updateCaption = await Post.findOneAndUpdate({_id:postID, userID:userID},{caption:caption});
 
     // If the post exists and the caption was updates, return ok:true
     if (updateCaption)
@@ -496,7 +510,7 @@ exports.editCaption = async function(req, res, next) {
     else
     {
         response.ok = false;
-        response.error = 'Invalid id or cannot edit caption';
+        response.error = 'Post not found or UserID does not match creator of post';
         res.status(200).json(response);
     }
 }

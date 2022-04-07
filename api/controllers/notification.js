@@ -21,7 +21,7 @@ exports.getAllNotifications = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
-    const {userID} = req.body;
+    const userID = req.body.userID;
 
     // Check if user id is valid object id
     if(!checkObjectId(userID)) {
@@ -55,18 +55,27 @@ exports.deleteOneNotification = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
-    const {notificationID} = req.body;
+    const userID = req.body.userID;
+    const notificationID = req.body.notificationID;
 
-    // Check if notification id is valid object id
+    // Check if userID is valid object id
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid userID ' + userID;
+        res.status(200).json(response);
+        return;
+    }
+
+    // Check if notificationID is valid object id
     if(!checkObjectId(notificationID)) {
         response.ok = false;
-        response.error = 'Invalid notification id';
+        response.error = 'Invalid notificationID ' + notificationID;
         res.status(200).json(response);
         return;
     }
 
     // delete notification with given notification id
-    const filter = {_id:notificationID};
+    const filter = {_id:notificationID, userID:userID};
     const notification = await Notification.deleteOne(filter);
 
     // If notification deleted then return ok
@@ -92,12 +101,12 @@ exports.deleteAllNotifications = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
-    const {userID} = req.body;
+    const userID = req.body.userID;
 
     // Check if user id is valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
-        response.error = 'Invalid user id';
+        response.error = 'Invalid userID ' + userID;
         res.status(200).json(response);
         return;
     }
@@ -129,12 +138,12 @@ exports.readAllNotifications = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
-    const {userID} = req.body;
+    const userID = req.body.userID;
 
-    // Check if user id is valid object id
+    // Check if userID is valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
-        response.error = 'Invalid user id';
+        response.error = 'Invalid userID ' + userID;
         res.status(200).json(response);
         return;
     }

@@ -1,6 +1,5 @@
 const User = require('../models/user');
 const Notification = require('../models/notification');
-const RefreshToken = require('../models/refreshtokens');
 const crypto = require('crypto');
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -28,6 +27,7 @@ exports.refreshToken = async function(req, res, next) {
 
     // Incoming value
     const refreshToken = req.body.refreshToken;
+    const userID = req.body.userID;
 
     // If refreshToken is empty, then return ok:false
     if (refreshToken == null)
@@ -37,8 +37,14 @@ exports.refreshToken = async function(req, res, next) {
         return res.status(200).json(response);
     }
 
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid userID ' + userID;
+        return res.status(200).json(response);
+    }
+
     // Check if refreshToken is in the database
-    const token = await RefreshToken.findOne({refreshToken:refreshToken});
+    const token = await User.findOne({refreshToken:refreshToken});
 
     // If it is not, then return ok:false
     if (token == undefined)
@@ -57,34 +63,48 @@ exports.refreshToken = async function(req, res, next) {
             response.error = err;
             return res.status(200).json(response);
         }
+        else if (user.userID != userID)
+        {
+            response.ok = false;
+            response.error = 'Wrong user';
+            return res.status(200).json(response);
+        }
         // If verifiable, then return a newly generated access token
-        const accessToken = jwt.sign({ userID: user.userID }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10m' });
+        const accessToken = jwt.sign({ userID: user.userID }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
         response.userID = user.userID;
         response.token = accessToken;
         res.status(200).json(response);
     });
 }
 
-exports.deleteToken = async function(req, res, next) {
+exports.deleteRefreshToken = async function(req, res, next) {
     // Default response object
     var response = {ok:true};
 
     // Incoming value
-    const refreshToken = req.body.refreshToken;
+    const userID = req.body.userID;
+
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid userID ' + userID;
+        res.status(200).json(response);
+        return;
+    }
 
     // Delete refresh token from database
-    const filter = {refreshToken: refreshToken};
-    const token = await RefreshToken.deleteOne(filter);
+    const filter = {_id: userID};
+    const update = {refreshToken: ""};
+    const token = await User.findOneAndUpdate(filter, update);
 
     // If refreshToken deleted, returk ok:true
-    if (token.deletedCount > 0)
+    if (token)
     {
-        response.msg = 'token deleted';
+        response.msg = 'refresh token deleted from database';
         res.status(200).json(response);
     }
     else
     {
-        response.msg = 'token not found';
+        response.msg = 'user not found in database';
         res.status(200).json(response);
     }
 }
@@ -94,7 +114,21 @@ exports.login = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
-    const {username, password} = req.body;
+    const username = req.body.username;
+    const password = req.body.password;
+
+    if (username == null)
+    {
+        response.ok = false;
+        response.error = 'username null';
+        return res.status(200).json(response);
+    }
+    if (password == null)
+    {
+        response.ok = false;
+        response.error = 'password null';
+        return res.status(200).json(response);
+    }
 
     // Attempt to find a user with matching username/password
     const filter = {username: username, password: password};
@@ -105,11 +139,11 @@ exports.login = async function(req, res, next) {
     if(user)
     {
         // Create token
-        const token = jwt.sign(
+        const accessToken = jwt.sign(
             {userID: user._id},
             process.env.ACCESS_TOKEN_SECRET,
             {
-                expiresIn: "15m",
+                expiresIn: "1h",
             }
         );
 
@@ -117,29 +151,27 @@ exports.login = async function(req, res, next) {
             {userID: user._id},
             process.env.REFRESH_TOKEN_SECRET,
             {
-                expiresIn: "1D",
+                expiresIn: "2D",
             }
         );
 
-        var newRefreshToken = new RefreshToken({
-            refreshToken: refreshToken
-        });
+        const filter2 = {_id: user._id};
+        const update = {refreshToken: refreshToken};
+        const user2 = await User.findOneAndUpdate(filter2, update, {upsert: true});
 
-        // Save the new instance
-        newRefreshToken.save(function (err) {
-            // If an error occurs, return ok:false and the error message
-            if(err)
-            {
-                response.ok = false;
-                response.error = err;
-                res.status(200).json(response);
-            }
-        });
-
-        response.token = token;
-        response.refreshToken = refreshToken;
-        response.user = user.toJSON();
-        res.status(200).json(response);
+        if (user2)
+        {
+            response.accessToken = accessToken;
+            response.refreshToken = refreshToken;
+            response.user = user.toJSON();
+            res.status(200).json(response);
+        }
+        else
+        {
+            response.ok = false;
+            response.error = 'Could not save refresh token for some reason';
+            res.status(200).json(response);
+        }
     }
     // Otherwise return ok:false and the error message
     else
@@ -153,27 +185,30 @@ exports.login = async function(req, res, next) {
 exports.register = async function(req, res, next)
 {
     // Default response object
-    var response = {ok:true}
+    var response = {ok:true};
 
     // Required incoming values
-    if (req.body.email == undefined)
-    {
-        response.message = 'email not there!';
-        res.status(200).json(response);
-    }
-    if (req.body.username == undefined)
-    {
-        response.message = 'username not there!';
-        res.status(200).json(response);
-    }
-    if (req.body.password == undefined)
-    {
-        response.message = 'password not there!';
-        res.status(200).json(response);
-    }
     const email = req.body.email;
     const username = req.body.username;
     const password = req.body.password;
+    if (email == null)
+    {
+        response.ok = false;
+        response.message = 'email null';
+        return res.status(200).json(response);
+    }
+    if (username == null)
+    {
+        response.ok = false;
+        response.message = 'username null';
+        return res.status(200).json(response);
+    }
+    if (password == null)
+    {
+        response.ok = false;
+        response.message = 'password null';
+        return res.status(200).json(response);
+    }
 
     // Create a new instance of User model
     var newUser = new User({
@@ -274,10 +309,11 @@ exports.verifyEmail = async function(req, res, next)
 exports.followUser = async function(req, res, next)
 {
     // Default response object
-    var response = {ok:true}
+    var response = {ok:true};
 
     // Incoming values
-    const {userID, followingID} = req.body;
+    const userID = req.body.userID;
+    const followingID = req.body.followingID;
 
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
@@ -346,7 +382,8 @@ exports.unfollowUser = async function(req, res, next)
     var response = {ok:true}
 
     // Incoming values
-    const {userID, followingID} = req.body;
+    const userID = req.body.userID;
+    const followingID = req.body.followingID;
 
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
@@ -405,82 +442,12 @@ exports.unfollowUser = async function(req, res, next)
     }
 }
 
-exports.bookmarkPost = async function(req, res, next) {
-    // Default response object
-    var response = {ok:true}
-
-    // Incoming values
-    const {userID, postID} = req.body;
-
-    // Check if userID is a valid object id
-    if(!checkObjectId(userID)) {
-        response.ok = false;
-        response.error = 'Invalid userID ' + userID;
-        res.status(200).json(response);
-        return;
-    }
-
-    // Check if postID is a valid object id
-    if(!checkObjectId(postID)) {
-        response.ok = false;
-        response.error = 'Invalid postID ' + postID;
-        res.status(200).json(response);
-        return;
-    }
-
-    // Check if already bookmarked
-    const checkBookmark = await User.find({_id:userID,bookmarks:{$in:[postID]}});
-
-    if(checkBookmark != '')
-    {
-        // deleting a bookmark
-        const filter = {_id:userID};
-        const update = {$pull:{bookmarks:postID}};
-        const user = await User.findOneAndUpdate(filter, update);
-
-        // If the user exists, return ok:true
-        if(user)
-        {
-            response.action = 'bookmark successfully removed';
-            res.status(200).json(response);
-        }
-        // Otherwise return ok:false and the error message
-        else
-        {
-            response.ok = false;
-            response.error = 'Invalid id or cannot remove';
-            res.status(200).json(response);
-        }
-    }
-    else
-    {
-        // update user with postID
-        const filter = {_id:userID};
-        const update = {$push:{bookmarks:postID}};
-        const user = await User.findOneAndUpdate(filter, update);
-
-        // If the user exists, return ok:true
-        if(user)
-        {
-            response.action = 'post successfully bookmarked';
-            res.status(200).json(response);
-        }
-        // Otherwise return ok:false and the error message
-        else
-        {
-            response.ok = false;
-            response.error = 'Cannot add bookmark';
-            res.status(200).json(response);
-        }
-    }
-}
-
 exports.showFollowers = async function(req, res, next) {
     // Default response object
     var response = {ok:true}
 
     // Incoming values
-    const {userID} = req.body;
+    const userID = req.body.userID;
 
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
@@ -518,8 +485,7 @@ exports.showFollowers = async function(req, res, next) {
             {
                 response.ok = false;
                 response.error = 'follower id not found ' + user.followers[i];
-                res.status(200).json(response);
-                return;
+                return res.status(200).json(response);
             }
         }
         // Returns followers array with ok response
@@ -541,7 +507,7 @@ exports.showFollowings = async function(req, res, next) {
     var response = {ok:true}
 
     // Incoming values
-    const {userID} = req.body;
+    const userID = req.body.userID;
 
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
@@ -601,7 +567,7 @@ exports.searchUser = async function(req, res, next) {
     var response = {ok:true}
 
     // Incoming values
-    const {userID} = req.body;
+    const userID = req.body.userID;
 
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
@@ -634,7 +600,8 @@ exports.changeUsername = async function(req, res, next) {
     var response = {ok:true}
 
     // Incoming values
-    const {userID, username} = req.body;
+    const userID = req.body.userID;
+    const username = req.body.username;
 
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
@@ -642,6 +609,12 @@ exports.changeUsername = async function(req, res, next) {
         response.error = 'Invalid userID ' + userID;
         res.status(200).json(response);
         return;
+    }
+    if (username == null)
+    {
+        response.ok = false;
+        response.message = 'username null';
+        return res.status(200).json(response);
     }
 
     // Searchs for single user and only returns username field
@@ -686,7 +659,8 @@ exports.changePassword = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
-    const {userID, password} = req.body;
+    const userID = req.body.userID;
+    const password = req.body.password;
 
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
@@ -694,6 +668,12 @@ exports.changePassword = async function(req, res, next) {
         response.error = 'Invalid userID ' + userID;
         res.status(200).json(response);
         return;
+    }
+    if (password == null)
+    {
+        response.ok = false;
+        response.message = 'password null';
+        return res.status(200).json(response);
     }
 
     // Searchs for single user and updates password field
