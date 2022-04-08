@@ -7,7 +7,7 @@ import { AuthContext } from "../Context";
 
 // COMPONENT BODY
 export default function HomeScreen({ route, navigation }) {
-  const {userID, refreshToken} = route.params
+  const {userID, accessToken, refreshToken} = route.params
   const [currentIndex, setCurrentIndex] = useState(0);
   const [feed, setFeed] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,12 +21,12 @@ export default function HomeScreen({ route, navigation }) {
 
   async function getFeed()
   {
-    //gets access token (this function must be async)
-    const access = await refresh(userID, refreshToken)
+    //refreshes access token (this function must be async)
+    //const access = await refresh(userID, refreshToken)
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({userID: userID, currentIndex: currentIndex, accessToken: access})
+      body: JSON.stringify({userID: userID, currentIndex: currentIndex, accessToken: accessToken})
     };
     fetch(`${API_URL}/api/post/homeFeed`, requestOptions)
       .then((response) => response.json())
@@ -61,7 +61,7 @@ export default function HomeScreen({ route, navigation }) {
       </View>) :
       (<FlatList
         data={feed}
-        renderItem={({item}) => <PostBox navigation={navigation} postID={item._id} playlistID={item.playlistID} userID={item.author} myUserID={userID} refreshToken={refreshToken}/>}
+        renderItem={({item}) => <PostBox navigation={navigation} postID={item._id} playlistID={item.playlistID} userID={item.author} myUserID={userID} accessToken={accessToken} refreshToken={refreshToken}/>}
         keyExtractor={(item, index) => index.toString()}
       />))
       :

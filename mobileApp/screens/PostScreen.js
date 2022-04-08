@@ -9,7 +9,7 @@ import { AuthContext } from "../Context";
 export default function PostScreen({ route, navigation }) {
 
   const [URL, setURL] = useState("")
-  const {userID, refreshToken} = route.params
+  const {userID, accessToken, refreshToken} = route.params
   const [connected, setConnected] = useState(false)
   const [playlists, setPlaylists] = useState([])
   const [dropped, setDropped] = useState(false)
@@ -94,11 +94,11 @@ export default function PostScreen({ route, navigation }) {
   //Gets spotify playlists from api
   async function getPlaylists()
   {
-    const access = await refresh(userID, refreshToken)
+    //const access = await refresh(userID, refreshToken)
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({userID: userID, accessToken: access})
+      body: JSON.stringify({userID: userID, accessToken: accessToken})
     };
     fetch(`${API_URL}/api/spotify/getMyPlaylists`, requestOptions)
       .then((response) => response.json())
