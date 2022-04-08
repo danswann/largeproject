@@ -6,13 +6,13 @@ const postController = require('../controllers/post');
 
 // Functions not using middleware
 router.post('/getPost', postController.getPost);
+router.post('/getAllUsersPost', postController.getAllUsersPost);
 
 // Call middleware function
 router.use(auth.jwtAuth);
 
 // Functions using middleware
 router.post('/newPost', postController.newPost);
-router.post('/getAllUsersPost', postController.getAllUsersPost);
 router.post('/likePost', postController.likePost);
 router.post('/commentOnPost', postController.commentOnPost);
 router.post('/editCaption', postController.editCaption);

@@ -9,8 +9,6 @@ router.use(auth.jwtAuth);
 
 // Functions using middleware
 router.post('/getAllNotifications', notificationController.getAllNotifications);
-router.post('/deleteOneNotification', notificationController.deleteOneNotification);
 router.post('/deleteAllNotifications', notificationController.deleteAllNotifications);
-router.post('/readAllNotifications', notificationController.readAllNotifications);
 
 module.exports = router;

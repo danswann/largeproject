@@ -106,16 +106,14 @@ exports.likePost = async function(req, res, next) {
     if(!checkObjectId(postID)) {
         response.ok = false;
         response.error = 'Invalid postID ' + postID;
-        res.status(200).json(response);
-        return;
+        return res.status(200).json(response);
     }
 
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
         response.error = 'Invalid userID ' + userID;
-        res.status(200).json(response);
-        return;
+        return res.status(200).json(response);
     }
 
     // Check if already liked
@@ -133,14 +131,14 @@ exports.likePost = async function(req, res, next) {
         if(post)
         {
             response.action = 'post successfully unliked';
-            res.status(200).json(response);
+            return res.status(200).json(response);
         }
         // Otherwise return ok:false and the error message
         else
         {
             response.ok = false;
             response.error = 'Invalid id or cannot delete';
-            res.status(200).json(response);
+            return res.status(200).json(response);
         }
     }
     // Add a like to the post if the user has not already liked
@@ -158,7 +156,7 @@ exports.likePost = async function(req, res, next) {
             var newNotification = new Notification({
                 notificationType: 1,
                 post: postID,
-                user: post.userID,
+                user: post.author,
                 sender: userID
             });
 
@@ -169,19 +167,19 @@ exports.likePost = async function(req, res, next) {
                 {
                     response.ok = false;
                     response.error = err;
-                    res.status(200).json(response);
+                    return res.status(200).json(response);
                 }
             });
 
             response.action = 'post successfully liked';
-            res.status(200).json(response);
+            return res.status(200).json(response);
         }
         // Otherwise return ok:false and the error message
         else
         {
             response.ok = false;
             response.error = 'Invalid id or cannot add';
-            res.status(200).json(response);
+            return res.status(200).json(response);
         }
     }
 }

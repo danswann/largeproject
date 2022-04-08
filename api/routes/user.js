@@ -12,6 +12,8 @@ router.post('/register', userController.register);
 router.get('/verifyEmail', userController.verifyEmail);
 router.post('/searchByUsername', userController.searchByUsername);
 router.post('/searchUser', userController.searchUser);
+router.post('/showFollowers', userController.showFollowers);
+router.post('/showFollowings', userController.showFollowings);
 
 // Call middleware function
 router.use(auth.jwtAuth);
@@ -19,8 +21,6 @@ router.use(auth.jwtAuth);
 // Functions using middleware
 router.post('/followUser', userController.followUser);
 router.post('/unfollowUser', userController.unfollowUser);
-router.post('/showFollowers', userController.showFollowers);
-router.post('/showFollowings', userController.showFollowings);
 router.post('/changeUsername', userController.changeUsername);
 router.post('/changePassword', userController.changePassword);
 

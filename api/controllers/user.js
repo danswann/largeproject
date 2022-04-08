@@ -132,7 +132,7 @@ exports.login = async function(req, res, next) {
 
     // Attempt to find a user with matching username/password
     const filter = {username: username, password: password};
-    const projection = {password: 0};
+    const projection = {_id: 1, isVerified: 1};
     const user = await User.findOne(filter, projection);
 
     // If the user exists, return ok:true and the user's details
@@ -143,7 +143,7 @@ exports.login = async function(req, res, next) {
             {userID: user._id},
             process.env.ACCESS_TOKEN_SECRET,
             {
-                expiresIn: "1h",
+                expiresIn: "30D",
             }
         );
 
@@ -151,7 +151,7 @@ exports.login = async function(req, res, next) {
             {userID: user._id},
             process.env.REFRESH_TOKEN_SECRET,
             {
-                expiresIn: "2D",
+                expiresIn: "364D",
             }
         );
 
@@ -191,22 +191,23 @@ exports.register = async function(req, res, next)
     const email = req.body.email;
     const username = req.body.username;
     const password = req.body.password;
+
     if (email == null)
     {
         response.ok = false;
-        response.message = 'email null';
+        response.error = 'email null';
         return res.status(200).json(response);
     }
     if (username == null)
     {
         response.ok = false;
-        response.message = 'username null';
+        response.error = 'username null';
         return res.status(200).json(response);
     }
     if (password == null)
     {
         response.ok = false;
-        response.message = 'password null';
+        response.error = 'password null';
         return res.status(200).json(response);
     }
 
@@ -255,7 +256,6 @@ exports.register = async function(req, res, next)
                 console.error(error)
             })
 
-            response.message = 'Succesfully added user!';
             res.status(200).json(response);
         }
     });
@@ -319,16 +319,14 @@ exports.followUser = async function(req, res, next)
     if(!checkObjectId(userID)) {
         response.ok = false;
         response.error = 'Invalid userID ' + userID;
-        res.status(200).json(response);
-        return;
+        return res.status(200).json(response);
     }
 
     // Check if followingID is a valid object id
     if(!checkObjectId(followingID)) {
         response.ok = false;
         response.error = 'Invalid followingID ' + followingID;
-        res.status(200).json(response);
-        return;
+        return res.status(200).json(response);
     }
 
     // Find user by userID and add following to following array if it doesn't exist already
@@ -350,7 +348,6 @@ exports.followUser = async function(req, res, next)
         // If the follower exists and is updated, return ok:true and the user's details
         if (user2)
         {
-            response.user = user;
             res.status(200).json(response);
         }
         // Otherwise return ok:false and the error message
