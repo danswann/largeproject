@@ -85,6 +85,7 @@ const AuthenticatedScreen = ({ route, navigation }) => {
           name="Notification"
           component={NotificationScreen}
           options={{ tabBarBadge: 3 }}
+          initialParams={{ userID: userID }}
         />
         <Tab.Screen
           name="Profile"
@@ -93,7 +94,7 @@ const AuthenticatedScreen = ({ route, navigation }) => {
         />
         <Tab.Screen
           name="Chat"
-          component={ChatScreen}
+          component={ChatScreen}          
           options={{ tabBarButton: () => null }}
         />
         <Tab.Screen

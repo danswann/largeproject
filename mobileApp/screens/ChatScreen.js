@@ -1,4 +1,4 @@
-import React from "react";
+import {React, useState, useEffect} from "react";
 import {
   StyleSheet, 
   TouchableWithoutFeedback,
@@ -17,6 +17,7 @@ import {
   TouchableHighlight} from "react-native";
 
 import ChatBox from "../components/ChatBox";
+import { API_URL } from "../constants/Info";
 import { NavigationContainer, NavigationHelpersContext } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
@@ -26,7 +27,61 @@ import { Ionicons } from "@expo/vector-icons";
 const Tab = createMaterialTopTabNavigator();
 
 export default function ChatScreen({ route, navigation }) {
-  const { name, messages } = route.params;  
+  const { myUserID, name, chat } = route.params;  
+  const [messageInput, setMessageInput] = useState("");
+  const [messageLoading, setMessageLoading] = useState(false);
+  const [messages, setMessages] = useState(chat)
+
+  function sentByMe(userID) {
+    if (userID === myUserID)
+      return true
+    return false
+  }  
+
+  function updateChat(messages) {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({dmID: messages.postID})
+    };
+    fetch(`${API_URL}/api/directMessage/getDM`, requestOptions)
+    .then((response) => response.json())
+    .then((response) => {
+      if(!response.ok)
+      {
+      console.log(response.error)
+      return
+      }
+      setMessages(response.dm)
+    })
+  }
+
+  function sendMessage() {
+    if (messageInput == "")
+        return
+    setMessageLoading(true)        
+    const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({id: messages.postID, text: messageInput, userID: myUserID})            
+    };
+    fetch('${API_URL}/api/directMessage/sendMessage', requestOptions)
+    .then((response) => response.json())
+    .then((response) => {
+        if(!response.ok)
+        {
+            console.log(response.error)
+            return
+        }
+        else
+        {
+            setMessageInput("")
+            updateChat()
+            setMessageLoading(false)
+        }
+    })
+}
+
   return (
     <View style={styles.MainContainer}>
       {/* back button */}
@@ -42,20 +97,23 @@ export default function ChatScreen({ route, navigation }) {
       <Text style={styles.nameText}>{name}</Text>      
       <FlatList
         data= {messages}
-        renderItem={({item}) => <ChatBox message={item.message} timeStamp={item.timeStamp} sentByMe={item.sentByMe}/>}
+        // sentByMe(item.userID)
+        renderItem={({item}) => <ChatBox message={item.text} timeStamp={item.timeStamp} sentByMe={item.sentByMe}/>}
       />
 
       {/* message input */}      
       <View style={styles.sendContainer}>
           <TextInput
-              style={styles.textInput}
-              placeholder="Send a message..."
-              placeholderTextColor="white"
-              multiline={true}
+            value={messageInput}
+            style={styles.textInput}
+            placeholder="Send a message..."
+            placeholderTextColor="white"
+            onChangeText={(text) => setMessageInput(text)}
+            multiline={true}
           />
           <TouchableOpacity onPress={() => {[sendMessage()]}}>
             <View style={{marginHorizontal: 10}}>
-              <Ionicons style={styles.sendButton} name="arrow-forward-outline" size={25} color={"white"}/>
+            {(messageLoading ?  <ActivityIndicator size={25} color="#12081A"/> : <Ionicons name="arrow-forward-outline" size={25} color={"#12081A"}/>)}  
             </View>
           </TouchableOpacity>
       </View>             
