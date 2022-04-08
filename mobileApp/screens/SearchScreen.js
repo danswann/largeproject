@@ -14,7 +14,7 @@ import { useIsFocused } from "@react-navigation/native";
 
 // COMPONENT BODY
 export default function SearchScreen({ route, navigation }) {
-  const {userID, refreshToken} = route.params;
+  const { userID, refreshToken } = route.params;
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
