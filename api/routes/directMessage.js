@@ -6,7 +6,7 @@ const directMessageController = require('../controllers/directMessage');
 
 // Functions not using middleware
 router.post('/readDM', directMessageController.readDM);
-router.post('/getDM', directMessageController.getDM);
+router.post('/getChat', directMessageController.getChat);
 
 // Call middleware function
 router.use(auth.jwtAuth);
@@ -14,7 +14,7 @@ router.use(auth.jwtAuth);
 // Functions using middleware
 router.post('/newChat', directMessageController.newChat);
 router.post('/sendMessage', directMessageController.sendMessage);
-router.post('/getAllDMs', directMessageController.getAllDMs);
+router.post('/getAllChats', directMessageController.getAllChats);
 //router.post('/deleteDM', directMessageController.deleteDM);
 
 module.exports = router;

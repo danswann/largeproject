@@ -10,7 +10,7 @@ const ChatSchema = new Schema({
     playlistID: {type:String, required:false},
     postID: {type:Schema.ObjectId, ref:'Post', required:false},
     text: {type:String, maxlength:250},
-    userID: {type:Schema.ObjectId, ref:'User', required:true}
+    author: {type:Schema.ObjectId, ref:'User', required:true}
 });
 
 // Define directMessage schema

@@ -24,7 +24,7 @@ exports.newPost = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
-    const {playlistID, caption, mentionedUsers} = req.body;
+    const {playlistID, caption} = req.body;
     const userID = req.user.userID;
 
     // Check if mentionedUsers[i] is a valid object id
@@ -51,7 +51,7 @@ exports.newPost = async function(req, res, next) {
         playlistID: playlistID,
         caption: caption,
         mentionedUsers: mentionedUsers,
-        userID: userID
+        author: userID
     });
 
     // Save the new instance
@@ -157,9 +157,9 @@ exports.likePost = async function(req, res, next) {
             // Create a new instance of notification model
             var newNotification = new Notification({
                 notificationType: 1,
-                postID: postID,
-                userID: post.userID,
-                senderID: userID
+                post: postID,
+                user: post.userID,
+                sender: userID
             });
 
             // Save the new instance
@@ -211,7 +211,7 @@ exports.commentOnPost = async function(req, res, next) {
 
     // find post by post id
     const filter = {_id:postID};
-    const update = {$push:{comments:{comment:comment,userID:userID}}};
+    const update = {$push:{comments:{comment:comment,author:userID}}};
     const options = {new: true};
     const post = await Post.findOneAndUpdate(filter, update, options);
 
@@ -221,9 +221,9 @@ exports.commentOnPost = async function(req, res, next) {
         // Create a new instance of notification model
         var newNotification = new Notification({
             notificationType: 3,
-            postID: postID,
-            userID: post.userID,
-            senderID: userID
+            post: postID,
+            user: post.userID,
+            sender: userID
         });
 
         // Save the new instance into database
@@ -531,7 +531,7 @@ exports.getAllUsersPost = async function(req, res, next) {
     }
 
     // Find post by userID
-    const filter = {userID:userID};
+    const filter = {author:userID};
     const posts = await Post.find(filter);
 
     // If the post exists, return ok:true

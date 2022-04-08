@@ -61,7 +61,7 @@ exports.sendMessage = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
-    const {id, text, userID} = req.body;
+    const {chatID, text, userID} = req.body;
 
     // Check if post id is valid object id
     if(!checkObjectId(id)) {
@@ -84,7 +84,7 @@ exports.sendMessage = async function(req, res, next) {
     const dm = await DirectMessage.findOne(filter);
 
     // add message object to chat array
-    const update = {text:text,userID:userID};
+    const update = {text:text,author:userID};
     dm.chat.push(update);
 
     // update the message json file in database
@@ -153,12 +153,12 @@ exports.readDM = async function(req, res, next) {
     }
 }
 
-exports.getDM = async function(req, res, next) {
+exports.getChat = async function(req, res, next) {
     // Default response object
     var response = {ok:true};
 
     // Incoming values
-    const {dmID} = req.body;
+    const {chatID} = req.body;
 
     // Check if dmID is valid object id
     if(!checkObjectId(dmID)) {
@@ -185,7 +185,7 @@ exports.getDM = async function(req, res, next) {
     }
 }
 
-exports.getAllDMs = async function(req, res, next) {
+exports.getAllChats = async function(req, res, next) {
     // Default response object
     var response = {ok:true};
 
