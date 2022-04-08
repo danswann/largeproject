@@ -43,7 +43,7 @@ export default function ChatScreen({ route, navigation }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({dmID: messages.postID})
     };
-    fetch(`${API_URL}/api/directMessage/getDM`, requestOptions)
+    fetch(`${API_URL}/api/directMessage/getChat`, requestOptions)
     .then((response) => response.json())
     .then((response) => {
       if(!response.ok)

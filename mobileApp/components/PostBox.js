@@ -76,7 +76,6 @@ export default function PostBox(props) {
                 if(isFocused)
                 {   
                     setCaption(response.post.caption)
-                    setCaption(response.post.caption)
                     setTimeStamp(response.post.timeStamp)
                     setLikedBy(response.post.likedBy)
                     setComments(response.post.comments)
@@ -287,7 +286,7 @@ export default function PostBox(props) {
                         <TouchableWithoutFeedback onPress={() => {songsTapped()}}>
                             <FlatList style={styles.SongList}
                                 data={playlistTracks}
-                                renderItem={({item}) => <SongBox songCover={item.image} songName={item.name} songArtists={item.artists} songLength={"?:??"} />}
+                                renderItem={({item}) => <SongBox songCover={item.image} songName={item.name} songArtists={item.artists} songLength={item.duration} />}
                                 listKey={(item, index) => `_key${index.toString()}`}
                                 keyExtractor={(item, index) => `_key${index.toString()}`}
                             />
@@ -317,7 +316,7 @@ export default function PostBox(props) {
                         <TouchableWithoutFeedback onPress={() => {songsTapped()}}>
                             <FlatList style={styles.SongList}
                                 data={playlistTracks}
-                                renderItem={({item}) => <SongBox songCover={item.image} songName={item.name} songArtists={item.artists} songLength={"?:??"} />}
+                                renderItem={({item}) => <SongBox songCover={item.image} songName={item.name} songArtists={item.artists} songLength={item.duration} />}
                                 listKey={(item, index) => `_key${index.toString()}`}
                                 keyExtractor={(item, index) => `_key${index.toString()}`}
                             />

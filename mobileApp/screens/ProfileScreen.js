@@ -127,7 +127,7 @@ export default function ProfileScreen({ route, navigation }) {
       <View style={styles.NavContainer}>
         {/* Posts and likes filter buttons */}
         <TouchableOpacity
-          hitSlop={{ top: 100, bottom: 100, left: 100, right: 100 }}
+          hitSlop={{ top: 40, bottom: 40, left: 100, right: 100 }}
           onPress={() => setPostsOrLikes("posts")}
         >
           {postsOrLikes === "posts" ? (
@@ -137,7 +137,7 @@ export default function ProfileScreen({ route, navigation }) {
           )}
         </TouchableOpacity>
         <TouchableOpacity
-          hitSlop={{ top: 100, bottom: 100, left: 100, right: 100 }}
+          hitSlop={{ top: 40, bottom: 40, left: 100, right: 100 }}
           onPress={() => setPostsOrLikes("likes")}
         >
           {postsOrLikes === "likes" ? (
