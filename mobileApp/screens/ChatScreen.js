@@ -27,11 +27,10 @@ import { Ionicons } from "@expo/vector-icons";
 const Tab = createMaterialTopTabNavigator();
 
 export default function ChatScreen({ route, navigation }) {
-  const { myUserID, name, chat } = route.params;  
+  const { myUserID, name, messages } = route.params;  
   const [messageInput, setMessageInput] = useState("");
   const [messageLoading, setMessageLoading] = useState(false);
-  const [messages, setMessages] = useState(chat)
-
+  const [messageArray, setMessageArray] = useState(messages)
   function sentByMe(userID) {
     if (userID === myUserID)
       return true
@@ -52,7 +51,7 @@ export default function ChatScreen({ route, navigation }) {
       console.log(response.error)
       return
       }
-      setMessages(response.dm)
+      setMessageArray(response.dm)
     })
   }
 
@@ -63,7 +62,7 @@ export default function ChatScreen({ route, navigation }) {
     const requestOptions = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({id: messages.postID, text: messageInput, userID: myUserID})            
+        body: JSON.stringify({id: messageArray.postID, text: messageInput, userID: myUserID})            
     };
     fetch('${API_URL}/api/directMessage/sendMessage', requestOptions)
     .then((response) => response.json())
@@ -96,9 +95,10 @@ export default function ChatScreen({ route, navigation }) {
       {/* name on top */}
       <Text style={styles.nameText}>{name}</Text>      
       <FlatList
-        data= {messages}
+        data= {messageArray}
         // sentByMe(item.userID)
-        renderItem={({item}) => <ChatBox message={item.text} timeStamp={item.timeStamp} sentByMe={item.sentByMe}/>}
+        renderItem={({item}) => <ChatBox message={item.text} timeStamp={item.timeStamp} sentByMe={sentByMe(item.userID)}/>}
+        keyExtractor={(item, index) => index.toString()}
       />
 
       {/* message input */}      

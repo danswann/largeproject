@@ -85,8 +85,7 @@ const AuthenticatedScreen = ({ route, navigation }) => {
         <Tab.Screen
           name="Notification"
           component={NotificationScreen}
-          options={{ tabBarBadge: 3 }}
-          initialParams={{ userID: userID }}
+          initialParams={{ userID: userID , accessToken: accessToken, refreshToken: refreshToken }}
         />
         <Tab.Screen
           name="Profile"
