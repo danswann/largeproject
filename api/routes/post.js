@@ -7,6 +7,7 @@ const postController = require('../controllers/post');
 // Functions not using middleware
 router.post('/getPost', postController.getPost);
 router.post('/getAllUsersPost', postController.getAllUsersPost);
+router.post('/userLikedPosts', postController.userLikedPosts);
 
 // Call middleware function
 router.use(auth.jwtAuth);

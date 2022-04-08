@@ -534,3 +534,36 @@ exports.getAllUsersPost = async function(req, res, next) {
         res.status(200).json(response);
     }
 }
+
+exports.userLikedPosts = async function(req, res, next) {
+    // Default reponse object
+    var response = {ok:true};
+
+    var userID = req.body.userID;
+    
+    // Check if userID is valid object id
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid userID ' + userID;
+        return res.status(200).json(response);
+    }
+    
+    // Find liked posts by userID
+    const filter = {likedBy: {$elemMatch: {$eq: userID}}};
+    const projection = {_id: 1, author: 1, playlistID: 1};
+    const posts = await Post.find(filter, projection).lean();
+
+    response.posts = posts;
+    for(p of response.posts) {
+        try {
+            data = await Spotify.getPlaylistData(p.author, p.playlistID);
+            p.image = data.image;
+        } catch(err) {
+            response.ok = false;
+            response.error = 'Could not fetch playlist with ID "' + p.playlistID + '" and author "' + p.author + '"';
+            res.status(200).json(response);
+            return;
+        }
+    };
+    res.status(200).json(response);
+}
