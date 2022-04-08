@@ -384,35 +384,36 @@ exports.homeFeed = async function(req, res, next) {
     const userID = req.body.userID;
     var currentIndex = req.body.currentIndex;
     var numberOfPosts = req.body.numberOfPosts;
-    let defaultIndex = false;
-    let defaultNumberOfPosts = false;
 
     // Check if userID is valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
         response.error = 'Invalid userID ' + userID;
-        res.status(200).json(response);
-        return;
+        return res.status(200).json(response);
     }
 
     // Check if currentIndex and numberOfPosts is given
     if (currentIndex == undefined)
     {
-        defaultIndex = true;
         currentIndex = 0;
     }
     if (numberOfPosts == undefined)
     {
-        defaultNumberOfPosts = true;
         numberOfPosts = 5;
     }
     if (numberOfPosts <= 0)
     {
         response.ok = false;
         response.error = 'numberOfPosts has to be greater than 0';
-        res.status(200).json(response);
-        return;
+        return res.status(200).json(response);
     }
+    if (currentIndex < 0)
+    {
+        response.ok = false;
+        response.error = 'currentIndex has to be greater than 0';
+        return res.status(200).json(response);
+    }
+
     // Find post by postID
     const filter = {_id: userID};
     const projection = {_id: 0, following: 1};
@@ -421,25 +422,12 @@ exports.homeFeed = async function(req, res, next) {
     // If the post exists, return ok:true
     if(followingArray)
     {
-        // Find post by postID
-        const filter2 = {userID: followingArray.following};
+        // Find post by author and sort them by time posted
+        const filter2 = {author: followingArray.following};
         const post = await Post.find(filter2).sort({ timeStamp: 'desc'}).skip(currentIndex).limit(numberOfPosts).lean();
 
         if(post)
         {
-            if (defaultIndex == true && defaultNumberOfPosts == true)
-            {
-                response.message = 'currentIndex was defaulted to 0 and numberOfPosts was defaulted to 5';
-            }
-            else if (defaultIndex == true)
-            {
-                response.message = 'currentIndex was defaulted to 0';
-            }
-            else if (defaultNumberOfPosts == true)
-            {
-                response.message = 'numberOfPosts was defaulted to 5';
-            }
-            response.length = post.length;
             response.posts = post;
             for(p of response.posts) {
                 try {

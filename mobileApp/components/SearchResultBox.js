@@ -20,14 +20,14 @@ export default function SearchResultBox(props) {
 
   const { refresh } = React.useContext(AuthContext);
   async function followUser() {
-    const access = await refresh(props.myUserID, props.refreshToken)
+    //const access = await refresh(props.myUserID, props.refreshToken)
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         userID: props.myUserID,
         followingID: props.userID,
-        accessToken: access
+        accessToken: props.accessToken
       }),
     };
     fetch(`${API_URL}/api/user/followUser`, requestOptions)

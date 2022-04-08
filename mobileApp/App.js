@@ -239,7 +239,7 @@ export default function App() {
             <LoggedInStack.Screen
               name="Authenticated"
               component={AuthenticatedScreen}
-              initialParams={{userID: loginState.userID, refreshToken: loginState.refreshToken}}
+              initialParams={{userID: loginState.userID, accessToken: loginState.accessToken, refreshToken: loginState.refreshToken}}
             />
           </LoggedInStack.Navigator>
         ) : (

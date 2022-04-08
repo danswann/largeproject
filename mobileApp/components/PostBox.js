@@ -175,13 +175,13 @@ export default function PostBox(props) {
     }
     //like post
     async function likePost(){
-        //gets access token (this function must be async)
-        const access = await refresh(props.myUserID, props.refreshToken)
+        //refreshes access token (this function must be async)
+        //const access = await refresh(props.myUserID, props.refreshToken)
         setLikeLoading(true)
         const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({postID: props.postID, userID: props.myUserID, accessToken: access})
+            body: JSON.stringify({postID: props.postID, userID: props.myUserID, accessToken: props.accessToken})
         };
         fetch(`${API_URL}/api/post/likePost`, requestOptions)
         .then((response) => response.json())
@@ -201,13 +201,13 @@ export default function PostBox(props) {
     async function makeComment(){
         if(commentInput == "")
             return
-        //gets access token (this function must be async)
-        const access = await refresh(props.myUserID, props.refreshToken)
+        //refreshes access token (this function must be async)
+        //const access = await refresh(props.myUserID, props.refreshToken)
         setCommentLoading(true)
         const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({postID: props.postID, comment: commentInput, userID: props.myUserID, accessToken: access})
+            body: JSON.stringify({postID: props.postID, comment: commentInput, userID: props.myUserID, accessToken: props.accessToken})
         };
         fetch(`${API_URL}/api/post/commentOnPost`, requestOptions)
         .then((response) => response.json())

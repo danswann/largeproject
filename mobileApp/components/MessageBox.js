@@ -4,12 +4,12 @@ import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 
 
 // COMPONENT BODY
-export default function MessageBox(props) {
+export default function MessageBox(props) {    
   return (
     <TouchableOpacity 
         style={{minWidth: "100%"}}
         onPress={() => {
-            props.navigation.navigate('Chat', {name: props.name, messages: props.messages})
+            props.navigation.navigate('Chat', {myUserID: props.myUserID, name: props.name, messages: props.messages})
         }}>
         <View style={styles.MessageContainer}>        
             <View style={{flexDirection: 'row'}}>
@@ -39,7 +39,7 @@ export default function MessageBox(props) {
                         alignItems: 'center', }}>
                         <Text style={
                             styles.MainText}>
-                            {props.messages[props.messages.length - 1].message}
+                            {props.messages[props.messages.length - 1].text}
                         </Text>
                     </View>
                 </View>

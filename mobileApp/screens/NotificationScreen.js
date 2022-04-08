@@ -1,4 +1,4 @@
-import React from "react";
+import {React, useState, useEffect} from "react";
 import {
   StyleSheet,
   Text,
@@ -15,11 +15,14 @@ import ChatScreen from "../screens/ChatScreen";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { NavigationContainer, StackActions} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { API_URL } from "../constants/Info";
 
 
 const Tab = createMaterialTopTabNavigator();
 
-export default function NotificationScreen({ navigation }) {
+export default function NotificationScreen({ route, navigation }) {
+  const userID = route.params.userID;
+
   return (
     <Tab.Navigator screenOptions={{
       tabBarLabelStyle: { fontSize: 12, color: "white" },
@@ -31,7 +34,7 @@ export default function NotificationScreen({ navigation }) {
       },
     }}>
       <Tab.Screen name="Notifications" component={NotificationTab} />
-      <Tab.Screen name="Messages" component={MessageTab} navigation={navigation}/>
+      <Tab.Screen name="Messages" component={MessageTab} navigation={navigation} initialParams={{ userID: userID }}/>
     </Tab.Navigator>
   );
 }
@@ -52,27 +55,78 @@ function NotificationTab() {
   );
 }
 
-function MessageTab({ navigation}) {
+function MessageTab({ route, navigation }) {  
+  const myUserID = route.params.userID;
+  const [dmList, setdmList] = useState([]);
+  const [name, setUsername] = useState("");
+
+  // Gets user data from api
+  function getUsername(userID) {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userID: userID }),
+    };
+    fetch(`${API_URL}/api/user/searchUser`, requestOptions)
+      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          console.log(response.error);
+          return;
+        }
+        return response.user.username
+      });
+  }
+
+  // returns whoever isn't the current user
+  function getName(users) {
+    if (users[0] === myUserID)
+    // need to grab username 
+      setUsername(getUsername(users[1]))
+  }
+  
+  // Gets user data from api
+  function getdmList()
+  {
+    const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({userID: myUserID})
+    };
+    fetch(`${API_URL}/api/directMessage/getAllDMs`, requestOptions)
+    .then((response) => response.json())
+    .then((response) => {
+        if(!response.ok)
+        {
+        console.log(response.error)
+        return
+        }
+        setdmList(response.dm)
+    })
+  }  
+  
   return (
     <View style={styles.MainContainer}>
       <FlatList
+        // data={dmList}
         data={[
-          {key: 1, name: 'John Smith', messages: [
-            { key: 1, message: 'yo', timeStamp:'3 days ago', sentByMe: false},
-            { key: 2, message: 'yooooo', timeStamp:'3 days ago', sentByMe: true},
-            { key: 3, message: 'hey nice playlist', timeStamp:'34 min ago', sentByMe: false},
+          {key: 1, name: 'John Smith', chat: [
+            { key: 1, text: 'yo', timeStamp:'3 days ago', sentByMe: false},
+            { key: 2, text: 'yooooo', timeStamp:'3 days ago', sentByMe: true},
+            { key: 3, text: 'hey nice playlist', timeStamp:'34 min ago', sentByMe: false},
           ]},
-          {key: 2, name: 'Arby Jones', messages: [
-            { key: 1, message: 'whats your soundcloud', timeStamp: '1 hr ago', sentByMe: true},
+          {key: 2, name: 'Arby Jones', chat: [
+            { key: 1, text: 'whats your soundcloud', timeStamp: '1 hr ago', sentByMe: true},
           ]},
-          {key: 3, name: 'Justin Case', messages: [
-            { key: 1, message: 'wanna link sounds?', timeStamp: '2 days ago', sentByMe: false},
+          {key: 3, name: 'Justin Case', chat: [
+            { key: 1, text: 'wanna link sounds?', timeStamp: '2 days ago', sentByMe: false},
           ]},
-          {key: 4, name: 'Black Beard', messages: [
-            { key: 1, message: 'whats up', timeStamp: '5 months ago', sentByMe: false},
+          {key: 4, name: 'Black Beard', chat: [
+            { key: 1, text: 'whats up', timeStamp: '5 months ago', sentByMe: false},
           ]},
         ]}
-        renderItem={({item}) => <MessageBox name={item.name} messages={item.messages} navigation={navigation}/>}
+        // getName(item.users)
+        renderItem={({item}) => <MessageBox myUserID={myUserID} name={"doug"} messages={item.chat} navigation={navigation}/>}
       />
     </View>
   );
