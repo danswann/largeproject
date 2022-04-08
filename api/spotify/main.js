@@ -24,7 +24,8 @@ exports.getPlaylistData = async function(userID, playlistID) {
             preview: x.track.preview_url,
             image: x.track.album.images[0]?.url || 'http://placehold.jp/3d4070/ffffff/100x100.png?text=No%0Art',
             local: x.track.is_local,
-            type: x.track.type
+            type: x.track.type,
+            duration: x.track.duration_ms
         })));
         offset += 50;
         total = result.body.total;
