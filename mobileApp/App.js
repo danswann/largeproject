@@ -7,48 +7,105 @@ import AuthenticatedScreen from "./screens/AuthenticatedScreen";
 import { AuthContext } from "./Context";
 import UnauthenticatedScreen from "./screens/UnauthenticatedScreen";
 import { API_URL } from "./constants/Info";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const LoggedOutStack = createNativeStackNavigator();
 const LoggedInStack = createNativeStackNavigator();
 
 export default function App() {
+  
   // Initial state
   const initialLoginState = {
     isLoading: true,
-    username: null,
-    userToken: null,
+    currentState: null,
+    userID: null,
     userVerified: false,
+    refreshToken: null,
+    accessToken: null,
+  };
+
+  //If user is logged out, deletes refresh token from database
+  async function deleteRefreshToken()
+  {
+    const userID = await getUserID()
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({userID: userID}),
+    };
+    fetch(`${API_URL}/api/user/deleteRefreshToken`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        if(!data.ok)
+        {
+          console.log("deleteRefresh error:" + data.error)
+        }
+        else
+          dispatch({ type: "LOGOUT" });
+      })
+  }
+  
+  //When user logs in, needed data from login saved in cache
+  const cacheData = async (id, token) => {
+    try {
+      await AsyncStorage.setItem("userID", id)
+      await AsyncStorage.setItem("refreshToken", token)
+    } catch (error) {
+      console.log("cacheData error:" + error)
+    }
+  };
+
+  //returns refresh token from cache
+  const getRefreshToken = async () => {
+    try {
+      return await AsyncStorage.getItem("refreshToken")
+    } catch (error) {
+      console.log(error)
+    }
+  };
+
+  //returns refresh token from cache
+  const getUserID = async () => {
+    try {
+      return await AsyncStorage.getItem("userID")
+    } catch (error) {
+    }
+
   };
 
   // Reducer function
   const loginReducer = (prevState, action) => {
+    console.log("State is " + action.type)
     switch (action.type) {
-      case "RETRIEVE_TOKEN":
+      case "LOGGEDIN":
         return {
           ...prevState,
-          userToken: action.token,
+          userID: action.userID,
+          refreshToken: action.refresh,
+          accessToken: action.access,
+          currentState: action.type,
           isLoading: false,
         };
-      case "LOGIN":
+      case "NOTLOGGEDIN":
         return {
           ...prevState,
-          username: action.id,
-          userToken: action.token,
-          userVerified: action.verified,
+          currentState: action.type,
           isLoading: false,
         };
       case "LOGOUT":
         return {
           ...prevState,
-          username: null,
-          userToken: null,
-          userVerified: null,
+          userID: null,
+          refreshToken: null,
+          accessToken: null,
+          userVerified: false,
+          currentState: action.type,
           isLoading: false,
         };
       case "REGISTER":
         return {
           ...prevState,
           userVerified: null,
+          currentState: action.type,
           isLoading: false,
         };
     }
@@ -64,9 +121,9 @@ export default function App() {
     return {
       signIn: (username, password) => {
         return new Promise((res, rej) => {
-          // User token will store the users unique id
-          let userToken;
-          let userVerified;
+          
+          // User ID will store the users unique id
+          let userID;
           const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -74,16 +131,13 @@ export default function App() {
           };
           fetch(`${API_URL}/api/user/login`, requestOptions)
             .then((response) => response.json())
-            .then((data) => {
-              console.log(data.ok);
+            .then( async (data) => {
               // data.ok and userVerified will be true if a valid user is attempting to log in
               if (data.ok === true ) {
-                userVerified = data.user.isVerified
-                if(userVerified) {
-                  // We then set the valid users token to verify them
-                  userToken = data.user._id;
-                  // We then check if the user is valid and the email has been verified
-                  dispatch({ type: "LOGIN", id: username, token: userToken, verified: userVerified });
+                if(data.user.isVerified) {
+                  userID = data.user._id;
+                  cacheData(userID, data.refreshToken)
+                  dispatch({ type: "LOGGEDIN", userID: userID, refresh: data.refreshToken, access: data.accessToken });
                 }
                 res(false);
               } else {
@@ -118,19 +172,50 @@ export default function App() {
         };
         fetch(`${API_URL}/api/user/register`, requestOptions)
           .then((response) => response.text())
-          .then((data) => console.log(data));
-        dispatch({ type: "REGISTER", id: "user", token: "usertoken" });
+          .then((data) => {
+            if(!data.ok)
+              console.log(data)
+          }
+          );
       },
       signOut: () => {
-        dispatch({ type: "LOGOUT" });
+        deleteRefreshToken()
       },
+      refresh: (userID, refreshToken) => {
+        return new Promise((res, rej) => {
+          if(refreshToken == null)
+            res(false)
+          const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({userID: userID, refreshToken: refreshToken}),
+          };
+          fetch(`${API_URL}/api/user/refreshToken`, requestOptions)
+            .then((response) => response.json())
+            .then(async (data) => {
+              if(!data.ok)
+              {
+                console.log("refresh error: " + data.error)
+                dispatch({ type: "NOTLOGGEDIN"});
+                res(false)
+              }
+              res(data.token)
+            })
+        })
+      }
     };
   }, []);
 
   // Set the buffer time for the loading screen (only occurs on first opening the app)
   React.useEffect(() => {
-    setTimeout(() => {
-      dispatch({ type: "RETRIEVE_TOKEN", token: loginState.userToken });
+    setTimeout( async () => {
+      const userID = await getUserID()
+      const refreshToken = await getRefreshToken()
+      accessToken = await authContext.refresh(userID, refreshToken)
+      if(!accessToken)
+        dispatch({ type: "NOTLOGGEDIN"});
+      else 
+        dispatch({ type: "LOGGEDIN", userID: userID, refresh: refreshToken, access: accessToken });
     }, 1000);
   }, []);
 
@@ -149,12 +234,12 @@ export default function App() {
     <AuthContext.Provider value={authContext}>
       <NavigationContainer>
         { /* Transitions to authenticated screen once user data is valid*/}
-        {(loginState.userToken != null && loginState.userVerified) ? (
+        {(loginState.userID != null && loginState.accessToken != null) ? (
           <LoggedInStack.Navigator screenOptions={{ headerShown: false }}>
             <LoggedInStack.Screen
               name="Authenticated"
               component={AuthenticatedScreen}
-              initialParams={{userID: loginState.userToken}}
+              initialParams={{userID: loginState.userID, refreshToken: loginState.refreshToken}}
             />
           </LoggedInStack.Navigator>
         ) : (

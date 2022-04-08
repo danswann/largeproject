@@ -1,10 +1,11 @@
-import {React, useState, useEffect} from "react";
+import React, {useState, useEffect} from "react";
 import { Animated, Text, TextInput, View, StyleSheet, Image, TouchableOpacity, FlatList, TouchableWithoutFeedback, ScrollView, ActivityIndicator} from "react-native";
 import SongBox from "./SongBox";
 import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
 import { API_URL } from "../constants/Info";
 import CommentBox from "./CommentBox";
+import { AuthContext } from "../Context";
 
 // COMPONENT BODY
 export default function PostBox(props) {
@@ -15,19 +16,25 @@ export default function PostBox(props) {
     const [songsExpanded, setSongsExpanded] = useState(false);
     const [commentsExpanded, setCommentsExpanded] = useState(false);
 
+    const [userImage, setUserImage] = useState("http://placehold.jp/3d4070/ffffff/100x100.png?text=No%0Art");
     const [username, setUsername] = useState("");
     const [caption, setCaption] = useState("");
     const [timeStamp, setTimeStamp] = useState("");
     const [likedBy, setLikedBy] = useState([]);
     const [comments, setComments] = useState([]);
 
-    const [playlistTitle, setPlaylistTitle] = useState("chillin...");
-    const [songCount, setSongCount] = useState(0);
+    
     const [liked, setLiked] = useState(false);
     const [likeCount, setLikeCount] = useState(0);
     const [commentCount, setCommentCount] = useState(0);
     const [commentInput, setCommentInput] = useState("");
     const isFocused = useIsFocused();
+
+    const [playlistName, setPlaylistName] = useState("");
+    const [playlistCover, setPlaylistCover] = useState("http://placehold.jp/3d4070/ffffff/100x100.png?text=No%0Art");
+    const [playlistIsPublic, setPlaylistIsPublic] = useState(false);
+    const [playlistTracks, setPlaylistTracks] = useState([]);
+    const [songCount, setSongCount] = useState(0);
 
     const updatePostComments = () => {
         getPostDataFromID()
@@ -37,18 +44,21 @@ export default function PostBox(props) {
         getPostData()
     }, [isFocused]);
     
-    async function getPostData()
+    function getPostData()
     {
         setLoading(true)
         getPostDataFromID()
-        getDataFromID()
+        getPlaylistDataFromID()
+        getUserDataFromID()
         
         if (isFocused)
             setLoading(false)
     }
 
+    const { refresh } = React.useContext(AuthContext);
+
     //Gets post data from api
-    async function getPostDataFromID()
+    function getPostDataFromID()
     {
         const requestOptions = {
             method: "POST",
@@ -78,14 +88,14 @@ export default function PostBox(props) {
             })
     }
     //Gets user data from api
-    async function getDataFromID()
+    function getUserDataFromID()
     {
         const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({userID: props.userID})
         };
-        await fetch(`${API_URL}/api/user/searchUser`, requestOptions)
+        fetch(`${API_URL}/api/user/searchUser`, requestOptions)
         .then((response) => response.json())
         .then((response) => {
             if(!response.ok)
@@ -94,6 +104,30 @@ export default function PostBox(props) {
             return
             }
             setUsername(response.user.username)
+            setUserImage(response.user.spotify.image)
+        })
+    }
+
+    function getPlaylistDataFromID()
+    {
+        const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({userID: props.userID, playlistID: props.playlistID})
+        };
+        fetch(`${API_URL}/api/spotify/getPlaylistData`, requestOptions)
+        .then((response) => response.json())
+        .then((response) => {
+            if(!response.ok)
+            {
+            console.log(response.error)
+            return
+            }
+            setPlaylistName(response.playlist.name)
+            setPlaylistCover(response.playlist.image)
+            setPlaylistIsPublic(response.playlist.public)
+            setPlaylistTracks(response.playlist.tracks)
+            setSongCount(response.playlist.tracks.length)
         })
     }
 
@@ -141,11 +175,13 @@ export default function PostBox(props) {
     }
     //like post
     async function likePost(){
+        //gets access token (this function must be async)
+        const access = await refresh(props.myUserID, props.refreshToken)
         setLikeLoading(true)
         const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({postID: props.postID, userID: props.myUserID})
+            body: JSON.stringify({postID: props.postID, userID: props.myUserID, accessToken: access})
         };
         fetch(`${API_URL}/api/post/likePost`, requestOptions)
         .then((response) => response.json())
@@ -162,14 +198,16 @@ export default function PostBox(props) {
     };
 
     //comment on post
-    function makeComment(){
+    async function makeComment(){
         if(commentInput == "")
             return
+        //gets access token (this function must be async)
+        const access = await refresh(props.myUserID, props.refreshToken)
         setCommentLoading(true)
         const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({postID: props.postID, comment: commentInput, userID: props.myUserID})
+            body: JSON.stringify({postID: props.postID, comment: commentInput, userID: props.myUserID, accessToken: access})
         };
         fetch(`${API_URL}/api/post/commentOnPost`, requestOptions)
         .then((response) => response.json())
@@ -206,7 +244,7 @@ export default function PostBox(props) {
                     <View style={{flexDirection: 'row'}}>
                         {/* profile pic */}
                         <Image
-                            source={require('../assets/images/defaultSmile.png')}
+                            source={{uri: userImage}}
                             style={styles.ProfilePic}
                         />
                         <View style={{flexDirection: 'column', marginStart: 5, marginTop: 10, }}>
@@ -232,33 +270,26 @@ export default function PostBox(props) {
                         <View style={{flexDirection: 'column', marginStart: 15, justifyContent:"space-between", marginTop: 5}}>
                             <View>
                                 {/* Playlist Title */}
-                                <Text style={{color: 'white', fontWeight: 'bold', fontSize: 18, textDecorationLine: "underline"}}>{playlistTitle}</Text>
+                                <Text style={{color: 'white', fontWeight: 'bold', fontSize: 18, textDecorationLine: "underline"}}>{playlistName}</Text>
 
                                 {/* Song Count */}
                                 <Text style={{color: 'white', fontSize: 8}}>{songCount} songs</Text>
                             </View>
                             {/* Playlist Image */}
                             <Image
-                                source={require('../assets/images/testCover.jpg')}
+                                source={{uri: playlistCover}}
                                 style={styles.PlaylistPic}
                             />
                         </View>
                     </View>
                     {/* Playlist Songs */}
-                    <ScrollView overScrollMode="never" style={{maxHeight: 205, marginVertical: 10}} nestedScrollEnabled={false}>
+                    <ScrollView overScrollMode="never" style={{maxHeight: 205, marginVertical: 10}} nestedScrollEnabled={true}>
                         <TouchableWithoutFeedback onPress={() => {songsTapped()}}>
                             <FlatList style={styles.SongList}
-                                data={[
-                                    {key: 1, songCover: '../assets/images/testCover.jpg', songName: 'bouquet of balloons', songArtist: 'biosphere', songLength: '3:04'},
-                                    {key: 2, songCover: '../assets/images/testCover.jpg', songName: 'The Last Song On Earth', songArtist: 'Adam Melchor, Emily Warren', songLength: '2:32'},
-                                    {key: 3, songCover: '../assets/images/testCover.jpg', songName: 'Call It Fate, Call It Karma', songArtist: 'The Strokes', songLength: '1:48'},
-                                    {key: 4, songCover: '../assets/images/testCover.jpg', songName: 'Nothing', songArtist: 'Bruno Major', songLength: '2:43'},
-                                    {key: 5, songCover: '../assets/images/testCover.jpg', songName: 'bouquet of balloons', songArtist: 'biosphere', songLength: '3:04'},
-                                    {key: 6, songCover: '../assets/images/testCover.jpg', songName: 'The Last Song On Earth', songArtist: 'Adam Melchor, Emily Warren', songLength: '2:32'},
-                                    {key: 7, songCover: '../assets/images/testCover.jpg', songName: 'Call It Fate, Call It Karma', songArtist: 'The Strokes', songLength: '1:48'},
-                                    {key: 8, songCover: '../assets/images/testCover.jpg', songName: 'Nothing', songArtist: 'Bruno Major', songLength: '2:43'},
-                                ]}
-                                renderItem={({item}) => <SongBox songCover={item.songCover} songName={item.songName} songArtist={item.songArtist} songLength={item.songLength} />}
+                                data={playlistTracks}
+                                renderItem={({item}) => <SongBox songCover={item.image} songName={item.name} songArtists={item.artists} songLength={"?:??"} />}
+                                listKey={(item, index) => `_key${index.toString()}`}
+                                keyExtractor={(item, index) => `_key${index.toString()}`}
                             />
                         </TouchableWithoutFeedback>
                     </ScrollView>
@@ -269,33 +300,26 @@ export default function PostBox(props) {
                         <View style={{flexDirection: 'column', marginStart: 15, justifyContent:"space-between", marginTop: 5}}>
                             <View>
                                 {/* Playlist Title */}
-                                <Text style={{color: 'white', fontWeight: 'bold', fontSize: 18, textDecorationLine: "underline"}}>{playlistTitle}</Text>
+                                <Text style={{color: 'white', fontWeight: 'bold', fontSize: 18, textDecorationLine: "underline"}}>{playlistName}</Text>
 
                                 {/* Song Count */}
                                 <Text style={{color: 'white', fontSize: 8}}>{songCount} songs</Text>
                             </View>
                             {/* Playlist Image */}
                             <Image
-                                source={require('../assets/images/testCover.jpg')}
+                                source={{uri: playlistCover}}
                                 style={styles.PlaylistPic}
                             />
                         </View>
                     </View>
                     {/* Playlist Songs */}
-                    <ScrollView overScrollMode="never" style={{maxHeight: 205, marginVertical: 10}} nestedScrollEnabled={false}>
+                    <ScrollView overScrollMode="never" style={{maxHeight: 205, marginVertical: 10}} nestedScrollEnabled={true}>
                         <TouchableWithoutFeedback onPress={() => {songsTapped()}}>
                             <FlatList style={styles.SongList}
-                                data={[
-                                    {key: 1, songCover: '../assets/images/testCover.jpg', songName: 'bouquet of balloons', songArtist: 'biosphere', songLength: '3:04'},
-                                    {key: 2, songCover: '../assets/images/testCover.jpg', songName: 'The Last Song On Earth', songArtist: 'Adam Melchor, Emily Warren', songLength: '2:32'},
-                                    {key: 3, songCover: '../assets/images/testCover.jpg', songName: 'Call It Fate, Call It Karma', songArtist: 'The Strokes', songLength: '1:48'},
-                                    {key: 4, songCover: '../assets/images/testCover.jpg', songName: 'Nothing', songArtist: 'Bruno Major', songLength: '2:43'},
-                                    {key: 5, songCover: '../assets/images/testCover.jpg', songName: 'bouquet of balloons', songArtist: 'biosphere', songLength: '3:04'},
-                                    {key: 6, songCover: '../assets/images/testCover.jpg', songName: 'The Last Song On Earth', songArtist: 'Adam Melchor, Emily Warren', songLength: '2:32'},
-                                    {key: 7, songCover: '../assets/images/testCover.jpg', songName: 'Call It Fate, Call It Karma', songArtist: 'The Strokes', songLength: '1:48'},
-                                    {key: 8, songCover: '../assets/images/testCover.jpg', songName: 'Nothing', songArtist: 'Bruno Major', songLength: '2:43'},
-                                ]}
-                                renderItem={({item}) => <SongBox songCover={item.songCover} songName={item.songName} songArtist={item.songArtist} songLength={item.songLength} />}
+                                data={playlistTracks}
+                                renderItem={({item}) => <SongBox songCover={item.image} songName={item.name} songArtists={item.artists} songLength={"?:??"} />}
+                                listKey={(item, index) => `_key${index.toString()}`}
+                                keyExtractor={(item, index) => `_key${index.toString()}`}
                             />
                         </TouchableWithoutFeedback>
                     </ScrollView>
@@ -313,7 +337,7 @@ export default function PostBox(props) {
                     <FlatList
                         data={comments}
                         initialScrollIndex={0}
-                        renderItem={({item}) => <CommentBox myUserID={props.myUserID} userID={item.userID} postID={props.postID} commentID={item._id} comment={item.comment} timeStamp={item.timeStamp} update={updatePostComments}/>}
+                        renderItem={({item}) => <CommentBox myUserID={props.myUserID} userID={item.author} postID={props.postID} commentID={item._id} comment={item.comment} timeStamp={item.timeStamp} update={updatePostComments}/>}
                         listKey={(item, index) => `_key${index.toString()}`}
                         keyExtractor={(item, index) => `_key${index.toString()}`}
                     />
@@ -433,8 +457,8 @@ const styles = StyleSheet.create({
     },
 
     SongList: {
-        marginVertical: 10,
         marginHorizontal: 10,
+        marginVertical: 2,
         backgroundColor: "#12081A",
     },
 

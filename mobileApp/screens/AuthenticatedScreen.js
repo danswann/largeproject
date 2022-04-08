@@ -26,7 +26,7 @@ const Tab = createBottomTabNavigator();
 
 // Collection of all the screens in the app once the users is authenticated
 const AuthenticatedScreen = ({ route, navigation }) => {
-  const userID = route.params.userID;
+  const {userID, refreshToken} = route.params;
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -67,17 +67,17 @@ const AuthenticatedScreen = ({ route, navigation }) => {
         <Tab.Screen
           name="Home"
           component={HomeScreen}
-          initialParams={{ userID: userID }}
+          initialParams={{ userID: userID , refreshToken: refreshToken}}
         />
         <Tab.Screen
           name="Search"
           component={SearchScreen}
-          initialParams={{ userID: userID }}
+          initialParams={{ userID: userID , refreshToken: refreshToken}}
         />
         <Tab.Screen
           name="Post"
           component={PostScreen}
-          initialParams={{ userID: userID }}
+          initialParams={{ userID: userID , refreshToken: refreshToken}}
         />
         {/* Notifications will be the only icon with a badge, right now the default is 3 
             but we need to make it so that a new notification that hasn't been looked
@@ -85,12 +85,11 @@ const AuthenticatedScreen = ({ route, navigation }) => {
         <Tab.Screen
           name="Notification"
           component={NotificationScreen}
-          options={{ tabBarBadge: 3 }}
         />
         <Tab.Screen
           name="Profile"
           component={ProfileScreen}
-          initialParams={{ userID: userID }}
+          initialParams={{ userID: userID , refreshToken: refreshToken}}
         />
         <Tab.Screen
           name="Chat"
@@ -112,14 +111,14 @@ const AuthenticatedScreen = ({ route, navigation }) => {
           name="FollowersList"
           component={FollowersListScreen}
           options={{ tabBarButton: () => null }}
-          initialParams={{ userID: 0, myUserID: userID }}
+          initialParams={{ userID: 0, myUserID: userID , refreshToken: refreshToken}}
           backBehavior={"history"}
         />
         <Tab.Screen
           name="FollowingList"
           component={FollowingListScreen}
           options={{ tabBarButton: () => null }}
-          initialParams={{ userID: 0, myUserID: userID }}
+          initialParams={{ userID: 0, myUserID: userID , refreshToken: refreshToken}}
           backBehavior={"history"}
         />
       </Tab.Navigator>
