@@ -1,18 +1,21 @@
-import {React, useState, useEffect, useCallback} from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import { Text, View, StyleSheet, TouchableOpacity, Linking, FlatList, ActivityIndicator} from "react-native";
 import { API_URL } from "../constants/Info";
 import PlaylistListBox from "../components/PlaylistListBox";
 import { useIsFocused } from "@react-navigation/native";
+import { AuthContext } from "../Context";
 
 // COMPONENT BODY
 export default function PostScreen({ route, navigation }) {
 
   const [URL, setURL] = useState("")
-  const userID = route.params.userID
+  const {userID, accessToken, refreshToken} = route.params
   const [connected, setConnected] = useState(false)
   const [playlists, setPlaylists] = useState([])
   const [dropped, setDropped] = useState(false)
   const [loading, setLoading] = useState(true)
+
+  const { refresh } = React.useContext(AuthContext);
 
   let mounted = true
   const isFocused = useIsFocused();
@@ -89,12 +92,13 @@ export default function PostScreen({ route, navigation }) {
   }
 
   //Gets spotify playlists from api
-  function getPlaylists()
+  async function getPlaylists()
   {
+    //const access = await refresh(userID, refreshToken)
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({userID: userID})
+      body: JSON.stringify({userID: userID, accessToken: accessToken})
     };
     fetch(`${API_URL}/api/spotify/getMyPlaylists`, requestOptions)
       .then((response) => response.json())

@@ -1,5 +1,6 @@
 const Post = require('../models/post');
 const Notification = require('../models/notification');
+const Spotify = require('../spotify/main');
 const User = require('../models/user');
 
 function checkObjectId (id) {
@@ -23,7 +24,7 @@ exports.newPost = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
-    const {playlistID, caption, mentionedUsers} = req.body;
+    const {playlistID, caption} = req.body;
     const userID = req.user.userID;
 
     // Check if mentionedUsers[i] is a valid object id
@@ -50,7 +51,7 @@ exports.newPost = async function(req, res, next) {
         playlistID: playlistID,
         caption: caption,
         mentionedUsers: mentionedUsers,
-        userID: userID
+        author: userID
     });
 
     // Save the new instance
@@ -105,16 +106,14 @@ exports.likePost = async function(req, res, next) {
     if(!checkObjectId(postID)) {
         response.ok = false;
         response.error = 'Invalid postID ' + postID;
-        res.status(200).json(response);
-        return;
+        return res.status(200).json(response);
     }
 
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
         response.error = 'Invalid userID ' + userID;
-        res.status(200).json(response);
-        return;
+        return res.status(200).json(response);
     }
 
     // Check if already liked
@@ -132,14 +131,14 @@ exports.likePost = async function(req, res, next) {
         if(post)
         {
             response.action = 'post successfully unliked';
-            res.status(200).json(response);
+            return res.status(200).json(response);
         }
         // Otherwise return ok:false and the error message
         else
         {
             response.ok = false;
             response.error = 'Invalid id or cannot delete';
-            res.status(200).json(response);
+            return res.status(200).json(response);
         }
     }
     // Add a like to the post if the user has not already liked
@@ -156,9 +155,9 @@ exports.likePost = async function(req, res, next) {
             // Create a new instance of notification model
             var newNotification = new Notification({
                 notificationType: 1,
-                postID: postID,
-                userID: post.userID,
-                senderID: userID
+                post: postID,
+                user: post.author,
+                sender: userID
             });
 
             // Save the new instance
@@ -168,19 +167,19 @@ exports.likePost = async function(req, res, next) {
                 {
                     response.ok = false;
                     response.error = err;
-                    res.status(200).json(response);
+                    return res.status(200).json(response);
                 }
             });
 
             response.action = 'post successfully liked';
-            res.status(200).json(response);
+            return res.status(200).json(response);
         }
         // Otherwise return ok:false and the error message
         else
         {
             response.ok = false;
             response.error = 'Invalid id or cannot add';
-            res.status(200).json(response);
+            return res.status(200).json(response);
         }
     }
 }
@@ -210,7 +209,7 @@ exports.commentOnPost = async function(req, res, next) {
 
     // find post by post id
     const filter = {_id:postID};
-    const update = {$push:{comments:{comment:comment,userID:userID}}};
+    const update = {$push:{comments:{comment:comment,author:userID}}};
     const options = {new: true};
     const post = await Post.findOneAndUpdate(filter, update, options);
 
@@ -220,9 +219,9 @@ exports.commentOnPost = async function(req, res, next) {
         // Create a new instance of notification model
         var newNotification = new Notification({
             notificationType: 3,
-            postID: postID,
-            userID: post.userID,
-            senderID: userID
+            post: postID,
+            user: post.userID,
+            sender: userID
         });
 
         // Save the new instance into database
@@ -253,44 +252,36 @@ exports.deletePost = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
-    const {postID} = req.body;
+    const userID = req.body.userID;
+    const postID = req.body.postID;
+
+    // Check if userID is valid object id
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid userID ' + userID;
+        return res.status(200).json(response);
+    }
 
     // Check if postID is valid object id
     if(!checkObjectId(postID)) {
         response.ok = false;
         response.error = 'Invalid postID ' + postID;
-        res.status(200).json(response);
-        return;
+        return res.status(200).json(response);
     }
 
-    const post = await Post.deleteOne({_id:postID});
+    const post = await Post.deleteOne({_id:postID, userID:userID});
 
     // If the post exists, return ok:true
-    if(post)
+    if(post.deletedCount > 0)
     {
-        // Removes post from users' bookmark array
-        const filter = {};
-        const update = {$pullAll:{bookmarks:[postID]}};
-        const user = await User.updateMany(filter, update);
-
-        if (user)
-        {
-            response.action = 'post successfully deleted';
-            res.status(200).json(response);
-        }
-        // Otherwise return ok:false and the error message
-        else
-        {
-            response.ok = false;
-            response.error = 'Invalid user id or cannot remove from bookmarks';
-            res.status(200).json(response);
-        }
+        response.action = 'post successfully deleted';
+        res.status(200).json(response);
     }
     // Otherwise return ok:false and the error message
     else
     {
         response.ok = false;
-        response.error = 'Invalid id or cannot delete';
+        response.error = 'Cannot delete (postID not in database)';
         res.status(200).json(response);
     }
 }
@@ -300,7 +291,17 @@ exports.deleteComment = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
-    const {postID, commentID} = req.body;
+    const userID = req.body.userID;
+    const postID = req.body.postID;
+    const commentID = req.body.commentID;
+
+    // Check if userID is valid object id
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid userID ' + userID;
+        res.status(200).json(response);
+        return;
+    }
 
     // Check if postID is valid object id
     if(!checkObjectId(postID)) {
@@ -320,7 +321,7 @@ exports.deleteComment = async function(req, res, next) {
 
     // find post by postID
     const filter = {_id:postID};
-    const update = { $pull: {comments: {_id:commentID}}};
+    const update = { $pull: {comments: {_id:commentID, userID:userID}}};
     const options = {new: true};
     const post = await Post.findOneAndUpdate(filter, update, options);
 
@@ -361,7 +362,9 @@ exports.getPost = async function(req, res, next) {
     // If the post exists, return ok:true
     if(post)
     {
-        response.post = post;
+        response.post = post.toObject();
+        response.post.playlist = await Spotify.getPlaylistData(post.userID, post.playlistID);
+        console.log(response.post.playlist);
         res.status(200).json(response);
     }
     // Otherwise return ok:false and the error message
@@ -381,35 +384,36 @@ exports.homeFeed = async function(req, res, next) {
     const userID = req.body.userID;
     var currentIndex = req.body.currentIndex;
     var numberOfPosts = req.body.numberOfPosts;
-    let defaultIndex = false;
-    let defaultNumberOfPosts = false;
 
     // Check if userID is valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
         response.error = 'Invalid userID ' + userID;
-        res.status(200).json(response);
-        return;
+        return res.status(200).json(response);
     }
 
     // Check if currentIndex and numberOfPosts is given
     if (currentIndex == undefined)
     {
-        defaultIndex = true;
         currentIndex = 0;
     }
     if (numberOfPosts == undefined)
     {
-        defaultNumberOfPosts = true;
         numberOfPosts = 5;
     }
     if (numberOfPosts <= 0)
     {
         response.ok = false;
         response.error = 'numberOfPosts has to be greater than 0';
-        res.status(200).json(response);
-        return;
+        return res.status(200).json(response);
     }
+    if (currentIndex < 0)
+    {
+        response.ok = false;
+        response.error = 'currentIndex has to be greater than 0';
+        return res.status(200).json(response);
+    }
+
     // Find post by postID
     const filter = {_id: userID};
     const projection = {_id: 0, following: 1};
@@ -418,26 +422,23 @@ exports.homeFeed = async function(req, res, next) {
     // If the post exists, return ok:true
     if(followingArray)
     {
-        // Find post by postID
-        const filter2 = {userID: followingArray.following};
-        const post = await Post.find(filter2).sort({ timeStamp: 'desc'}).skip(currentIndex).limit(numberOfPosts);
+        // Find post by author and sort them by time posted
+        const filter2 = {author: followingArray.following};
+        const post = await Post.find(filter2).sort({ timeStamp: 'desc'}).skip(currentIndex).limit(numberOfPosts).lean();
 
         if(post)
         {
-            if (defaultIndex == true && defaultNumberOfPosts == true)
-            {
-                response.message = 'currentIndex was defaulted to 0 and numberOfPosts was defaulted to 5';
-            }
-            else if (defaultIndex == true)
-            {
-                response.message = 'currentIndex was defaulted to 0';
-            }
-            else if (defaultNumberOfPosts == true)
-            {
-                response.message = 'numberOfPosts was defaulted to 5';
-            }
-            response.length = post.length;
             response.posts = post;
+            for(p of response.posts) {
+                try {
+                    p.playlist = await Spotify.getPlaylistData(p.userID, p.playlistID);
+                } catch(err) {
+                    response.ok = false;
+                    response.error = 'Could not fetch playlist with ID "' + p.playlistID + '" and author "' + p.userID + '"';
+                    res.status(200).json(response);
+                    return;
+                }
+            };
             res.status(200).json(response);
         }
         // Otherwise return ok:false and the error message
@@ -462,16 +463,28 @@ exports.editCaption = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
-    const {postID, caption} = req.body;
+    const userID = req.body.userID;
+    const postID = req.body.postID;
+    const caption = req.body.caption;
 
+    if (!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid userID ' + userID;
+        return res.status(200).json(response);
+    }
     if (!checkObjectId(postID)) {
         response.ok = false;
         response.error = 'Invalid postID ' + postID;
-        res.status(200).json(response);
-        return;
+        return res.status(200).json(response);
+    }
+    if (caption == null)
+    {
+        response.ok = false;
+        response.error = 'caption null';
+        return res.status(200).json(response);
     }
 
-    const updateCaption = await Post.findOneAndUpdate({_id:postID},{caption:caption});
+    const updateCaption = await Post.findOneAndUpdate({_id:postID, userID:userID},{caption:caption});
 
     // If the post exists and the caption was updates, return ok:true
     if (updateCaption)
@@ -483,7 +496,7 @@ exports.editCaption = async function(req, res, next) {
     else
     {
         response.ok = false;
-        response.error = 'Invalid id or cannot edit caption';
+        response.error = 'Post not found or UserID does not match creator of post';
         res.status(200).json(response);
     }
 }
@@ -504,7 +517,7 @@ exports.getAllUsersPost = async function(req, res, next) {
     }
 
     // Find post by userID
-    const filter = {userID:userID};
+    const filter = {author:userID};
     const posts = await Post.find(filter);
 
     // If the post exists, return ok:true

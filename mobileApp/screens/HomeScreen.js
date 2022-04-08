@@ -1,27 +1,32 @@
-import {React , useState, useEffect} from "react";
+import React, { useState, useEffect} from "react";
 import { Text, View, StyleSheet, FlatList, Image, ActivityIndicator } from "react-native";
 import { API_URL } from "../constants/Info";
 import PostBox from "../components/PostBox";
 import { useIsFocused } from "@react-navigation/native";
+import { AuthContext } from "../Context";
 
 // COMPONENT BODY
 export default function HomeScreen({ route, navigation }) {
-  const userID = route.params.userID
+  const {userID, accessToken, refreshToken} = route.params
   const [currentIndex, setCurrentIndex] = useState(0);
   const [feed, setFeed] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const { refresh } = React.useContext(AuthContext);
 
   const isFocused = useIsFocused();
   useEffect(() => {
     getFeed()
   }, [isFocused]);
 
-  function getFeed()
+  async function getFeed()
   {
+    //refreshes access token (this function must be async)
+    //const access = await refresh(userID, refreshToken)
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({userID: userID, currentIndex: currentIndex})
+      body: JSON.stringify({userID: userID, currentIndex: currentIndex, accessToken: accessToken})
     };
     fetch(`${API_URL}/api/post/homeFeed`, requestOptions)
       .then((response) => response.json())
@@ -56,7 +61,7 @@ export default function HomeScreen({ route, navigation }) {
       </View>) :
       (<FlatList
         data={feed}
-        renderItem={({item}) => <PostBox navigation={navigation} postID={item._id} userID={item.userID} myUserID={userID}/>}
+        renderItem={({item}) => <PostBox navigation={navigation} postID={item._id} playlistID={item.playlistID} userID={item.author} myUserID={userID} accessToken={accessToken} refreshToken={refreshToken}/>}
         keyExtractor={(item, index) => index.toString()}
       />))
       :

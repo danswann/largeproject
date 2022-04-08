@@ -1,8 +1,9 @@
 import { NavigationContainer } from "@react-navigation/native";
-import { React, useState, useEffect } from "react";
+import React, {useState, useEffect } from "react";
 import { API_URL } from "../constants/Info";
 import { useIsFocused } from "@react-navigation/native";
 import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { AuthContext } from "../Context";
 
 // COMPONENT BODY
 export default function SearchResultBox(props) {
@@ -16,13 +17,17 @@ export default function SearchResultBox(props) {
       return true;
     else return false;
   }
-  function followUser() {
+
+  const { refresh } = React.useContext(AuthContext);
+  async function followUser() {
+    //const access = await refresh(props.myUserID, props.refreshToken)
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         userID: props.myUserID,
         followingID: props.userID,
+        accessToken: props.accessToken
       }),
     };
     fetch(`${API_URL}/api/user/followUser`, requestOptions)
@@ -33,13 +38,15 @@ export default function SearchResultBox(props) {
           else console.log(response.error);
       });
   }
-  function unfollowUser() {
+  async function unfollowUser() {
+    const access = await refresh(props.myUserID, props.refreshToken)
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         userID: props.myUserID,
         followingID: props.userID,
+        accessToken: access
       }),
     };
     fetch(`${API_URL}/api/user/unfollowUser`, requestOptions)
