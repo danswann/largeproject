@@ -32,7 +32,7 @@ exports.getAllNotifications = async function(req, res, next) {
 
     // Find all notifications by userID
     const filter = {user:userID};
-    const allNotifications = await Notification.find(filter).populate('sender', '_id username spotify.image');
+    const allNotifications = await Notification.find(filter).populate('sender', '_id username profileImageUrl');
 
     // JSON array returned
     response.notifications = allNotifications;

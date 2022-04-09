@@ -71,8 +71,7 @@ exports.refreshToken = async function(req, res, next) {
         }
         // If verifiable, then return a newly generated access token
         const accessToken = jwt.sign({ userID: user.userID }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
-        response.userID = user.userID;
-        response.token = accessToken;
+        response.accessToken = accessToken;
         res.status(200).json(response);
     });
 }
@@ -99,12 +98,12 @@ exports.deleteRefreshToken = async function(req, res, next) {
     // If refreshToken deleted, returk ok:true
     if (token)
     {
-        response.msg = 'refresh token deleted from database';
         res.status(200).json(response);
     }
     else
     {
-        response.msg = 'user not found in database';
+        response.ok = false;
+        response.error = 'user not found in database';
         res.status(200).json(response);
     }
 }
@@ -169,7 +168,7 @@ exports.login = async function(req, res, next) {
         else
         {
             response.ok = false;
-            response.error = 'Could not save refresh token for some reason';
+            response.error = 'Could not save refreshToken in database';
             res.status(200).json(response);
         }
     }
@@ -182,8 +181,7 @@ exports.login = async function(req, res, next) {
     }
 }
 
-exports.register = async function(req, res, next)
-{
+exports.register = async function(req, res, next) {
     // Default response object
     var response = {ok:true};
 
@@ -261,8 +259,7 @@ exports.register = async function(req, res, next)
     });
 }
 
-exports.verifyEmail = async function(req, res, next)
-{
+exports.verifyEmail = async function(req, res, next) {
     // Default response object
     var response = {ok:true};
 
@@ -306,8 +303,7 @@ exports.verifyEmail = async function(req, res, next)
     }
 }
 
-exports.followUser = async function(req, res, next)
-{
+exports.followUser = async function(req, res, next) {
     // Default response object
     var response = {ok:true};
 
@@ -353,14 +349,14 @@ exports.followUser = async function(req, res, next)
         // Otherwise return ok:false and the error message
         else
         {
-            // Find user by userID and remove following as its userID was not found
+            // Find user by userID and remove following as following user was not found
             const filterUser = {_id: userID};
             const updateUser = {$pull: {following: followingID}};
             const optionsUser = {new: true};
             const user = await User.findOneAndUpdate(filterUser, updateUser, optionsUser);
 
             response.ok = false;
-            response.error = 'Following user not found or cannot be updated';
+            response.error = 'followingID not found in database';
             res.status(200).json(response);
         }
     }
@@ -368,13 +364,12 @@ exports.followUser = async function(req, res, next)
     else
     {
         response.ok = false;
-        response.error = 'User not found or cannot be updated';
+        response.error = 'userID not found in database';
         res.status(200).json(response);
     }
 }
 
-exports.unfollowUser = async function(req, res, next)
-{
+exports.unfollowUser = async function(req, res, next) {
     // Default response object
     var response = {ok:true}
 
@@ -386,16 +381,14 @@ exports.unfollowUser = async function(req, res, next)
     if(!checkObjectId(userID)) {
         response.ok = false;
         response.error = 'Invalid userID ' + userID;
-        res.status(200).json(response);
-        return;
+        return res.status(200).json(response);
     }
 
     // Check if followingID is a valid object id
     if(!checkObjectId(followingID)) {
         response.ok = false;
         response.error = 'Invalid followingID ' + followingID;
-        res.status(200).json(response);
-        return;
+        return res.status(200).json(response);
     }
 
     // Find user by userID and remove following from following array
@@ -414,19 +407,16 @@ exports.unfollowUser = async function(req, res, next)
         const optionsFollowing = {new: true};
         const user2 = await User.findOneAndUpdate(filterFollowing, updateFollowing, optionsFollowing);
 
-        // If the follower exists and is updated, return ok:true and the user's details
+        // If the follower exists and is updated, return ok:true
         if (user2)
         {
-            const index = user.following.indexOf(followingID);
-            user.following.splice(index, 1);
-            response.user = user;
             res.status(200).json(response);
         }
         // Otherwise return ok:false and the error message
         else
         {
             response.ok = false;
-            response.error = 'Following user not found or cannot be updated';
+            response.error = 'followingID not found in database';
             res.status(200).json(response);
         }
     }
@@ -434,7 +424,7 @@ exports.unfollowUser = async function(req, res, next)
     else
     {
         response.ok = false;
-        response.error = 'User not found or cannot be updated';
+        response.error = 'userID not found in database';
         res.status(200).json(response);
     }
 }
@@ -445,44 +435,55 @@ exports.showFollowers = async function(req, res, next) {
 
     // Incoming values
     const userID = req.body.userID;
+    const targetID = req.body.targetID;
 
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
         response.error = 'Invalid userID ' + userID;
-        res.status(200).json(response);
-        return;
+        return res.status(200).json(response);
     }
 
-    const filter = {_id:userID};
-    const user = await User.findOne(filter);
+    // Check if targetID is a valid object id
+    if(!checkObjectId(targetID)) {
+        response.ok = false;
+        response.error = 'Invalid targetID ' + targetID;
+        return res.status(200).json(response);
+    }
 
-    if(user)
+    const filter = {_id:targetID};
+    const target = await User.findOne(filter);
+
+    if(target)
     {
-        // Creates array of follower's objects with the stuff we want to return in it
+        // Creates array of follower's objects
         var arrayFollowers = [];
 
-        // Loops through all followers
-        for(let i = 0; i < user.followers.length; i++)
-        {
-            // filters for follower's id
-            const filter2 = {_id:user.followers[i]}
-            const user2 = await User.findOne(filter2);
+        // Filters for followerID
+        const filter2 = {_id:target.followers};
+        const projection = {_id: 1, username: 1, profileImageUrl: 1, followers: 1};
+        const user2 = await User.find(filter2, projection);
 
-            if(user2)
+        // Loops through all followers
+        for(let i = 0; i < user2.length; i++)
+        {
+            if (user2[i].followers.includes(userID))
             {
-                // Pushes all followers's infomration into the array
                 arrayFollowers.push({
-                    userID: user2._id,
-                    username: user2.username,
-                    profilePicture: user2.profileImageUrl
+                    userID: user2[i]._id,
+                    username: user2[i].username,
+                    profileImageUrl: user2[i].profileImageUrl,
+                    currentUserFollows: true
                 });
             }
             else
             {
-                response.ok = false;
-                response.error = 'follower id not found ' + user.followers[i];
-                return res.status(200).json(response);
+                arrayFollowers.push({
+                    userID: user2[i]._id,
+                    username: user2[i].username,
+                    profileImageUrl: user2[i].profileImageUrl,
+                    currentUserFollows: false
+                });
             }
         }
         // Returns followers array with ok response
@@ -498,52 +499,61 @@ exports.showFollowers = async function(req, res, next) {
     }
 }
 
-
 exports.showFollowings = async function(req, res, next) {
     // Default response object
     var response = {ok:true}
 
     // Incoming values
     const userID = req.body.userID;
+    const targetID = req.body.targetID;
 
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
         response.error = 'Invalid userID ' + userID;
-        res.status(200).json(response);
-        return;
+        return res.status(200).json(response);
     }
 
-    const filter = {_id:userID};
-    const user = await User.findOne(filter);
+    // Check if targetID is a valid object id
+    if(!checkObjectId(targetID)) {
+        response.ok = false;
+        response.error = 'Invalid targetID ' + targetID;
+        return res.status(200).json(response);
+    }
 
-    if(user)
+    const filter = {_id:targetID};
+    const target = await User.findOne(filter);
+
+    if(target)
     {
         // Creates array of following's objects with the stuff we want to return in it
         var arrayFollowings = [];
 
-        // Loops through all followings
-        for(let i = 0; i < user.following.length; i++)
-        {
-            // filters for following's id
-            const filter2 = {_id:user.following[i]}
-            const user2 = await User.findOne(filter2);
+        // Filters for followingID's
+        const filter2 = {_id:target.following};
+        const projection = {_id: 1, username: 1, profileImageUrl: 1, followers: 1};
+        const user2 = await User.find(filter2, projection);
 
-            if(user2)
+        // Loops through all followings
+        for(let i = 0; i < user2.length; i++)
+        {
+            if (user2[i].followers.includes(userID))
             {
-                // Pushes all following's infomration into the array
                 arrayFollowings.push({
-                    userID: user2._id,
-                    username: user2.username,
-                    profilePicture: user2.profileImageUrl
+                    userID: user2[i]._id,
+                    username: user2[i].username,
+                    profileImageUrl: user2[i].profileImageUrl,
+                    currentUserFollows: true
                 });
             }
             else
             {
-                response.ok = false;
-                response.error = 'followering id not found ' + user.following[i];
-                res.status(200).json(response);
-                return;
+                arrayFollowings.push({
+                    userID: user2[i]._id,
+                    username: user2[i].username,
+                    profileImageUrl: user2[i].profileImageUrl,
+                    currentUserFollows: false
+                });
             }
         }
         // Returns following array with ok response
@@ -570,13 +580,12 @@ exports.searchUser = async function(req, res, next) {
     if(!checkObjectId(userID)) {
         response.ok = false;
         response.error = 'Invalid userID ' + userID;
-        res.status(200).json(response);
-        return;
+        return res.status(200).json(response);
     }
 
-    // Searchs for single user and does not return password field
+    // Searchs for single user and does not return password and refreshToken fields
     const filter = {_id: userID};
-    const projection = {password: 0};
+    const projection = {password: 0, refreshToken: 0};
     const user = await User.findOne(filter, projection);
 
     if(user)
@@ -604,13 +613,13 @@ exports.changeUsername = async function(req, res, next) {
     if(!checkObjectId(userID)) {
         response.ok = false;
         response.error = 'Invalid userID ' + userID;
-        res.status(200).json(response);
-        return;
+        return res.status(200).json(response);
     }
+    // Check if username is given
     if (username == null)
     {
         response.ok = false;
-        response.message = 'username null';
+        response.error = 'username null';
         return res.status(200).json(response);
     }
 
@@ -636,8 +645,6 @@ exports.changeUsername = async function(req, res, next) {
             // Otherwise return the username and success message
             else
             {
-                response.username = username;
-                response.message = 'Succesfully changed username';
                 res.status(200).json(response);
             }
         });
@@ -663,13 +670,12 @@ exports.changePassword = async function(req, res, next) {
     if(!checkObjectId(userID)) {
         response.ok = false;
         response.error = 'Invalid userID ' + userID;
-        res.status(200).json(response);
-        return;
+        return res.status(200).json(response);
     }
     if (password == null)
     {
         response.ok = false;
-        response.message = 'password null';
+        response.error = 'password null';
         return res.status(200).json(response);
     }
 
@@ -678,10 +684,9 @@ exports.changePassword = async function(req, res, next) {
     const update = {password: password};
     const user = await User.findOneAndUpdate(filter, update);
 
-    // If user is found return message
+    // If user is found return ok:true
     if(user)
     {
-        response.message = 'Succesfully changed password';
         res.status(200).json(response);
     }
     // If userID is not found return error
@@ -698,22 +703,38 @@ exports.searchByUsername = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
+    const userID = req.body.userID;
     var partialUsername = req.body.username;
     var searchKey = new RegExp(partialUsername);
 
+    // Check if userID is a valid object id
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid userID ' + userID;
+        return res.status(200).json(response);
+    }
+
     // Using $regex in order to get partial matching, 'i' option makes it case-sensitive
     var filter = {username: {$regex: searchKey, $options: 'i'}};
-    const projection = {password: 0};
+    const projection = {_id: 1, username: 1, profileImageUrl: 1, following: 1};
 
-    const user = await User.find(filter, projection);
+    const userM = await User.find(filter, projection);
 
-    if (user.length != 0) {
-        response.user = user;
-        res.status(200).json(response);
+    var user = JSON.parse(JSON.stringify(userM));
+
+    for (var i = 0; i < user.length; i++)
+    {
+        if (user[i].following.includes(userID))
+        {
+            user[i].currentUserFollows = true;
+        }
+        else
+        {
+            user[i].currentUserFollows = false;
+        }
+        delete user[i].following;
     }
-    else {
-        response.ok = false;
-        response.error = 'No users matching field';
-        res.status(200).json(response);
-    }
+
+    response.user = user;
+    res.status(200).json(response);
 }

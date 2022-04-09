@@ -10,10 +10,10 @@ router.post('/deleteRefreshToken', userController.deleteRefreshToken);
 router.post('/login', userController.login);
 router.post('/register', userController.register);
 router.get('/verifyEmail', userController.verifyEmail);
-router.post('/searchByUsername', userController.searchByUsername);
 router.post('/searchUser', userController.searchUser);
 router.post('/showFollowers', userController.showFollowers);
 router.post('/showFollowings', userController.showFollowings);
+router.post('/searchByUsername', userController.searchByUsername);
 
 // Call middleware function
 router.use(auth.jwtAuth);

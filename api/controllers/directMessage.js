@@ -180,7 +180,7 @@ exports.getChat = async function(req, res, next) {
 
     // Find DM by chatID
     const filter = {_id:chatID, users:userID};
-    const dm = await DirectMessage.findOne(filter).populate('users', '_id username spotify.image');
+    const dm = await DirectMessage.findOne(filter).populate('users', '_id username profileImageUrl');
 
     // Return DM if found, if not return empty array
     if(dm)
@@ -212,7 +212,7 @@ exports.getAllChats = async function(req, res, next) {
     // Find all DMs by userID
     const filter = {users: {$elemMatch: {$eq: userID}}};
     const projection = {chat: {$slice: -1}};
-    const dm = await DirectMessage.find(filter, projection).sort({'chat.timeStamp': 'desc'}).populate('users', '_id username spotify.image');
+    const dm = await DirectMessage.find(filter, projection).sort({'chat.timeStamp': 'desc'}).populate('users', '_id username profileImageUrl');
 
     // Return DM's if found, if not return empty array
     if(dm)
