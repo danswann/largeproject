@@ -53,14 +53,15 @@ exports.callback = async function(req, res, next) {
 
     // Update the current user's document to reflect that they have connected their Spotify
     // account and assign them the access and refresh tokens from Spotify
-    const currentUser = await User.findById(userID, 'spotify');
+    const currentUser = await User.findById(userID, 'spotify profileImageUrl');
     if(currentUser) {
         currentUser.spotify.connected = true;
         currentUser.spotify.accessToken = result.body['access_token'];
         currentUser.spotify.refreshToken = result.body['refresh_token'];
         currentUser.spotify.expiration = Date.now() + result.body['expires_in'] * 1000;
         currentUser.spotify.id = me.body['id'];
-        currentUser.spotify.image = me.body['images'][0]?.url;
+        //currentUser.spotify.image = me.body['images'][0]?.url;
+        currentUser.profileImageUrl = me.body['images'][0]?.url;
         await currentUser.save();
         // Redirect to a success message on the main website
         res.redirect(C.DOMAIN_ROOT + '/message/spotifyconnect/success');
