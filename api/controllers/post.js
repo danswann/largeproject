@@ -24,33 +24,21 @@ exports.newPost = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
-    const {playlistID, caption} = req.body;
-    const userID = req.user.userID;
-
-    // Check if mentionedUsers[i] is a valid object id
-    for (let i = 0; i < mentionedUsers.length; i++)
-    {
-        if(!checkObjectId(mentionedUsers[i])) {
-            response.ok = false;
-            response.error = 'Invalid mentionedUsers id at i = ' + i + ' userID ' + mentionedUsers[i];
-            res.status(200).json(response);
-            return;
-        }
-    }
+    const userID = req.body.userID;
+    const playlistID = req.body.playlistID;
+    const caption = req.body.caption;
 
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
         response.error = 'Invalid userID ' + userID;
-        res.status(200).json(response);
-        return;
+        return res.status(200).json(response);
     }
 
     // Create a new instance of post model
     var newPost = new Post({
         playlistID: playlistID,
         caption: caption,
-        mentionedUsers: mentionedUsers,
         author: userID
     });
 
@@ -66,30 +54,7 @@ exports.newPost = async function(req, res, next) {
         // Otherwise return a success message
         else
         {
-            // Add notification to database for each mentioned user
-            for (let i = 0; i < mentionedUsers.length; i++)
-            {
-                // Create a new instance of notification model
-                var newNotification = new Notification({
-                    notificationType: 4,
-                    postID: newPost._id,
-                    userID: mentionedUsers[i],
-                    senderID: userID
-                });
-
-                // Save the new instance
-                newNotification.save(function (err) {
-                    // If an error occurs, return ok:false and the error message
-                    if(err)
-                    {
-                        response.ok = false;
-                        response.error = err;
-                        res.status(200).json(response);
-                    }
-                });
-            }
-            response.msg = req.user;
-            response.message = 'Succesfully added post!';
+            response.postID = newPost._id;
             res.status(200).json(response);
         }
     });
@@ -540,14 +505,14 @@ exports.userLikedPosts = async function(req, res, next) {
     var response = {ok:true};
 
     var userID = req.body.userID;
-    
+
     // Check if userID is valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
         response.error = 'Invalid userID ' + userID;
         return res.status(200).json(response);
     }
-    
+
     // Find liked posts by userID
     const filter = {likedBy: {$elemMatch: {$eq: userID}}};
     const projection = {_id: 1, author: 1, playlistID: 1};
