@@ -47,6 +47,7 @@ export default function FollowingListScreen({ route, navigation }) {
       setFollowings(data.following);
     }
   }, [route.params.userID]);
+  console.log("Followings Data: ", followings);
   return (
     <View style={styles.MainContainer}>
       {/* Go back button */}

@@ -6,12 +6,14 @@ import {
   FlatList,
   Dimensions,
   Image,
+  TouchableOpacity,
 } from "react-native";
 import ProfileBox from "../components/ProfileBox";
 import RowBox from "../components/RowBox";
 import { API_URL } from "../constants/Info";
 import { useIsFocused } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
 // COMPONENT BODY
 export default function ProfileScreen({ route, navigation }) {
@@ -23,6 +25,7 @@ export default function ProfileScreen({ route, navigation }) {
   const [followerCount, setFollowerCount] = useState([0]);
   const [posts, setPosts] = useState([]);
   const [postGridComplete, setPostGridComplete] = useState([]);
+  const [postsOrLikes, setPostsOrLikes] = useState("posts");
 
   const isFocused = useIsFocused();
   useEffect(() => {
@@ -72,6 +75,7 @@ export default function ProfileScreen({ route, navigation }) {
         setPostCount(posts.length);
       });
   }
+
   function dividePostsIntoRows() {
     var count = 0;
     var rowNum = 0;
@@ -104,6 +108,9 @@ export default function ProfileScreen({ route, navigation }) {
     postGrid[rowNum] = { key: rowNum, row: postRow };
     setPostGridComplete(postGrid);
   }
+
+  const Tab = createMaterialTopTabNavigator();
+
   return (
     <View style={styles.MainContainer}>
       {/*Profile Info */}
@@ -116,20 +123,49 @@ export default function ProfileScreen({ route, navigation }) {
         userID={userID}
         navigation={navigation}
       />
-      {/* Container for nav */}
+      {/* Container for navigation between posts and likes */}
       <View style={styles.NavContainer}>
-        <Ionicons name="grid" size={20} color="white" />
-        <Ionicons name="heart" size={20} color="white" />
+        {/* Posts and likes filter buttons */}
+        <TouchableOpacity
+          hitSlop={{ top: 40, bottom: 40, left: 100, right: 100 }}
+          onPress={() => setPostsOrLikes("posts")}
+        >
+          {postsOrLikes === "posts" ? (
+            <Ionicons name="grid" size={20} color="#573C6B" />
+          ) : (
+            <Ionicons name="grid" size={20} color="white" />
+          )}
+        </TouchableOpacity>
+        <TouchableOpacity
+          hitSlop={{ top: 40, bottom: 40, left: 100, right: 100 }}
+          onPress={() => setPostsOrLikes("likes")}
+        >
+          {postsOrLikes === "likes" ? (
+            <Ionicons name="heart" size={20} color="#573C6B" />
+          ) : (
+            <Ionicons name="heart" size={20} color="white" />
+          )}
+        </TouchableOpacity>
       </View>
       {/* Grid container */}
-      <View style={styles.GridColumnContainer}>
-        {postCount == 0 ? (
-          <Text style={{ color: "white" }}>This user has no posts</Text>
+      <View>
+        {postsOrLikes === "posts" ? (
+          // Posts container
+          <View style={styles.GridColumnContainer}>
+            {postCount == 0 ? (
+              <Text style={{ color: "white" }}>This user has no posts</Text>
+            ) : (
+              <FlatList
+                data={postGridComplete}
+                renderItem={({ item }) => <RowBox row={item.row} />}
+              />
+            )}
+          </View>
         ) : (
-          <FlatList
-            data={postGridComplete}
-            renderItem={({ item }) => <RowBox row={item.row} />}
-          />
+          // Likes container
+          <View style={styles.GridColumnContainer}>
+            <Text style={{ color: "white" }}>Likes will be displayed here</Text>
+          </View>
         )}
       </View>
     </View>

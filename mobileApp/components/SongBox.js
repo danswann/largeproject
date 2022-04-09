@@ -3,6 +3,16 @@ import { Text, View, StyleSheet, Image, TouchableOpacity, } from "react-native";
 
 // COMPONENT BODY
 export default function SongBox(props) {
+    function getSongLength()
+    {
+        const seconds = (props.songLength / 1000)
+        const remainingSeconds = Math.floor(seconds % 60)
+        const minutes = Math.floor(seconds / 60)
+        let secondsString = remainingSeconds
+        if(remainingSeconds < 10)
+           secondsString = "0" + remainingSeconds
+        return (minutes + ":" + secondsString)
+    }
     function buildArtistString(artists)
     {
         let string = "";
@@ -28,7 +38,7 @@ export default function SongBox(props) {
                 </View>
             </View>
             {/* Song Length */}
-            <Text style={{color: 'white', textAlign: "right", textAlignVertical:"bottom", marginBottom: 5, marginHorizontal: 5, fontSize: 10}}>{props.songLength}</Text>
+            <Text style={{color: 'white', textAlign: "right", textAlignVertical:"bottom", marginBottom: 5, marginHorizontal: 5, fontSize: 10}}>{getSongLength()}</Text>
         </View>
     );
 }
