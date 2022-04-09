@@ -19,8 +19,6 @@ import { StatusBar, ActivityIndicator } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AuthContext } from "../Context";
 
-
-
 // Login screen
 function LoginScreen({ navigation }) {
   // Keeps track of what the user has inputted
@@ -146,7 +144,7 @@ function RegisterScreen({ navigation }) {
   const { signUp } = React.useContext(AuthContext);
   const [loading, setLoading] = useState(false);
 
-  function verifyRegisterData(username, email, password, confirmPassword)
+  async function verifyRegisterData()
   {
     if (username === "")
       return "Username field must be filled"
@@ -160,10 +158,9 @@ function RegisterScreen({ navigation }) {
       return "Password field must be filled"
     else if(password !== confirmPassword)
       return "Passwords do not match"
-    else
-      signUp("", "", email, "", username, password, "")
-      navigation.navigate("EmailVerification", {usernameParam: username, passwordParam: password, emailParam: email})
-      return "Verified"
+    signUp("", "", email, "", username, password, "")
+    navigation.navigate("EmailVerification", {usernameParam: username, passwordParam: password, emailParam: email})
+    return "Verified"
   }
   function verifyEmailFormat(email) //verifies format of string@string.string
   {
@@ -171,16 +168,21 @@ function RegisterScreen({ navigation }) {
     return reg.test(email);
   }
 
-  async function tryRegister()
+
+  const getHashedPassword = async () => {
+    return new Promise((res, rej) => {
+      JSHash(password, CONSTANTS.HashAlgorithms.sha256)
+        .then(async(hash) => {
+          res(hash)
+        })
+    })
+  }
+
+  function tryRegister()
   {
     if(!loading) {
       setLoading(true)
-      setRegisterState(await verifyRegisterData(
-        username,
-        email,
-        password,
-        confirmPassword
-      ))
+      setRegisterState(verifyRegisterData())
       setLoading(false)
     }
   }

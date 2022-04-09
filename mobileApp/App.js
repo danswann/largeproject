@@ -8,6 +8,7 @@ import { AuthContext } from "./Context";
 import UnauthenticatedScreen from "./screens/UnauthenticatedScreen";
 import { API_URL } from "./constants/Info";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { JSHash, JSHmac, CONSTANTS } from "react-native-hash";
 
 const LoggedInStack = createNativeStackNavigator();
 
@@ -22,6 +23,16 @@ export default function App() {
     refreshToken: null,
     accessToken: null,
   };
+
+  const getHashedPassword = (password) => {
+    let hash = new Promise((res, rej) => {
+    JSHash(password, CONSTANTS.HashAlgorithms.sha256)
+      .then((hash) => {
+        res(hash)
+      })
+    })
+    return hash
+  }
 
   //If user is logged out, deletes refresh token from database
   async function deleteRefreshToken()
@@ -119,16 +130,18 @@ export default function App() {
   // Context functions that can change the authentication status of the user
   const authContext = React.useMemo(() => {
     return {
-      signIn: (username, password) => {
-        return new Promise((res, rej) => {
+      signIn: async (username, password) => {
+        const hashedPassword = await getHashedPassword(password)
+        const promise = new Promise((res, rej) => {
           
           // User ID will store the users unique id
           let userID;
           const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username: username, password: password }),
+            body: JSON.stringify({ username: username, password: hashedPassword }),
           };
+          console.log(JSON.stringify({ username: username, password: hashedPassword }))
           fetch(`${API_URL}/api/user/login`, requestOptions)
             .then((response) => response.json())
             .then( async (data) => {
@@ -144,10 +157,15 @@ export default function App() {
                 console.log("Invalid username or password");
                 res(true);
               }
-            });
-        });
+            })
+            .catch(() => {
+              console.log("Api error: Server is probably down")
+              res(false)
+            })
+        })
+        return promise;
       },
-      signUp: (
+      signUp: async (
         firstName,
         lastName,
         email,
@@ -157,6 +175,8 @@ export default function App() {
         dob
       ) => {
         // Object that specifies what we need for the request since it is a POST
+        const hashedPassword = await getHashedPassword(password)
+        console.log("Sign up is hashing as " + hashedPassword)
         const requestOptions = {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -166,7 +186,7 @@ export default function App() {
             email: email,
             phoneNumber: phoneNumber,
             username: username,
-            password: password,
+            password: hashedPassword,
             dob: dob,
           }),
         };
@@ -201,6 +221,7 @@ export default function App() {
               }
               res(data.token)
             })
+            .catch(() => {console.log("Api error: Server is probably down")})
         })
       }
     };
@@ -211,8 +232,10 @@ export default function App() {
     setTimeout( async () => {
       const userID = await getUserID()
       const refreshToken = await getRefreshToken()
-      accessToken = await authContext.refresh(userID, refreshToken)
-      if(!accessToken)
+      let accessToken = null;
+      if(refreshToken != null)
+        accessToken = await authContext.refresh(userID, refreshToken)
+      if(accessToken == null)
         dispatch({ type: "NOTLOGGEDIN"});
       else 
         dispatch({ type: "LOGGEDIN", userID: userID, refresh: refreshToken, access: accessToken });
