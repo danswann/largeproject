@@ -6,9 +6,6 @@ const Schema = mongoose.Schema;
 const ChatSchema = new Schema({
     isRead: {type:Boolean, default:false},
     timeStamp: {type:Date, default:Date.now},
-    containsEmbed: {type:Boolean, default:false},
-    playlistID: {type:String, required:false},
-    postID: {type:Schema.ObjectId, ref:'Post', required:false},
     text: {type:String, maxlength:250},
     author: {type:Schema.ObjectId, ref:'User', required:true}
 });

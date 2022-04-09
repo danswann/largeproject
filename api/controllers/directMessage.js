@@ -23,14 +23,12 @@ exports.newChat = async function(req, res, next) {
     // Incoming values
     const {users} = req.body;
 
-    // Check if userID is a valid object id
-    for (let i = 0; i < users.length; i++)
-    {
+    // Check if all userID's are a valid object id
+    for (let i = 0; i < users.length; i++) {
         if(!checkObjectId(users[i])) {
             response.ok = false;
-            response.error = 'Invalid user id';
-            res.status(200).json(response);
-            return;
+            response.error = 'Invalid userID ' + users[i];
+            return res.status(200).json(response);
         }
     }
 
@@ -47,10 +45,10 @@ exports.newChat = async function(req, res, next) {
             response.error = err;
             res.status(200).json(response);
         }
-        // Otherwise return a success message
+        // Return chatID
         else
         {
-            response.message = 'Succesfully made new DM group!';
+            response.dm = newDM._id;
             res.status(200).json(response);
         }
     });
@@ -61,33 +59,33 @@ exports.sendMessage = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
-    const {chatID, text, userID} = req.body;
-
-    // Check if post id is valid object id
-    if(!checkObjectId(id)) {
-        response.ok = false;
-        response.error = 'Invalid post id';
-        res.status(200).json(response);
-        return;
-    }
+    const userID = req.body.userID;
+    const chatID = req.body.chatID;
+    const text = req.body.text;
 
     // Check if userID is a valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
-        response.error = 'Invalid user id';
-        res.status(200).json(response);
-        return;
+        response.error = 'Invalid userID ' + userID;
+        return res.status(200).json(response);
     }
 
-    // find dm by dm id
-    const filter = {_id:id};
+    // Check if chatID is valid object id
+    if(!checkObjectId(chatID)) {
+        response.ok = false;
+        response.error = 'Invalid chatID ' + chatID;
+        return res.status(200).json(response);
+    }
+
+    // Find DM by chatID
+    const filter = {_id:chatID};
     const dm = await DirectMessage.findOne(filter);
 
-    // add message object to chat array
+    // Add message in local DM instance
     const update = {text:text,author:userID};
     dm.chat.push(update);
 
-    // update the message json file in database
+    // Update DM in database
     dm.save(function (err) {
         // If an error occurs, return ok:false and the error message
         if(err)
@@ -96,39 +94,45 @@ exports.sendMessage = async function(req, res, next) {
             response.error = err;
             res.status(200).json(response);
         }
-        // Otherwise return a success message
+        // Otherwise return ok:true
         else
         {
-            response.message = 'Succesfully sent message!';
             res.status(200).json(response);
         }
     });
 }
 
-exports.readDM = async function(req, res, next) {
+exports.readChat = async function(req, res, next) {
     // Default response object
     var response = {ok:true};
 
     // Incoming values
-    const {dmID} = req.body;
+    const userID = req.body.userID;
+    const chatID = req.body.chatID;
 
-    // Check if dm id is valid object id
-    if(!checkObjectId(dmID)) {
+    // Check if userID is valid object id
+    if(!checkObjectId(userID)) {
         response.ok = false;
-        response.error = 'Invalid post id';
-        res.status(200).json(response);
-        return;
+        response.error = 'Invalid userID ' + userID;
+        return res.status(200).json(response);
     }
 
+    // Check if chatID is valid object id
+    if(!checkObjectId(chatID)) {
+        response.ok = false;
+        response.error = 'Invalid chatID ' + chatID;
+        return res.status(200).json(response);
+    }
 
-    // find dm by dm id
-    const filter = {_id:dmID};
+    // Find DM by ChatID
+    const filter = {_id:chatID};
     const dm = await DirectMessage.findOne(filter);
 
     if(dm)
     {
         for(var i = 0; i < dm.chat.length; i++)
-            dm.chat[i].isRead = true;
+            if (dm.chat[i].author != userID)
+                dm.chat[i].isRead = true;
 
         dm.save(function (err) {
             // If an error occurs, return ok:false and the error message
@@ -140,7 +144,6 @@ exports.readDM = async function(req, res, next) {
             }
             else
             {
-                response.message = 'Succesfully read messages!';
                 res.status(200).json(response);
             }
         });
@@ -148,7 +151,7 @@ exports.readDM = async function(req, res, next) {
     else
     {
         response.ok = false;
-        response.message = 'dm not found';
+        response.error = 'Chat not found';
         res.status(200).json(response);
     }
 }
@@ -158,20 +161,28 @@ exports.getChat = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
-    const {chatID} = req.body;
+    const userID = req.body.userID;
+    const chatID = req.body.chatID;
 
-    // Check if dmID is valid object id
-    if(!checkObjectId(dmID)) {
+    // Check if userID is valid object id
+    if(!checkObjectId(userID)) {
         response.ok = false;
-        response.error = 'Invalid dmID ' + dmID;
-        res.status(200).json(response);
-        return;
+        response.error = 'Invalid userID ' + userID;
+        return res.status(200).json(response);
     }
 
-    // find dm by dmID
-    const filter = {_id:dmID};
-    const dm = await DirectMessage.findOne(filter);
+    // Check if chatID is valid object id
+    if(!checkObjectId(chatID)) {
+        response.ok = false;
+        response.error = 'Invalid chatID ' + chatID;
+        return res.status(200).json(response);
+    }
 
+    // Find DM by chatID
+    const filter = {_id:chatID, users:userID};
+    const dm = await DirectMessage.findOne(filter).populate('users', '_id username spotify.image');
+
+    // Return DM if found, if not return empty array
     if(dm)
     {
         response.dm = dm;
@@ -179,8 +190,7 @@ exports.getChat = async function(req, res, next) {
     }
     else
     {
-        response.ok = false;
-        response.message = 'dm not found';
+        response.dm = [];
         res.status(200).json(response);
     }
 }
@@ -190,31 +200,29 @@ exports.getAllChats = async function(req, res, next) {
     var response = {ok:true};
 
     // Incoming values
-    const {userID, currentIndex, numberOfDMs} = req.body;
+    const userID = req.body.userID;
 
     // Check if userID is valid object id
     if(!checkObjectId(userID)) {
         response.ok = false;
         response.error = 'Invalid userID ' + userID;
-        res.status(200).json(response);
-        return;
+        return res.status(200).json(response);
     }
 
-    // find dm by dm id
+    // Find all DMs by userID
     const filter = {users: {$elemMatch: {$eq: userID}}};
     const projection = {chat: {$slice: -1}};
-    const dm = await DirectMessage.find(filter, projection).sort({'chat.timeStamp': 'desc'}).skip(currentIndex).limit(numberOfDMs);
+    const dm = await DirectMessage.find(filter, projection).sort({'chat.timeStamp': 'desc'}).populate('users', '_id username spotify.image');
 
+    // Return DM's if found, if not return empty array
     if(dm)
     {
-        response.dmLength = dm.length;
         response.dm = dm;
         res.status(200).json(response);
     }
     else
     {
-        response.ok = false;
-        response.message = 'No dms found';
+        response.dm = [];
         res.status(200).json(response);
     }
 }
