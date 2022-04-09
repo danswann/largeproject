@@ -1,7 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import React from "react";
 import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
-
+import { Ionicons } from "@expo/vector-icons";
 
 // COMPONENT BODY
 export default function MessageBox(props) {    
@@ -55,6 +55,7 @@ export default function MessageBox(props) {
             </Text>
         </View>
     </TouchableOpacity>
+    
   );
 }
 
@@ -71,6 +72,7 @@ const styles = StyleSheet.create({
         marginStart: 10,
         marginEnd: 10,
         marginTop: 15,
+        borderRadius: 10,
     },
 
     ProfilePic: {

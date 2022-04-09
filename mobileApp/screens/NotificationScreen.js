@@ -16,7 +16,7 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { NavigationContainer, StackActions} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { API_URL } from "../constants/Info";
-
+import { Ionicons } from "@expo/vector-icons";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -128,6 +128,17 @@ function MessageTab({ route, navigation }) {
         // getName(item.users)
         renderItem={({item}) => <MessageBox myUserID={myUserID} name={"doug"} messages={item.chat} navigation={navigation}/>}
       />
+
+      {/* create new message button */}
+      {/*  onPress={() => navigation.navigate("Notification")} */}
+      <View style={styles.newMessageButton}>
+        <TouchableOpacity>
+          <View>
+            <Ionicons style={{ color: "white", borderStyle: "solid" }} name="create-outline" size={25} />            
+          </View>            
+        </TouchableOpacity>
+      </View>        
+
     </View>
   );
 }
@@ -171,8 +182,18 @@ const styles = StyleSheet.create({
     color: "white",
   },
 
-  tabs: {
-
+  newMessageButton: {
+    // backgroundColor: "white", 
+    // opacity: 0.25, 
+    borderRadius: 10, 
+    width: 45, 
+    height: 45,
+    // flexDirection: "row",    
+    marginBottom: 10, 
+    marginLeft: 325,
+    padding: 10,
+    justifyContent: "center",
+    // alignSelf: "right",
   },
 
 });
