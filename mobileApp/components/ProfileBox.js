@@ -12,9 +12,8 @@ export default function ProfileBox(props) {
           {/* Profile pic */}
           <Image
             style={styles.ProfilePic}
-            source={{
-              uri: "https://media.comicbook.com/2020/10/my-hero-academia-bakugo-1240308.jpeg?auto=webp",
-            }}
+            source={(props.hasProfileImage  ? { uri: props.image }
+              : require('../assets/images/defaultSmile.png'))} //default image
           />
 
           {/* Username and bio (bio length is limited need to fix)*/}

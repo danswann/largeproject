@@ -6,9 +6,9 @@ import ThumbnailBox from "../components/ThumbnailBox";
 export default function RowBox(props) {
 	return (
 		<View style={styles.GridRowContainer}>
-        <ThumbnailBox postID={props.row[0].postID}/>
-        <ThumbnailBox postID={props.row[1].postID}/>
-        <ThumbnailBox postID={props.row[2].postID}/>
+        <ThumbnailBox postID={props.row[0].postID} image={props.row[0].image}/>
+        <ThumbnailBox postID={props.row[1].postID} image={props.row[1].image}/>
+        <ThumbnailBox postID={props.row[2].postID} image={props.row[2].image}/>
 		</View>
 	);
 }

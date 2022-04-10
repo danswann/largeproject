@@ -14,12 +14,12 @@ export default function PlaylistListBox(props) {
     }}>
       {/* playlist pic */}
       <Image
-            source={require('../assets/images/testCover.jpg')}
+            source={{uri: props.image}}
             style={styles.playlistPic}
       />
       <View style={styles.infoContainer}>
         <Text numberOfLines={1} style={styles.MainText}>{props.name}</Text>
-        <Text numberOfLines={1} style={styles.SubText}>{"This playlist is private (not accurate yet)"}</Text>
+        <Text numberOfLines={1} style={styles.SubText}>{(props.public ? "Public" : "Private")}</Text>
       </View>
       <Ionicons name="add" size={25} color={"white"}/>
     </TouchableOpacity>

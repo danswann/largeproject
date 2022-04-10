@@ -3,6 +3,7 @@ import {React, useState, useEffect} from "react";
 import { useIsFocused } from "@react-navigation/native";
 import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { API_URL } from "../constants/Info";
 
 // COMPONENT BODY
 export default function MessageBox(props) {   
@@ -12,31 +13,13 @@ export default function MessageBox(props) {
     useEffect(() => {
         getOtherUsername(props.users)
     }, [isFocused]);
-
-    // Gets user data from api
-    function getUsername(userID) {
-        const requestOptions = {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userID: userID }),
-        };
-        fetch(`${API_URL}/api/user/searchUser`, requestOptions)
-          .then((response) => response.json())
-          .then((response) => {
-            if (!response.ok) {
-              console.log(response.error);
-              return;
-            }
-            setUsername(response.user.username)
-          });
-      }
     
     // returns whoever isn't the current user
     function getOtherUsername(users) {
-        if (users[0] == props.myUserID)
-            getUsername(users[1])
+        if (users[0]._id == props.myUserID)
+            setUsername(users[1].username)
         else
-            getUsername(users[0])
+            setUsername(users[0].username)
     }
     
     return (

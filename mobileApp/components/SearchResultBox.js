@@ -7,16 +7,8 @@ import { AuthContext } from "../Context";
 
 // COMPONENT BODY
 export default function SearchResultBox(props) {
-  const [followed, setFollowed] = useState(checkFollowed());
+  const [followed, setFollowed] = useState(props.isFollowed);
   const isFocused = useIsFocused();
-  function checkFollowed() {
-    if (
-      props.followers &&
-      props.followers.find((user) => user === props.myUserID)
-    )
-      return true;
-    else return false;
-  }
 
   const { refresh } = React.useContext(AuthContext);
   async function followUser() {
@@ -34,8 +26,10 @@ export default function SearchResultBox(props) {
       .then((response) => response.json())
       .then((response) => {
         if (response.ok)
+        {
           if (isFocused) setFollowed(true);
-          else console.log(response.error);
+        }
+        else console.log(response.error);
       });
   }
   async function unfollowUser() {
@@ -78,9 +72,7 @@ export default function SearchResultBox(props) {
         </Text>
       </View>
       {props.myUserID == props.userID ? (
-        <TouchableOpacity style={styles.buttonFollowed}>
-          <Text style={styles.buttonText}>That's you!</Text>
-        </TouchableOpacity>
+        <></>
       ) : !followed ? (
         <TouchableOpacity
           style={styles.button}

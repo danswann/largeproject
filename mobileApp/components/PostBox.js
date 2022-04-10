@@ -9,6 +9,17 @@ import { AuthContext } from "../Context";
 
 // COMPONENT BODY
 export default function PostBox(props) {
+    /*
+    postID={item._id} 
+    isReposted={item.isReposted}
+    originalPostID={item.likedBy}
+    */
+    const [comments, setComments] = useState(props.comments);
+    const [commentCount, setCommentCount] = useState(props.comments.length);
+    const [commentInput, setCommentInput] = useState("");
+    const [liked, setLiked] = useState(props.likedBy.find(user => user === props.myUserID));
+    const [likeCount, setLikeCount] = useState(props.likedBy.length);
+
     const [loading, setLoading] = useState(true);
     const [commentLoading, setCommentLoading] = useState(false);
     const [likeLoading, setLikeLoading] = useState(false);
@@ -16,18 +27,6 @@ export default function PostBox(props) {
     const [songsExpanded, setSongsExpanded] = useState(false);
     const [commentsExpanded, setCommentsExpanded] = useState(false);
 
-    const [userImage, setUserImage] = useState("http://placehold.jp/3d4070/ffffff/100x100.png?text=No%0Art");
-    const [username, setUsername] = useState("");
-    const [caption, setCaption] = useState("");
-    const [timeStamp, setTimeStamp] = useState("");
-    const [likedBy, setLikedBy] = useState([]);
-    const [comments, setComments] = useState([]);
-
-    
-    const [liked, setLiked] = useState(false);
-    const [likeCount, setLikeCount] = useState(0);
-    const [commentCount, setCommentCount] = useState(0);
-    const [commentInput, setCommentInput] = useState("");
     const isFocused = useIsFocused();
 
     const [playlistName, setPlaylistName] = useState("");
@@ -36,76 +35,11 @@ export default function PostBox(props) {
     const [playlistTracks, setPlaylistTracks] = useState([]);
     const [songCount, setSongCount] = useState(0);
 
-    const updatePostComments = () => {
-        getPostDataFromID()
-    }
-
     useEffect(() => {
-        getPostData()
-    }, [isFocused]);
-    
-    function getPostData()
-    {
-        setLoading(true)
-        getPostDataFromID()
         getPlaylistDataFromID()
-        getUserDataFromID()
-        
-        if (isFocused)
-            setLoading(false)
-    }
+    }, []);
 
     const { refresh } = React.useContext(AuthContext);
-
-    //Gets post data from api
-    function getPostDataFromID()
-    {
-        const requestOptions = {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({postID: props.postID})
-        };
-        fetch(`${API_URL}/api/post/getPost`, requestOptions)
-            .then((response) => response.json())
-            .then((response) => {
-                if(!response.ok)
-                {
-                    console.log(response.error)
-                    return
-                }
-                if(isFocused)
-                {   
-                    setCaption(response.post.caption)
-                    setTimeStamp(response.post.timeStamp)
-                    setLikedBy(response.post.likedBy)
-                    setComments(response.post.comments)
-                    setLikeCount(response.post.likedBy.length)
-                    setCommentCount(response.post.comments.length)
-                    setLiked(response.post.likedBy.find(user => user === props.myUserID))
-                    setLikeLoading(false)
-                }
-            })
-    }
-    //Gets user data from api
-    function getUserDataFromID()
-    {
-        const requestOptions = {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({userID: props.userID})
-        };
-        fetch(`${API_URL}/api/user/searchUser`, requestOptions)
-        .then((response) => response.json())
-        .then((response) => {
-            if(!response.ok)
-            {
-            console.log(response.error)
-            return
-            }
-            setUsername(response.user.username)
-            setUserImage(response.user.spotify.image)
-        })
-    }
 
     function getPlaylistDataFromID()
     {
@@ -127,13 +61,14 @@ export default function PostBox(props) {
             setPlaylistIsPublic(response.playlist.public)
             setPlaylistTracks(response.playlist.tracks)
             setSongCount(response.playlist.tracks.length)
+            setLoading(false)
         })
     }
 
     //get time since posted
     function getTimeSince()
     {
-        let ms = new Date().getTime() - new Date(timeStamp).getTime();
+        let ms = new Date().getTime() - new Date(props.timeStamp).getTime();
         let days = ms / (1000 * 60 * 60 * 24)
         if(days > 1)
         {
@@ -165,6 +100,7 @@ export default function PostBox(props) {
         else
             setSongsExpanded(true)
     };
+
     //expands comments
     function commentsTapped(){
         if(commentsExpanded)
@@ -172,6 +108,7 @@ export default function PostBox(props) {
         else
             setCommentsExpanded(true)
     }
+
     //like post
     async function likePost(){
         //refreshes access token (this function must be async)
@@ -191,7 +128,9 @@ export default function PostBox(props) {
                 return
             }
             if(isFocused){
-                getPostDataFromID()
+                setLikeCount(response.post.likedBy.length)
+                setLiked(response.post.likedBy.find(user => user === props.myUserID))
+                setLikeLoading(false)
             }
         })
     };
@@ -218,13 +157,18 @@ export default function PostBox(props) {
             }
             else
             {
+                setComments(response.post.comments)
+                setCommentCount(response.post.comments.length)
                 setCommentInput("")
-                updatePostComments()
                 setCommentLoading(false)
             }
         })
     };
-    
+
+    const updatePostComments = (comments) => {
+        setComments(comments)
+        setCommentCount(comments.length)
+    }
 
     return (
         <View style={styles.PostContainer}>
@@ -238,20 +182,20 @@ export default function PostBox(props) {
             <View style={styles.MessageContainer}>  
                 <TouchableOpacity onPress={() => {props.navigation.navigate({
                     name: 'OtherProfile',
-                    params: { userID: props.userID },
+                    params: { userID: props.author._id },
                 });}}>
                     <View style={{flexDirection: 'row'}}>
                         {/* profile pic */}
                         <Image
-                            source={{uri: userImage}}
+                            source={{uri: props.author.profileImageUrl}}
                             style={styles.ProfilePic}
                         />
                         <View style={{flexDirection: 'column', marginStart: 5, marginTop: 10, }}>
                             {/* name */}
-                            <Text style={{color: 'white', fontWeight: 'bold', fontSize: 12, textDecorationLine: "underline"}}>{username}</Text>
+                            <Text style={{color: 'white', fontWeight: 'bold', fontSize: 12, textDecorationLine: "underline"}}>{props.author.username}</Text>
                             {/* Message */}
                             <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 5}}>
-                                <Text style={styles.MainText}>{caption}</Text>
+                                <Text style={styles.MainText}>{props.caption}</Text>
                             </View>
                         </View>
                     </View>
@@ -285,8 +229,14 @@ export default function PostBox(props) {
                     <ScrollView overScrollMode="never" style={{maxHeight: 205, marginVertical: 10}} nestedScrollEnabled={true}>
                         <TouchableWithoutFeedback onPress={() => {songsTapped()}}>
                             <FlatList style={styles.SongList}
-                                data={playlistTracks}
-                                renderItem={({item}) => <SongBox songCover={item.image} songName={item.name} songArtists={item.artists} songLength={item.duration} />}
+                                data={props.playlist}
+                                renderItem={({item}) => 
+                                <SongBox 
+                                songCover={item.image} 
+                                songName={item.name} 
+                                songArtists={item.artists} 
+                                songLength={item.duration} 
+                                />}
                                 listKey={(item, index) => `_key${index.toString()}`}
                                 keyExtractor={(item, index) => `_key${index.toString()}`}
                             />
@@ -336,7 +286,17 @@ export default function PostBox(props) {
                     <FlatList
                         data={comments}
                         initialScrollIndex={0}
-                        renderItem={({item}) => <CommentBox myUserID={props.myUserID} userID={item.author} postID={props.postID} commentID={item._id} comment={item.comment} timeStamp={item.timeStamp} update={updatePostComments}/>}
+                        renderItem={({item}) => <CommentBox 
+                            postID={props.postID} 
+                            commentID={item._id}
+                            author={item.author} 
+                            comment={item.comment} 
+                            timeStamp={item.timeStamp} 
+                            update={updatePostComments}
+                            myUserID={props.myUserID} 
+                            accessToken={props.accessToken}
+                            refreshToken={props.refreshToken}
+                        />}
                         listKey={(item, index) => `_key${index.toString()}`}
                         keyExtractor={(item, index) => `_key${index.toString()}`}
                     />

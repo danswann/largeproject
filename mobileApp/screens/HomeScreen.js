@@ -26,14 +26,18 @@ export default function HomeScreen({ route, navigation }) {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({userID: userID, currentIndex: currentIndex, accessToken: accessToken})
+      body: JSON.stringify({userID: userID, currentIndex: currentIndex, numberOfPosts: 5, accessToken: accessToken})
     };
     fetch(`${API_URL}/api/post/homeFeed`, requestOptions)
       .then((response) => response.json())
       .then((response) => {
         if(response.ok)
+        {
           if(isFocused)
+          {
             setFeed(response.posts)
+          }
+        }
         else
         {
           if(isFocused)
@@ -61,7 +65,21 @@ export default function HomeScreen({ route, navigation }) {
       </View>) :
       (<FlatList
         data={feed}
-        renderItem={({item}) => <PostBox navigation={navigation} postID={item._id} playlistID={item.playlistID} userID={item.author} myUserID={userID} accessToken={accessToken} refreshToken={refreshToken}/>}
+        renderItem={({item}) => <PostBox 
+          navigation={navigation} 
+          postID={item._id} 
+          author={item.author} 
+          caption={item.caption}
+          comments={item.comments}
+          isReposted={item.isReposted}
+          likedBy={item.likedBy}
+          originalPostID={item.originalPostID}
+          playlistID={item.playlistID} 
+          timeStamp={item.timeStamp}
+          myUserID={userID} 
+          accessToken={accessToken} 
+          refreshToken={refreshToken}
+        />}
         keyExtractor={(item, index) => index.toString()}
       />))
       :

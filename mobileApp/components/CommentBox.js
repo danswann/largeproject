@@ -6,59 +6,34 @@ import { useIsFocused } from "@react-navigation/native";
 
 // COMPONENT BODY
 export default function CommentBox(props) {
-  const [username, setUsername] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [tapped, setTapped] = useState(false);
-
-  const isFocused = useIsFocused();
-  useEffect(() => {
-    getUsername()
-  }, [isFocused]);
-
   //checks if user owns this comment before allowing access to delete button
   function checkUser(){
     if(tapped)
       setTapped(false)
-    else if(props.myUserID == props.userID)
+    else if(props.myUserID == props.author._id)
       setTapped(true)
   }
 
-  //comment on post
+  //deletes comment
   function deleteComment(){
     setDeleteLoading(true)
     const requestOptions = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({postID: props.postID, commentID: props.commentID})
+        body: JSON.stringify({userID: props.myUserID, postID: props.postID, commentID: props.commentID, accessToken: props.accessToken})
     };
     fetch(`${API_URL}/api/post/deleteComment`, requestOptions)
     .then((response) => response.json())
     .then((response) => {
-      props.update()
       if(!response.ok)
         console.log(response.error)
+      else
+        props.update(response.post.comments)
   })
   };
 
-  function getUsername()
-  {
-    const requestOptions = {
-    method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({userID: props.userID})
-    };
-    fetch(`${API_URL}/api/user/searchUser`, requestOptions)
-    .then((response) => response.json())
-    .then((response) => {
-      if(!response.ok)
-      {
-        console.log(response.error)
-        return
-      }
-      if (isFocused)
-        setUsername(response.user.username)
-    })
-  }
   //get time since posted
   function getTimeSince()
   {
@@ -92,12 +67,12 @@ export default function CommentBox(props) {
         <View style={{flexDirection: 'row', maxWidth: "60%"}}>
           {/* profile pic */}
           <Image
-            source={require('../assets/images/defaultSmile.png')}
+            source={{uri: props.author.profileImageUrl}}
             style={styles.ProfilePic}
           />
           <View style={{flexDirection: 'column', marginStart: 5, marginTop: 10, }}>
             {/* name */}
-            <Text style={{color: 'white', fontWeight: 'bold', fontSize: 12, textDecorationLine: "underline"}}>{username}</Text>
+            <Text style={{color: 'white', fontWeight: 'bold', fontSize: 12, textDecorationLine: "underline"}}>{props.author.username}</Text>
             {/* Comment */}
             <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 5, marginBottom: 10}}>
               <Text style={styles.MainText}>{props.comment}</Text>
@@ -109,7 +84,7 @@ export default function CommentBox(props) {
           <Text style={{color: 'white', textAlign: "right", marginVertical: 10, marginRight: 20, fontSize: 11}}>{getTimeSince()}</Text>
           <TouchableOpacity onPress={() => {deleteComment()}}>
             <View style={{marginHorizontal:10}}>
-                {(tapped ? (deleteLoading ?  <ActivityIndicator size={20} color="white"/> : <Ionicons name="trash-outline" size={20} color={"red"}/>) : <></>)}
+                {(deleteLoading ?  <ActivityIndicator size={20} color="white"/> : (tapped ? <Ionicons name="trash-outline" size={20} color={"red"}/> : <></>))}
             </View>
           </TouchableOpacity>
         </View>

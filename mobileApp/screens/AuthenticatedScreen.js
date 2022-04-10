@@ -14,7 +14,7 @@ import HeaderTitle from "../components/HeaderTitle";
 import HeaderProfile from "../components/HeaderProfile";
 import HomeScreen from "./HomeScreen";
 import SearchScreen from "./SearchScreen";
-import PostScreen from "./PostScreen";
+import CreatePostScreen from "./CreatePostScreen";
 import NotificationScreen from "./NotificationScreen";
 import ProfileScreen from "./ProfileScreen";
 import ChatScreen from "./ChatScreen";
@@ -76,7 +76,7 @@ const AuthenticatedScreen = ({ route, navigation }) => {
         />
         <Tab.Screen
           name="Post"
-          component={PostScreen}
+          component={CreatePostScreen}
           initialParams={{ userID: userID , accessToken: accessToken, refreshToken: refreshToken}}
         />
         {/* Notifications will be the only icon with a badge, right now the default is 3 

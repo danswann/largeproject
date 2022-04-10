@@ -158,7 +158,7 @@ function RegisterScreen({ navigation }) {
       return "Password field must be filled"
     else if(password !== confirmPassword)
       return "Passwords do not match"
-    signUp("", "", email, "", username, password, "")
+    signUp(password, "", email, "", username, password, "")
     navigation.navigate("EmailVerification", {usernameParam: username, passwordParam: password, emailParam: email})
     return "Verified"
   }

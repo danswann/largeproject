@@ -70,7 +70,7 @@ export default function App() {
     try {
       return await AsyncStorage.getItem("refreshToken")
     } catch (error) {
-      console.log(error)
+      console.log("getRefreshToken error:" + error)
     }
   };
 
@@ -141,7 +141,6 @@ export default function App() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username: username, password: hashedPassword }),
           };
-          console.log(JSON.stringify({ username: username, password: hashedPassword }))
           fetch(`${API_URL}/api/user/login`, requestOptions)
             .then((response) => response.json())
             .then( async (data) => {
@@ -203,8 +202,6 @@ export default function App() {
       },
       refresh: (userID, refreshToken) => {
         return new Promise((res, rej) => {
-          if(refreshToken == null)
-            res(false)
           const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -219,9 +216,12 @@ export default function App() {
                 dispatch({ type: "NOTLOGGEDIN"});
                 res(false)
               }
-              res(data.token)
+              res(data.accessToken)
             })
-            .catch(() => {console.log("Api error: Server is probably down")})
+            .catch(() => {
+              res(false)
+              console.log("Api error: Server is probably down")
+            })
         })
       }
     };
@@ -232,10 +232,8 @@ export default function App() {
     setTimeout( async () => {
       const userID = await getUserID()
       const refreshToken = await getRefreshToken()
-      let accessToken = null;
-      if(refreshToken != null)
-        accessToken = await authContext.refresh(userID, refreshToken)
-      if(accessToken == null)
+      const accessToken = await authContext.refresh(userID, refreshToken)
+      if(!accessToken)
         dispatch({ type: "NOTLOGGEDIN"});
       else 
         dispatch({ type: "LOGGEDIN", userID: userID, refresh: refreshToken, access: accessToken });
