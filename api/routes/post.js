@@ -16,7 +16,6 @@ router.use(auth.jwtAuth);
 router.post('/newPost', postController.newPost);
 router.post('/likePost', postController.likePost);
 router.post('/commentOnPost', postController.commentOnPost);
-router.post('/editCaption', postController.editCaption);
 router.post('/deleteComment', postController.deleteComment);
 router.post('/deletePost', postController.deletePost);
 // router.post('/repost', postController.repost);
