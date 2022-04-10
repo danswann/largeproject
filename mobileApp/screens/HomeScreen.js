@@ -18,6 +18,7 @@ export default function HomeScreen({ route, navigation }) {
   useEffect(() => {
     getFeed()
   }, [isFocused]);
+  
 
   async function getFeed()
   {
@@ -35,7 +36,10 @@ export default function HomeScreen({ route, navigation }) {
         {
           if(isFocused)
           {
-            setFeed(response.posts)
+            if(currentIndex != 0)
+              setFeed(feed.concat(response.posts))
+            else
+              setFeed(response.posts)
           }
         }
         else
@@ -65,6 +69,9 @@ export default function HomeScreen({ route, navigation }) {
       </View>) :
       (<FlatList
         data={feed}
+        onRefresh={() => [setCurrentIndex(0), setLoading(true), getFeed()]}
+        refreshing={loading}
+        onEndReached={() => [setCurrentIndex(currentIndex + 5), getFeed()]}
         renderItem={({item}) => <PostBox 
           navigation={navigation} 
           postID={item._id} 
