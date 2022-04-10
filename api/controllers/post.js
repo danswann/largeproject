@@ -397,6 +397,8 @@ exports.homeFeed = async function(req, res, next) {
     const filter = {_id: userID};
     const projection = {_id: 0, following: 1};
     const followingArray = await User.findOne(filter, projection);
+    // Add the current user
+    followingArray.following.push(userID);
 
     // If the post exists, return ok:true
     if(followingArray)
