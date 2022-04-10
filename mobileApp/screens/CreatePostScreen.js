@@ -1,13 +1,13 @@
-import React, {useState, useEffect, useCallback} from "react";
-import { Image, Text, View, StyleSheet, TouchableOpacity, Linking, FlatList, ActivityIndicator} from "react-native";
+import React, {useState, useEffect, useRef, useCallback} from "react";
+import { TextInput, AppState, Image, Text, View, StyleSheet, TouchableOpacity, Linking, FlatList, ActivityIndicator} from "react-native";
 import { API_URL } from "../constants/Info";
 import PlaylistListBox from "../components/PlaylistListBox";
 import { useIsFocused } from "@react-navigation/native";
 import { AuthContext } from "../Context";
+import SongBox from "../components/SongBox";
 
 // COMPONENT BODY
 export default function PostScreen({ route, navigation }) {
-
   const [URL, setURL] = useState("")
   const {userID, accessToken, refreshToken} = route.params
   const [connected, setConnected] = useState(false)
@@ -15,16 +15,31 @@ export default function PostScreen({ route, navigation }) {
   const [dropped, setDropped] = useState(false)
   const [loading, setLoading] = useState(true)
 
+  const [caption, setCaption] = useState("")
+  const [playlistTitle, setPlaylistTitle] = useState("")
+  const [playlistImage, setPlaylistImage] = useState("uri")
+  const [playlistID, setPlaylistID] = useState(0)
+  const [playlistSongs, setPlaylistSongs] = useState([])
+  const [playlistIsPublic, setPlaylistIsPublic] = useState(true)
+
   const { refresh } = React.useContext(AuthContext);
 
-  let mounted = true
   const isFocused = useIsFocused();
+  //Activates when user re-enters app (on CreatePostScreen) to update connected
   useEffect(() => {
-    isConnected()
-    return function cleanup() { //if user navigates away before an api call is finished, this prevents error
-      mounted = false
+    const listener = (nextAppState) => {
+      console.log("User entering " + nextAppState)
+      if(nextAppState === "active")
+        isConnected()
     }
-  }, [isFocused]);
+    if(!connected && isFocused)
+      AppState.addEventListener("change", listener)
+    isConnected()
+    return () => {
+      AppState.removeEventListener("change", listener)
+    };
+  }, [connected, isFocused]);
+
 
   //Redirect to url button component
   const OpenURLButton = ({children}) => {
@@ -44,7 +59,7 @@ export default function PostScreen({ route, navigation }) {
   
     return (
     <TouchableOpacity style={styles.spotifyBtn} onPress={handlePress}>
-        <Text style={styles.mainText}>{children}</Text>
+        <Text style={styles.btnText}>{children}</Text>
     </TouchableOpacity> 
     );
   };
@@ -59,8 +74,7 @@ export default function PostScreen({ route, navigation }) {
       .then((response) => response.json())
       .then((response) => {
         if(response.ok)
-          if (mounted)
-            setURL(response.link)
+          setURL(response.link)
         else
           console.log(response.error)
       })
@@ -80,14 +94,10 @@ export default function PostScreen({ route, navigation }) {
         if(!response.ok)
         {
           console.log(response.error)
-          return false
         }
         else
-          if (mounted)
-          {
-            setConnected(response.user.spotify.connected)
-            setLoading(false)
-          }
+          setConnected(response.user.spotify.connected)
+          setLoading(false)
       })
   }
 
@@ -112,6 +122,53 @@ export default function PostScreen({ route, navigation }) {
         return
       })
   }
+  function getSongsFromID(playlistID)
+    {
+      const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({userID: userID, playlistID: playlistID})
+      };
+      fetch(`${API_URL}/api/spotify/getPlaylistData`, requestOptions)
+      .then((response) => response.json())
+      .then((response) => {
+          if(!response.ok)
+          {
+          console.log(response.error)
+          return
+          }
+          setPlaylistSongs(response.playlist.tracks)
+      })
+    }
+
+  const makePostFromPlaylist = (playlist) => {
+    setDropped(false)
+    setPlaylistIsPublic(playlist.public)
+    setPlaylistID(playlist.id)
+    getSongsFromID(playlist.id)
+    setPlaylistTitle(playlist.name)
+    setPlaylistImage(playlist.image)
+  }
+
+  function createPost()
+  {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({userID: userID, playlistID: playlistID, caption: caption, accessToken: accessToken})
+    };
+    fetch(`${API_URL}/api/post/newPost`, requestOptions)
+    .then((response) => response.json())
+    .then((response) => {
+        if(!response.ok)
+        {
+        console.log(response.error)
+        return
+        }
+        navigation.navigate("Home")
+    })
+  }
+
 
   return (
     // Main container
@@ -124,7 +181,6 @@ export default function PostScreen({ route, navigation }) {
       :
       <View>
         {((!connected) ? 
-        (
         <View style={{alignItems: "center", marginVertical: 100}}>
           <Image
           source={require('../assets/images/defaultSmile.png')} //make this something more relevant
@@ -133,30 +189,93 @@ export default function PostScreen({ route, navigation }) {
           <Text style={styles.mainText}>What've you been listening to?</Text>
           <OpenURLButton>Connect your Spotify!</OpenURLButton>
         </View>
-        ) 
         :
-        (
         <View style={{alignItems: "center", marginVertical: 50}}>
           {(dropped ? 
-          <View style={{width:"80%", height:"80%"}}>
-            <TouchableOpacity style={styles.playlistsBtn} onPress={() => {setDropped(false)}}>
-              <Text style={styles.btnText}>Back</Text>
-            </TouchableOpacity>
-            <FlatList
-                data={playlists}
-                renderItem={({item}) => <PlaylistListBox playlistID={item.id} image={item.image} name={item.name} public={item.public}/>}
+            <View style={{width:"90%", height:"80%"}}>
+              <TouchableOpacity style={styles.playlistsBtn} onPress={() => {[setDropped(false), setPlaylistTitle("")]}}>
+                <Text style={styles.btnText}>Back</Text>
+              </TouchableOpacity>
+              <FlatList
+                  data={playlists}
+                  renderItem={({item}) => <PlaylistListBox playlist={item} image={item.image} name={item.name} public={item.public} pick={makePostFromPlaylist}/>}
+                  keyExtractor={(item, index) => index.toString()}
+                />
+            </View>
+            :
+            (playlistTitle == "" ?
+              <View style={{width:"90%"}}>
+                <TouchableOpacity style={styles.playlistsBtn} onPress={() => {[getPlaylists(), setDropped(true)]}}>
+                  <Text style={styles.btnText}>Pick your playlist!</Text>
+                </TouchableOpacity>
+              </View>
+              :
+              <View style={{width:"90%"}}>
+                <TouchableOpacity style={styles.playlistBtnExpanded} onPress={() => {[getPlaylists(), setDropped(true)]}}>
+                  <View>
+                    <Image
+                      source={{uri: playlistImage}}
+                      style={styles.playlistPicBig}
+                    />
+                  </View>
+                  <View style={{justifyContent:"flex-end", marginTop:10}}>
+                    <Text style={{color:"white", textDecorationLine: "underline", fontWeight: "bold", fontSize:25}}>
+                      {playlistTitle}
+                    </Text>
+                    <View style={{marginBottom:10}}>
+                      <Text style={{color:"white", fontSize:12}}>
+                        {(playlistSongs.length > 0 ?
+                        playlistSongs.length + " songs"
+                        :
+                        ""
+                        )}
+                      </Text>
+                      <Text style={{color: "#A57FC1", fontSize:12}}>
+                        {(playlistIsPublic ? 
+                        "Public" 
+                        :
+                        "Private, viewers won't be able to listen to your songs."
+                        )}
+                      </Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            )
+          )}
+          {(playlistTitle == "" ? <></> :
+          <View style={{width:"100%", alignItems: "center"}}>
+            <View style={styles.inputView}>
+              <TextInput
+                style={styles.TextInput}
+                placeholder="Enter a caption for this post..."
+                placeholderTextColor="white"
+                selectionColor={"#573C6B"}            
+                multiline={true}
+                value={caption}
+                onChangeText={(text) => setCaption(text)
+                }
+              />
+            </View>
+            <View overScrollMode="never" style={{maxHeight: 300, width: "100%", marginVertical: 10}} nestedScrollEnabled={true}>
+              <FlatList style={styles.SongList}
+                data={playlistSongs}
+                renderItem={({item}) => 
+                <SongBox 
+                songCover={item.image} 
+                songName={item.name} 
+                songArtists={item.artists} 
+                songLength={item.duration} 
+                />}
                 keyExtractor={(item, index) => index.toString()}
               />
-          </View>
-          :
-          <View style={{width:"80%", height:"50%"}}>
-            <TouchableOpacity style={styles.playlistsBtn} onPress={() => {[getPlaylists(), setDropped(true)]}}>
-              <Text style={styles.btnText}>Pick your playlist!</Text>
+            </View>
+            <TouchableOpacity style={styles.spotifyBtn} onPress={() => {createPost()}}>
+              <Text style={styles.btnText}>Create Post!</Text>
             </TouchableOpacity>
           </View>
           )}
         </View>
-        )
         )}
       </View>
       )}
@@ -181,7 +300,8 @@ const styles = StyleSheet.create({
   },
 
   btnText: {
-    fontSize: 13,
+    fontSize: 15,
+    marginHorizontal: 10,
     color: "white",
   },
 
@@ -191,7 +311,7 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginVertical: 30,
+    marginVertical: 20,
     backgroundColor: "#573C6B",
   },
 
@@ -199,7 +319,58 @@ const styles = StyleSheet.create({
     height: 50, 
     minWidth: "100%",
     backgroundColor: "#12081A",
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
   },
+
+  playlistBtnExpanded: {
+    alignSelf: "center", 
+    marginTop:10, 
+    padding:10, 
+    borderRadius: 20, 
+    flexDirection:"row", 
+    minWidth: "100%", 
+    backgroundColor: "#12081A"
+  },
+
+  playlistPic: {
+    width: 30,
+    height: 30,
+    marginVertical: 10,
+  },
+
+  playlistPicBig: {
+    width: 80,
+    height: 80,
+    marginVertical: 10,
+    marginHorizontal: 10,
+  },
+
+  SongList: {
+    width: "90%",
+    alignSelf: "center",
+    marginHorizontal: 10,
+    marginVertical: 2,
+    backgroundColor: "#12081A",
+  },
+
+  TextInput: {
+    height: 50,
+    flex: 1,
+    padding: 10,
+    marginLeft: 20,
+    color: "white",
+  },
+
+  inputView: {
+    backgroundColor: "#12081A",
+    borderWidth: 1,
+    borderRadius: 20,
+    width: "90%",
+    height: 45,
+    marginTop: 20,
+    marginBottom: 10
+  },
+
 });

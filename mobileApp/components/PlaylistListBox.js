@@ -10,7 +10,7 @@ export default function PlaylistListBox(props) {
   return (
     <TouchableOpacity style={styles.resultContainer} 
     onPress={() => {
-      //get playlist info and fill out post information
+      props.pick(props.playlist)
     }}>
       {/* playlist pic */}
       <Image
