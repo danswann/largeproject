@@ -1,5 +1,5 @@
 import { NavigationContainer } from "@react-navigation/native";
-import React, {useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { API_URL } from "../constants/Info";
 import { useIsFocused } from "@react-navigation/native";
 import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
@@ -19,28 +19,26 @@ export default function SearchResultBox(props) {
       body: JSON.stringify({
         userID: props.myUserID,
         followingID: props.userID,
-        accessToken: props.accessToken
+        accessToken: props.accessToken,
       }),
     };
     fetch(`${API_URL}/api/user/followUser`, requestOptions)
       .then((response) => response.json())
       .then((response) => {
-        if (response.ok)
-        {
+        if (response.ok) {
           if (isFocused) setFollowed(true);
-        }
-        else console.log(response.error);
+        } else console.log(response.error);
       });
   }
   async function unfollowUser() {
-    const access = await refresh(props.myUserID, props.refreshToken)
+    const access = await refresh(props.myUserID, props.refreshToken);
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         userID: props.myUserID,
         followingID: props.userID,
-        accessToken: access
+        accessToken: access,
       }),
     };
     fetch(`${API_URL}/api/user/unfollowUser`, requestOptions)

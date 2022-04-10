@@ -12,12 +12,19 @@ import SearchResultBox from "../components/SearchResultBox";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function FollowersListScreen({ route, navigation }) {
-  console.log("FollowersListScreen: ", route.params.userID);
+  console.log(
+    "FollowersListScreen: ",
+    route.params.userID,
+    route.params.myUserID
+  );
   const [followers, setFollowers] = useState([]);
   const requestOptions = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userID: route.params.userID }),
+    body: JSON.stringify({
+      userID: route.params.myUserID,
+      targetID: route.params.userID,
+    }),
   };
   // Fetch the list of users who follow this user
   useEffect(async () => {
@@ -31,20 +38,6 @@ export default function FollowersListScreen({ route, navigation }) {
     } else {
       let data = await response.json();
       console.log("DATA FOLLOWERS ", data.followers);
-      // Fetch the followers of each of your followers
-      data.followers.forEach(async (follower, index) => {
-        const followerRequestOptions = {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userID: follower.userID }),
-        };
-        let followerResponse = await fetch(
-          `${API_URL}/api/user/showFollowers`,
-          followerRequestOptions
-        );
-        let followerData = await followerResponse.json();
-        data.followers[index].followers = followerData.followers;
-      });
       setFollowers(data.followers);
     }
     console.log("My followers", followers);
@@ -72,7 +65,7 @@ export default function FollowersListScreen({ route, navigation }) {
           <SearchResultBox
             username={item.username}
             userID={item.userID}
-            followers={item.followers}
+            isFollowed={item.currentUserFollows}
             myUserID={route.params.myUserID}
             navigation={navigation}
           />

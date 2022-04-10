@@ -19,6 +19,7 @@ import { ScreenStackHeaderBackButtonImage } from "react-native-screens";
 // COMPONENT BODY
 export default function ProfileScreen({ route, navigation }) {
   const userID = route.params.userID;
+  const myUserID = route.params.myUserID;
 
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
@@ -55,18 +56,18 @@ export default function ProfileScreen({ route, navigation }) {
           return;
         }
         setUsername(response.user.username);
-        
-        if(response.user.spotify.connected && response.user.profileImageUrl != undefined)
-        {
-          setHasProfileImage(true)
-          setImage(response.user.profileImageUrl)
-        }
-        else
-        {
-          setHasProfileImage(false)
+
+        if (
+          response.user.spotify.connected &&
+          response.user.profileImageUrl != undefined
+        ) {
+          setHasProfileImage(true);
+          setImage(response.user.profileImageUrl);
+        } else {
+          setHasProfileImage(false);
         }
         setBio(response.user.biography);
-        
+
         if (response.user.followers != null)
           setFollowerCount(response.user.followers.length);
         if (response.user.following != null)
@@ -78,7 +79,11 @@ export default function ProfileScreen({ route, navigation }) {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userID: userID , currentIndex: 0, numberOfPosts: 12}),
+      body: JSON.stringify({
+        userID: userID,
+        currentIndex: 0,
+        numberOfPosts: 12,
+      }),
     };
     fetch(`${API_URL}/api/post/getAllUsersPost`, requestOptions)
       .then((response) => response.json())
@@ -97,7 +102,11 @@ export default function ProfileScreen({ route, navigation }) {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userID: userID , currentIndex: 0, numberOfPosts: 12}),
+      body: JSON.stringify({
+        userID: userID,
+        currentIndex: 0,
+        numberOfPosts: 12,
+      }),
     };
     fetch(`${API_URL}/api/post/userLikedPosts`, requestOptions)
       .then((response) => response.json())
@@ -132,7 +141,11 @@ export default function ProfileScreen({ route, navigation }) {
         rowNum++;
       }
       //add item to current row
-      postRow[count] = { key: count, postID: posts[i]._id , image: posts[i].image};
+      postRow[count] = {
+        key: count,
+        postID: posts[i]._id,
+        image: posts[i].image,
+      };
       count++;
     }
     // Finishes row with empty
@@ -141,13 +154,10 @@ export default function ProfileScreen({ route, navigation }) {
       count++;
     }
     postGrid[rowNum] = { key: rowNum, row: postRow };
-    
-    if(type === "Posts")
-    {
+
+    if (type === "Posts") {
       setPostGridComplete(postGrid);
-    }
-    else
-    {
+    } else {
       setLikedPostGridComplete(postGrid);
     }
   }
@@ -165,6 +175,8 @@ export default function ProfileScreen({ route, navigation }) {
         postCount={postCount}
         followerCount={followerCount}
         followingCount={followingCount}
+        myUserID={myUserID}
+        targetUserID={userID}
         navigation={navigation}
       />
       {/* Container for navigation between posts and likes */}
@@ -209,7 +221,9 @@ export default function ProfileScreen({ route, navigation }) {
           // Likes container
           <View style={styles.GridColumnContainer}>
             {likedPostCount == 0 ? (
-              <Text style={{ color: "white" }}>This user has no liked posts</Text>
+              <Text style={{ color: "white" }}>
+                This user has no liked posts
+              </Text>
             ) : (
               <FlatList
                 data={likedPostGridComplete}

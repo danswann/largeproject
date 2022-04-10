@@ -12,8 +12,11 @@ export default function ProfileBox(props) {
           {/* Profile pic */}
           <Image
             style={styles.ProfilePic}
-            source={(props.hasProfileImage  ? { uri: props.image }
-              : require('../assets/images/defaultSmile.png'))} //default image
+            source={
+              props.hasProfileImage
+                ? { uri: props.image }
+                : require("../assets/images/defaultSmile.png")
+            } //default image
           />
 
           {/* Username and bio (bio length is limited need to fix)*/}
@@ -40,7 +43,10 @@ export default function ProfileBox(props) {
             onPress={() => {
               props.navigation.navigate({
                 name: "FollowersList",
-                params: { userID: props.userID },
+                params: {
+                  userID: props.targetUserID,
+                  myUserID: props.myUserID,
+                },
               });
             }}
           >
