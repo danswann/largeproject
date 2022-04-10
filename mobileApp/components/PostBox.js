@@ -187,7 +187,11 @@ export default function PostBox(props) {
                     <View style={{flexDirection: 'row'}}>
                         {/* profile pic */}
                         <Image
-                            source={{uri: props.author.profileImageUrl}}
+                            source={
+                                props.hasProfileImage
+                                ? { uri: props.author.profileImageUrl }
+                                : require("../assets/images/defaultSmile.png")
+                            } //default image
                             style={styles.ProfilePic}
                         />
                         <View style={{flexDirection: 'column', marginStart: 5, marginTop: 10, }}>
@@ -217,6 +221,7 @@ export default function PostBox(props) {
 
                                 {/* Song Count */}
                                 <Text style={{color: 'white', fontSize: 8}}>{songCount} songs</Text>
+                                
                             </View>
                             {/* Playlist Image */}
                             <Image
@@ -229,13 +234,13 @@ export default function PostBox(props) {
                     <ScrollView overScrollMode="never" style={{maxHeight: 205, marginVertical: 10}} nestedScrollEnabled={true}>
                         <TouchableWithoutFeedback onPress={() => {songsTapped()}}>
                             <FlatList style={styles.SongList}
-                                data={props.playlist}
+                                data={playlistTracks}
                                 renderItem={({item}) => 
                                 <SongBox 
                                 songCover={item.image} 
                                 songName={item.name} 
                                 songArtists={item.artists} 
-                                songLength={item.duration} 
+                                songLength={item.duration}
                                 />}
                                 listKey={(item, index) => `_key${index.toString()}`}
                                 keyExtractor={(item, index) => `_key${index.toString()}`}
@@ -262,16 +267,24 @@ export default function PostBox(props) {
                         </View>
                     </View>
                     {/* Playlist Songs */}
+                    {((songCount == 0)  ? <Text style={{color: "white", marginLeft: 30, marginTop: 20}}>No songs in this playlist...</Text> :
                     <ScrollView overScrollMode="never" style={{maxHeight: 205, marginVertical: 10}} nestedScrollEnabled={true}>
                         <TouchableWithoutFeedback onPress={() => {songsTapped()}}>
                             <FlatList style={styles.SongList}
                                 data={playlistTracks}
-                                renderItem={({item}) => <SongBox songCover={item.image} songName={item.name} songArtists={item.artists} songLength={item.duration} />}
+                                renderItem={({item}) => 
+                                <SongBox 
+                                songCover={item.image} 
+                                songName={item.name} 
+                                songArtists={item.artists} 
+                                songLength={item.duration} 
+                                />}
                                 listKey={(item, index) => `_key${index.toString()}`}
                                 keyExtractor={(item, index) => `_key${index.toString()}`}
                             />
                         </TouchableWithoutFeedback>
                     </ScrollView>
+                    )}
                 </View>
                 )}      
             </View>
@@ -418,7 +431,7 @@ const styles = StyleSheet.create({
     SongList: {
         marginHorizontal: 10,
         marginVertical: 2,
-        backgroundColor: "#12081A",
+        backgroundColor: "#23192B",
     },
 
     CommentsContainer: {

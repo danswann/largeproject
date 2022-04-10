@@ -24,7 +24,7 @@ export default function ProfileScreen({ route, navigation }) {
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
   const [hasProfileImage, setHasProfileImage] = useState(false);
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState("uri");
 
   const [postCount, setPostCount] = useState([0]);
   const [likedPostCount, setLikedPostCount] = useState([0]);
