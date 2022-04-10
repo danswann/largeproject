@@ -716,7 +716,7 @@ exports.searchByUsername = async function(req, res, next) {
 
     // Using $regex in order to get partial matching, 'i' option makes it case-sensitive
     var filter = {username: {$regex: searchKey, $options: 'i'}};
-    const projection = {_id: 1, username: 1, profileImageUrl: 1, following: 1};
+    const projection = {_id: 1, username: 1, profileImageUrl: 1, followers: 1};
 
     const userM = await User.find(filter, projection);
 
@@ -724,7 +724,7 @@ exports.searchByUsername = async function(req, res, next) {
 
     for (var i = 0; i < user.length; i++)
     {
-        if (user[i].following.includes(userID))
+        if (user[i].followers.includes(userID))
         {
             user[i].currentUserFollows = true;
         }
@@ -732,7 +732,7 @@ exports.searchByUsername = async function(req, res, next) {
         {
             user[i].currentUserFollows = false;
         }
-        delete user[i].following;
+        delete user[i].followers;
     }
 
     response.user = user;
