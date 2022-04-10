@@ -249,7 +249,7 @@ exports.register = async function(req, res, next) {
 
             // Sends the email through sendgrid
             sgMail.send(msg).then(() => {
-                console.log('Email sent')
+                // console.log('Email sent')
             }).catch((error) => {
                 console.error(error)
             })
