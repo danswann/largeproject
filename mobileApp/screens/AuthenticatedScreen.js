@@ -30,7 +30,7 @@ const AuthenticatedScreen = ({ route, navigation }) => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ height: "100%", width: "100%" }}
+      style={{ height: "100%", width: "100%", backgroundColor: "#23192B" }}
     >
       <Tab.Navigator
         backBehavior={"history"}
