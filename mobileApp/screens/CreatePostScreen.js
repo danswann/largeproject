@@ -172,6 +172,7 @@ export default function PostScreen({ route, navigation }) {
 
   return (
     // Main container
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
     <View style={styles.container}>
       {(loading ? 
       <View>
@@ -250,6 +251,7 @@ export default function PostScreen({ route, navigation }) {
                 style={styles.TextInput}
                 placeholder="Enter a caption for this post..."
                 placeholderTextColor="white"
+                clearButtonMode="while-editing"
                 selectionColor={"#573C6B"}            
                 multiline={true}
                 value={caption}
@@ -280,6 +282,7 @@ export default function PostScreen({ route, navigation }) {
       </View>
       )}
     </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -361,6 +364,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginLeft: 20,
     color: "white",
+    justifyContent: "center",
   },
 
   inputView: {
