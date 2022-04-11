@@ -77,29 +77,26 @@ exports.sendMessage = async function(req, res, next) {
         return res.status(200).json(response);
     }
 
-    // Find DM by chatID
+    // Find DM by chatID and add new message
     const filter = {_id:chatID};
-    const dm = await DirectMessage.findOne(filter);
+    const update = {$push: {chat: {text:text,author:userID}}};
+    const projection = {chat: 1};
+    const options = {projection: projection, new: true};
+    const dm = await DirectMessage.findOneAndUpdate(filter, update, options);
 
-    // Add message in local DM instance
-    const update = {text:text,author:userID};
-    dm.chat.push(update);
-
-    // Update DM in database
-    dm.save(function (err) {
-        // If an error occurs, return ok:false and the error message
-        if(err)
-        {
-            response.ok = false;
-            response.error = err;
-            res.status(200).json(response);
-        }
-        // Otherwise return ok:true
-        else
-        {
-            res.status(200).json(response);
-        }
-    });
+    // If an error occurs, return ok:false and the error message
+    if(dm)
+    {
+        response.dm = dm;
+        res.status(200).json(response);
+    }
+    // Otherwise return ok:true
+    else
+    {
+        response.ok = false;
+        response.error = err;
+        res.status(200).json(response);
+    }
 }
 
 exports.readChat = async function(req, res, next) {
