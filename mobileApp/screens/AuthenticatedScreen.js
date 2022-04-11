@@ -128,14 +128,24 @@ const AuthenticatedScreen = ({ route, navigation }) => {
           name="FollowersList"
           component={FollowersListScreen}
           options={{ tabBarButton: () => null }}
-          initialParams={{ userID: 0, myUserID: userID }}
+          initialParams={{
+            userID: 0,
+            myUserID: userID,
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+          }}
           backBehavior={"history"}
         />
         <Tab.Screen
           name="FollowingList"
           component={FollowingListScreen}
           options={{ tabBarButton: () => null }}
-          initialParams={{ userID: 0, myUserID: userID }}
+          initialParams={{
+            userID: 0,
+            myUserID: userID,
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+          }}
           backBehavior={"history"}
         />
       </Tab.Navigator>

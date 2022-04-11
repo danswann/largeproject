@@ -24,7 +24,11 @@ export default function SearchScreen({ route, navigation }) {
 
   //Gets user data from api
   function getResults(input) {
-    if(input == "") return;
+    if (input == "") {
+      setResults([]);
+      setSearching(false);
+      return;
+    }
     if (isFocused) setLoading(true);
     const requestOptions = {
       method: "POST",
@@ -32,10 +36,9 @@ export default function SearchScreen({ route, navigation }) {
       body: JSON.stringify({ userID: userID, username: input }),
     };
     fetch(`${API_URL}/api/user/searchByUsername`, requestOptions)
-      
       .then((response) => response.json())
       .then((response) => {
-        console.log(response)
+        console.log(response);
         if (response.ok) {
           if (isFocused) {
             setSearching(true);
@@ -43,7 +46,7 @@ export default function SearchScreen({ route, navigation }) {
           }
         } else {
           if (isFocused) {
-            console.log(response.error)
+            console.log(response.error);
             setSearching(false);
             setResults([]);
           }

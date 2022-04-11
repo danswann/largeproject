@@ -6,17 +6,23 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
 import { API_URL } from "../constants/Info";
 import SearchResultBox from "../components/SearchResultBox";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function FollowingListScreen({ route, navigation }) {
-  console.log("FollowingListScreen: ", route.params.userID);
+  console.log("TARGET ID: ", route.params.userID);
+  const isFocused = useIsFocused();
+  const { accessToken, refreshToken } = route.params;
   const [followings, setFollowings] = useState([]);
   const requestOptions = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userID: route.params.userID }),
+    body: JSON.stringify({
+      userID: route.params.myUserID,
+      targetID: route.params.userID,
+    }),
   };
   // Fetch the following list of this user
   useEffect(async () => {
@@ -30,23 +36,11 @@ export default function FollowingListScreen({ route, navigation }) {
     } else {
       let data = await response.json();
       console.log("DATA FOLLOWING ", data.following);
-      // Fetch the followers of each of the users in the following list
-      data.following.forEach(async (following, index) => {
-        const followerRequestOptions = {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userID: following.userID }),
-        };
-        let followerResponse = await fetch(
-          `${API_URL}/api/user/showFollowers`,
-          followerRequestOptions
-        );
-        let followerData = await followerResponse.json();
-        data.following[index].followers = followerData.followers;
-      });
+      // Set the following list of the user
+      console.log("DATA FOLLOWING LIST SCREEN", data);
       setFollowings(data.following);
     }
-  }, [route.params.userID]);
+  }, [isFocused]);
   console.log("Followings Data: ", followings);
   return (
     <View style={styles.MainContainer}>
@@ -64,15 +58,17 @@ export default function FollowingListScreen({ route, navigation }) {
         </TouchableOpacity>
         <Text style={styles.MainText}>Following</Text>
       </View>
-      {/* Reusing search result box to render follower list */}
+      {/* Reusing search result box to render following list */}
       <FlatList
         data={followings}
         renderItem={({ item }) => (
           <SearchResultBox
             username={item.username}
             userID={item.userID}
-            followers={item.followers}
             myUserID={route.params.myUserID}
+            isFollowed={item.currentUserFollows}
+            accessToken={accessToken}
+            refreshToken={refreshToken}
             navigation={navigation}
           />
         )}

@@ -204,12 +204,14 @@ export default function ProfileScreen({ route, navigation }) {
         </TouchableOpacity>
       </View>
       {/* Grid container */}
-      <View>
+      <View style={{ width: "100%", alignItems: "center" }}>
         {postsOrLikes === "posts" ? (
           // Posts container
           <View style={styles.GridColumnContainer}>
             {postCount == 0 ? (
-              <Text style={{ color: "white" }}>This user has no posts</Text>
+              <Text style={{ color: "white", alignSelf: "center" }}>
+                This user has no posts
+              </Text>
             ) : (
               <FlatList
                 data={postGridComplete}
@@ -221,7 +223,7 @@ export default function ProfileScreen({ route, navigation }) {
           // Likes container
           <View style={styles.GridColumnContainer}>
             {likedPostCount == 0 ? (
-              <Text style={{ color: "white" }}>
+              <Text style={{ color: "white", alignSelf: "center" }}>
                 This user has no liked posts
               </Text>
             ) : (
@@ -254,10 +256,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   GridColumnContainer: {
+    backgroundColor: "blue",
     marginTop: 40,
     flexDirection: "column",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "space-around",
-    alignSelf: "stretch",
+    width: "80%",
   },
 });
