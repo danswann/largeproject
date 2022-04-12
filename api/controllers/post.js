@@ -410,7 +410,7 @@ exports.homeFeed = async function(req, res, next) {
         if(post)
         {
             response.posts = post;
-            for (var i = 0; i < response.posts.length; i++) {
+            /*for (var i = 0; i < response.posts.length; i++) {
                 try {
                     if (response.posts[i].isReposted == true)
                     {
@@ -427,7 +427,7 @@ exports.homeFeed = async function(req, res, next) {
                     // response.error = 'Could not fetch playlist with ID "' + p.playlistID + '" and author "' + p.author + '"';
                     // return res.status(200).json(response);
                 }
-            };
+            };*/
             res.status(200).json(response);
         }
         // Otherwise return ok:false and the error message
