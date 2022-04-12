@@ -7,6 +7,7 @@ import {
   Dimensions,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import ProfileBox from "../components/ProfileBox";
 import RowBox from "../components/RowBox";
@@ -33,6 +34,7 @@ export default function ProfileScreen({ route, navigation }) {
   const [postGridComplete, setPostGridComplete] = useState([]);
   const [likedPostGridComplete, setLikedPostGridComplete] = useState([]);
   const [postsOrLikes, setPostsOrLikes] = useState("posts");
+  const [isLoading, setIsLoading] = useState(true);
 
   const isFocused = useIsFocused();
   useEffect(() => {
@@ -157,8 +159,10 @@ export default function ProfileScreen({ route, navigation }) {
 
     if (type === "Posts") {
       setPostGridComplete(postGrid);
+      setIsLoading(false);
     } else {
       setLikedPostGridComplete(postGrid);
+      setIsLoading(false);
     }
   }
 
@@ -205,32 +209,40 @@ export default function ProfileScreen({ route, navigation }) {
       </View>
       {/* Grid container */}
       <View style={{ width: "100%", alignItems: "center" }}>
-        {postsOrLikes === "posts" ? (
-          // Posts container
-          <View style={styles.GridColumnContainer}>
-            {postCount == 0 ? (
-              <Text style={{ color: "white", alignSelf: "center" }}>
-                This user has no posts
-              </Text>
-            ) : (
-              <FlatList
-                data={postGridComplete}
-                renderItem={({ item }) => <RowBox row={item.row} />}
-              />
-            )}
+        {isLoading ? (
+          <View style={{ justifyContent: "center", marginTop: 60 }}>
+            <ActivityIndicator size="large" color="#573C6B" />
           </View>
         ) : (
-          // Likes container
-          <View style={styles.GridColumnContainer}>
-            {likedPostCount == 0 ? (
-              <Text style={{ color: "white", alignSelf: "center" }}>
-                This user has no liked posts
-              </Text>
+          <View>
+            {postsOrLikes === "posts" ? (
+              // Posts container
+              <View style={styles.GridColumnContainer}>
+                {postCount == 0 ? (
+                  <Text style={{ color: "white", alignSelf: "center" }}>
+                    This user has no posts
+                  </Text>
+                ) : (
+                  <FlatList
+                    data={postGridComplete}
+                    renderItem={({ item }) => <RowBox row={item.row} />}
+                  />
+                )}
+              </View>
             ) : (
-              <FlatList
-                data={likedPostGridComplete}
-                renderItem={({ item }) => <RowBox row={item.row} />}
-              />
+              // Likes container
+              <View style={styles.GridColumnContainer}>
+                {likedPostCount == 0 ? (
+                  <Text style={{ color: "white", alignSelf: "center" }}>
+                    This user has no liked posts
+                  </Text>
+                ) : (
+                  <FlatList
+                    data={likedPostGridComplete}
+                    renderItem={({ item }) => <RowBox row={item.row} />}
+                  />
+                )}
+              </View>
             )}
           </View>
         )}
