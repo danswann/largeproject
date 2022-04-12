@@ -285,14 +285,16 @@ function PostBox(props) {
                       marginTop: 5,
                     }}
                   >
-                    <View>
+                    <View style={{width: 150}}>
                       {/* Playlist Title */}
                       <Text
+                        numberOfLines={1}
                         style={{
                           color: "white",
                           fontWeight: "bold",
                           fontSize: 18,
                           textDecorationLine: "underline",
+                          
                         }}
                       >
                         {playlistName}
@@ -327,7 +329,7 @@ function PostBox(props) {
                       initialNumToRender={5}
                       viewabilityConfig={{waitForInteraction: true}}
                       getItemLayout={(data, index) => (
-                        {length: 54, offset: 54 * index, index}
+                        {length: 53, offset: 53 * index, index}
                       )}
                       renderItem={({ item }) => (
                         <SongBox
@@ -354,9 +356,10 @@ function PostBox(props) {
                       marginTop: 5,
                     }}
                   >
-                    <View>
+                    <View style={{width: 150}}>
                       {/* Playlist Title */}
                       <Text
+                        numberOfLines={1}
                         style={{
                           color: "white",
                           fontWeight: "bold",
@@ -403,7 +406,7 @@ function PostBox(props) {
                         initialNumToRender={5}
                         viewabilityConfig={{waitForInteraction: true}}
                         getItemLayout={(data, index) => (
-                          {length: 54, offset: 54 * index, index}
+                          {length: 53, offset: 53 * index, index}
                         )}
                         renderItem={({ item }) => (
                           <SongBox
@@ -479,6 +482,8 @@ function PostBox(props) {
                   placeholderTextColor="#12081A"
                   onChangeText={(text) => setCommentInput(text)}
                   multiline={true}
+                  clearButtonMode="while-editing"
+                  selectionColor={"#573C6B"}
                 />
                 <TouchableOpacity
                   onPress={() => {
@@ -682,14 +687,13 @@ const styles = StyleSheet.create({
 
   textInput: {
     justifyContent: "center",
-    minHeight: 40,
     flex: 1,
-    padding: 5,
-    marginTop: 5,
+    marginVertical: 5,
     marginRight: 5,
     marginLeft: 10,
     color: "#12081A",
     alignSelf: "center",
+    textAlignVertical:"auto",
   },
 
   MakeCommentContainer: {

@@ -199,7 +199,8 @@ export default function PostScreen({ route, navigation }) {
             ) : (
               <View style={{ alignItems: "center", marginVertical: 50 }}>
                 {dropped ? (
-                  <View style={{ width: "90%", height: "80%" }}>
+                  <View onStartShouldSetResponder={() => true}
+                  style={{ width: "90%", height: "80%" }}>
                     <TouchableOpacity
                       style={styles.playlistsBtn}
                       onPress={() => {
@@ -276,7 +277,7 @@ export default function PostScreen({ route, navigation }) {
                     </TouchableOpacity>
                   </View>
                 )}
-                {playlistTitle == "" ? (
+                {(playlistTitle == "" || dropped) ? (
                   <></>
                 ) : (
                   <View style={{ width: "100%", alignItems: "center" }}>
@@ -293,13 +294,12 @@ export default function PostScreen({ route, navigation }) {
                       />
                     </View>
                     <View
-                      overScrollMode="never"
+                      onStartShouldSetResponder={() => true}
                       style={{
-                        maxHeight: 300,
+                        maxHeight: "50%",
                         width: "100%",
                         marginVertical: 10,
                       }}
-                      nestedScrollEnabled={true}
                     >
                       <FlatList
                         style={styles.SongList}
@@ -407,12 +407,12 @@ const styles = StyleSheet.create({
   },
 
   TextInput: {
-    height: 50,
-    flex: 1,
-    padding: 10,
+    marginVertical: 5,
     marginLeft: 20,
     color: "white",
+    backgroundColor: "red",
     justifyContent: "center",
+    textAlignVertical:"auto",
   },
 
   inputView: {
@@ -420,7 +420,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 20,
     width: "90%",
-    height: 45,
+    minHeight: 45,
     marginTop: 20,
     marginBottom: 10,
   },
