@@ -30,7 +30,7 @@ const AuthenticatedScreen = ({ route, navigation }) => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ height: "100%", width: "100%" }}
+      style={{ height: "100%", width: "100%", backgroundColor: "#23192B" }}
     >
       <Tab.Navigator
         backBehavior={"history"}
@@ -128,14 +128,24 @@ const AuthenticatedScreen = ({ route, navigation }) => {
           name="FollowersList"
           component={FollowersListScreen}
           options={{ tabBarButton: () => null }}
-          initialParams={{ userID: 0, myUserID: userID }}
+          initialParams={{
+            userID: 0,
+            myUserID: userID,
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+          }}
           backBehavior={"history"}
         />
         <Tab.Screen
           name="FollowingList"
           component={FollowingListScreen}
           options={{ tabBarButton: () => null }}
-          initialParams={{ userID: 0, myUserID: userID }}
+          initialParams={{
+            userID: 0,
+            myUserID: userID,
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+          }}
           backBehavior={"history"}
         />
       </Tab.Navigator>

@@ -63,7 +63,6 @@ function MessageTab({ route, navigation }) {
   const isFocused = useIsFocused();
   useEffect(() => {
     getdmList()
-    console.log(dmList)
   }, [isFocused]);
   
   // Gets user data from api

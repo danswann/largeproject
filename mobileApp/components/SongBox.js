@@ -23,7 +23,7 @@ export default function SongBox(props) {
     }
     return (
         
-        <View style={styles.SongContainer}>        
+        <View style={[styles.SongContainer]}>        
             <View style={{flexDirection: 'row', maxWidth:"60%"}}>
                 {/* Song Cover */}
                 <Image
@@ -50,13 +50,12 @@ const styles = StyleSheet.create({
     },
     
     SongContainer: {
-        backgroundColor: "#23192B",
         borderColor: "#573C6B",
         borderTopWidth: 2,
         borderBottomWidth: 2,
         flexDirection: "row",
         justifyContent:"space-between",
-        marginVertical: -2,
+        marginVertical: -1,
     },
 
     SongCover: {

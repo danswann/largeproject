@@ -11,8 +11,8 @@ const CommentSchema = new Schema({
 // Define post schema
 const PostSchema = new Schema({
     isReposted: {type:Boolean, required:true, default:false},
-    originalPost: {type:Schema.ObjectId, ref:'Post', default:null},
-    playlistID: {type:String, required:true},
+    originalPost: {type:Schema.ObjectId, ref:'Post', default:undefined},
+    playlistID: {type:String},
     caption: {type:String, maxlength:250},
     likedBy: [{type:Schema.ObjectId, ref:'User'}],
     comments: [{type:CommentSchema, required:true, default:()=>({})}],

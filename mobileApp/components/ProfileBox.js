@@ -59,7 +59,10 @@ export default function ProfileBox(props) {
             onPress={() => {
               props.navigation.navigate({
                 name: "FollowingList",
-                params: { userID: props.userID },
+                params: {
+                  userID: props.targetUserID,
+                  myUserID: props.myUserID,
+                },
               });
             }}
           >

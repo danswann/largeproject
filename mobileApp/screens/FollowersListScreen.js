@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useIsFocused } from "@react-navigation/native";
 import {
   View,
   StyleSheet,
@@ -12,11 +13,8 @@ import SearchResultBox from "../components/SearchResultBox";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function FollowersListScreen({ route, navigation }) {
-  console.log(
-    "FollowersListScreen: ",
-    route.params.userID,
-    route.params.myUserID
-  );
+  const isFocused = useIsFocused();
+  const { accessToken, refreshToken } = route.params;
   const [followers, setFollowers] = useState([]);
   const requestOptions = {
     method: "POST",
@@ -37,11 +35,9 @@ export default function FollowersListScreen({ route, navigation }) {
       return;
     } else {
       let data = await response.json();
-      console.log("DATA FOLLOWERS ", data.followers);
       setFollowers(data.followers);
     }
-    console.log("My followers", followers);
-  }, [route.params.userID]);
+  }, [isFocused]);
   return (
     <View style={styles.MainContainer}>
       {/* Go back button */}
@@ -67,6 +63,8 @@ export default function FollowersListScreen({ route, navigation }) {
             userID={item.userID}
             isFollowed={item.currentUserFollows}
             myUserID={route.params.myUserID}
+            accessToken={accessToken}
+            refreshToken={refreshToken}
             navigation={navigation}
           />
         )}

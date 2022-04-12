@@ -2,13 +2,24 @@ import { NavigationContainer } from "@react-navigation/native";
 import React, { useState, useEffect } from "react";
 import { API_URL } from "../constants/Info";
 import { useIsFocused } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { AuthContext } from "../Context";
 
 // COMPONENT BODY
 export default function SearchResultBox(props) {
-  const [followed, setFollowed] = useState(props.isFollowed);
+  console.log("isFollowed: ", props.isFollowed);
   const isFocused = useIsFocused();
+  const [followed, setFollowed] = useState(props.isFollowed);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setFollowed(props.isFollowed);
+    }, [props.isFollowed])
+  );
+
+  console.log(props.username);
+  console.log(followed);
 
   const { refresh } = React.useContext(AuthContext);
   async function followUser() {

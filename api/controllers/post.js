@@ -397,20 +397,29 @@ exports.homeFeed = async function(req, res, next) {
     const filter = {_id: userID};
     const projection = {_id: 0, following: 1};
     const followingArray = await User.findOne(filter, projection);
+    // Add the current user
+    followingArray.following.push(userID);
 
     // If the post exists, return ok:true
     if(followingArray)
     {
         // Find post by author and sort them by time posted
         const filter2 = {author: followingArray.following};
-        const post = await Post.find(filter2).sort({ timeStamp: 'desc'}).populate('author comments.author', '_id username profileImageUrl').skip(currentIndex).limit(numberOfPosts).lean();
+        const post = await Post.find(filter2).sort({timeStamp: 'desc'}).populate({path: 'author comments.author', select: '_id username profileImageUrl'}).populate({path: 'originalPost', populate: {path: 'author comments.author', select: '_id username profileImageUrl'}}).skip(currentIndex).limit(numberOfPosts).lean();
 
         if(post)
         {
             response.posts = post;
             for (var i = 0; i < response.posts.length; i++) {
                 try {
-                    response.posts[i].playlist = await Spotify.getPlaylistData(response.posts[i].author, response.posts[i].playlistID);
+                    if (response.posts[i].isReposted == true)
+                    {
+                        response.posts[i].originalPost.playlist = await Spotify.getPlaylistData(response.posts[i].originalPost.author, response.posts[i].originalPost.playlistID);
+                    }
+                    else
+                    {
+                        response.posts[i].playlist = await Spotify.getPlaylistData(response.posts[i].author, response.posts[i].playlistID);
+                    }
                 }
                 catch(err) {
                     response.posts.splice(i, 1);
@@ -465,15 +474,24 @@ exports.getAllUsersPost = async function(req, res, next) {
 
     // Find liked posts by userID
     const filter = {author:userID};
-    const projection = {_id: 1, author: 1, playlistID: 1};
-    const posts = await Post.find(filter, projection).skip(currentIndex).limit(numberOfPosts).lean();
+    const projection = {_id: 1, isReposted: 1, originalPost: 1, author: 1, playlistID: 1};
+    const posts = await Post.find(filter, projection).sort({timeStamp: 'desc'}).populate('originalPost', 'author playlistID').skip(currentIndex).limit(numberOfPosts).lean();
 
     response.posts = posts;
     for (var i = 0; i < response.posts.length; i++) {
         try {
-            data = await Spotify.getPlaylistData(response.posts[i].author, response.posts[i].playlistID);
-            response.posts[i].name = data.name;
-            response.posts[i].image = data.image;
+            if (response.posts[i].isReposted == true)
+            {
+                var data = await Spotify.getPlaylistData(response.posts[i].originalPost.author, response.posts[i].originalPost.playlistID);
+                response.posts[i].name = data.name;
+                response.posts[i].image = data.image;
+            }
+            else
+            {
+                var data = await Spotify.getPlaylistData(response.posts[i].author, response.posts[i].playlistID);
+                response.posts[i].name = data.name;
+                response.posts[i].image = data.image;
+            }
         }
         catch(err) {
             response.posts.splice(i, 1);
@@ -510,16 +528,25 @@ exports.userLikedPosts = async function(req, res, next) {
     }
 
     // Find liked posts by userID
-    const filter = {likedBy: {$elemMatch: {$eq: userID}}};
-    const projection = {_id: 1, author: 1, playlistID: 1};
-    const posts = await Post.find(filter, projection).skip(currentIndex).limit(numberOfPosts).lean();
+    const filter = {$reverseArray: {likedBy: {$elemMatch: {$eq: userID}}}};
+    const projection = {_id: 1, isReposted: 1, originalPost: 1, author: 1, playlistID: 1};
+    const posts = await Post.find(filter, projection).populate('originalPost', 'author playlistID').skip(currentIndex).limit(numberOfPosts).lean();
 
     response.posts = posts;
     for (var i = 0; i < response.posts.length; i++) {
         try {
-            data = await Spotify.getPlaylistData(response.posts[i].author, response.posts[i].playlistID);
-            response.posts[i].name = data.name;
-            response.posts[i].image = data.image;
+            if (response.posts[i].isReposted == true)
+            {
+                var data = await Spotify.getPlaylistData(response.posts[i].originalPost.author, response.posts[i].originalPost.playlistID);
+                response.posts[i].name = data.name;
+                response.posts[i].image = data.image;
+            }
+            else
+            {
+                var data = await Spotify.getPlaylistData(response.posts[i].author, response.posts[i].playlistID);
+                response.posts[i].name = data.name;
+                response.posts[i].image = data.image;
+            }
         }
         catch(err) {
             response.posts.splice(i, 1);
@@ -529,4 +556,54 @@ exports.userLikedPosts = async function(req, res, next) {
         }
     };
     res.status(200).json(response);
+}
+
+exports.repost = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true};
+
+    // Incoming values
+    const userID = req.body.userID;
+    const postID = req.body.postID;
+
+    // Check if userID is a valid object id
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid userID ' + userID;
+        return res.status(200).json(response);
+    }
+
+    // Check if postID is a valid object id
+    if(!checkObjectId(postID)) {
+        response.ok = false;
+        response.error = 'Invalid postID ' + postID;
+        return res.status(200).json(response);
+    }
+
+    // Create a new instance of post model
+    var repost = new Post({
+        isReposted: true,
+        originalPost: postID,
+        author: userID
+    });
+
+    repost.likedBy = undefined;
+    repost.comments = undefined;
+
+    // Save the new instance
+    repost.save(function (err) {
+        // If an error occurs, return ok:false and the error message
+        if(err)
+        {
+            response.ok = false;
+            response.error = err;
+            res.status(200).json(response);
+        }
+        // Otherwise return a success message
+        else
+        {
+            response.repost = repost;
+            res.status(200).json(response);
+        }
+    });
 }
