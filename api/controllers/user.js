@@ -802,7 +802,7 @@ exports.changePasswordByEmail = async function(req, res, next) {
     const password = req.body.password;
 
     // Check if user exists with the email
-    const filter = {email: email};
+    const filter = {email: email, canChangePassword: true};
     const update = {password: password, canChangePassword: false};
     const user = await User.findOneAndUpdate(filter, update);
 
