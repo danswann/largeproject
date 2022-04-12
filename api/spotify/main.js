@@ -8,7 +8,11 @@ exports.getPlaylistData = async function(userID, playlistID) {
     // Get playlist metadata
     const result = await swa.getPlaylist(playlistID, {fields:'name,images,public'});
     playlist.name = result.body.name;
-    playlist.image = result.body.images[0]?.url||'http://placehold.jp/3d4070/ffffff/100x100.png?text=No%0Art';
+    if(result.body.images && result.body.images.length > 0) {
+        //playlist.image = result.body.images[result.body.images.length - 1].url;
+        playlist.image = result.body.images[0].url;
+    }
+    else playlist.image = 'https://placehold.jp/e0e0e0/787878/150x150.png?text=No%0AArt';
     playlist.public = result.body.public;
 
     // Get metadata on all tracks
@@ -22,7 +26,7 @@ exports.getPlaylistData = async function(userID, playlistID) {
             album: x.track.album.name,
             artists: x.track.artists.map(a => (a.name)),
             preview: x.track.preview_url,
-            image: x.track.album.images[0]?.url || 'http://placehold.jp/3d4070/ffffff/100x100.png?text=No%0Art',
+            image: (x.track.album.images && x.track.album.images.length > 0 ? x.track.album.images[x.track.album.images.length - 1].url : 'https://placehold.jp/e0e0e0/787878/40x40.png?text=No%0AArt'),
             local: x.track.is_local,
             type: x.track.type,
             duration: x.track.duration_ms
