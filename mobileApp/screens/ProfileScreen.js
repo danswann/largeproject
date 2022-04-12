@@ -268,7 +268,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   GridColumnContainer: {
-    backgroundColor: "blue",
     marginTop: 40,
     flexDirection: "column",
     alignItems: "flex-start",

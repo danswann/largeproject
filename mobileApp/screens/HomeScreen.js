@@ -7,7 +7,8 @@ import { AuthContext } from "../Context";
 
 // COMPONENT BODY
 export default function HomeScreen({ route, navigation }) {
-  const {userID, accessToken, refreshToken} = route.params
+  const { userID, accessToken, refreshToken, reload } = route.params;
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [feed, setFeed] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,8 +19,11 @@ export default function HomeScreen({ route, navigation }) {
 
   const isFocused = useIsFocused();
   useEffect(() => {
-    getFeed(0)
-  }, [isFocused]);
+    setLoading(true), 
+    getFeed(0), 
+    setCurrentIndex(0)
+  }, [isFocused, reload]);
+
   
 
   async function getFeed(index)
@@ -44,12 +48,18 @@ export default function HomeScreen({ route, navigation }) {
               console.log("Loading more posts...")
               setFeed(feed.concat(response.posts))
               if(response.posts.length == 0)
+              {
                 setEndOfFeed(true)
+                setCurrentIndex(currentIndex - 5)
+              }
+              else
+                setEndOfFeed(false)
               setNewPostsLoading(false)
             }
             else
             {
               console.log("Refresh posts...")
+              setEndOfFeed(false)
               setFeed(response.posts)
               setLoading(false)
             }

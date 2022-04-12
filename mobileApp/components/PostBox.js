@@ -250,6 +250,9 @@ function PostBox(props) {
                       flexDirection: "row",
                       alignItems: "center",
                       marginTop: 5,
+                      marginBottom: 10,
+                      minWidth: "85%",
+                      maxWidth: "85%",
                     }}
                   >
                     <Text style={styles.MainText}>{props.caption}</Text>

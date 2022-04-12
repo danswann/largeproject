@@ -14,7 +14,6 @@ export default function RowBox(props) {
 
 const styles = StyleSheet.create({
   GridRowContainer: {
-    backgroundColor: "red",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",

@@ -40,6 +40,7 @@ const AuthenticatedScreen = ({ route, navigation }) => {
 
             if (route.name === "Home") {
               iconName = focused ? "home" : "home-outline";
+              route.params.reload = false;
             } else if (route.name === "Search") {
               iconName = focused ? "search" : "search-outline";
             } else if (route.name === "Post") {
@@ -71,6 +72,7 @@ const AuthenticatedScreen = ({ route, navigation }) => {
             userID: userID,
             accessToken: accessToken,
             refreshToken: refreshToken,
+            reload: true
           }}
         />
         <Tab.Screen
