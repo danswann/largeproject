@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   FlatList,
   TouchableWithoutFeedback,
+  Pressable,
   ScrollView,
   ActivityIndicator,
 } from "react-native";
@@ -20,18 +21,8 @@ import CommentBox from "./CommentBox";
 import { AuthContext } from "../Context";
 
 
-//Prevents re-rendering when data is the same
-export default React.memo(PostBox, areEqual)
-
-const areEqual = (prevProps, nextProps) => {
-  if (nextProps == prevProps)
-    return true;
-  else
-    return false;
-}
-
 // COMPONENT BODY
-function PostBox(props) {
+export default function PostBox(props) {
   /*
     postID={item._id} 
     isReposted={item.isReposted}
@@ -316,37 +307,38 @@ function PostBox(props) {
                   </View>
                 </View>
                 {/* Playlist Songs */}
+                {songCount == 0 ? (
+                  <Text
+                    style={{ color: "white", marginLeft: 30, marginTop: 20 }}
+                  >
+                    No songs...
+                  </Text>
+                ) : (
                 <ScrollView
                   overScrollMode="never"
-                  style={{ maxHeight: 205, marginVertical: 10 }}
+                  style={{ maxHeight: 205, marginVertical: 10, marginHorizontal:10 }}
+                  scrollEnabled={true}
                   nestedScrollEnabled={true}
                 >
-                  <TouchableWithoutFeedback
+                  <TouchableOpacity
+                    activeOpacity={1}
                     onPress={() => {
                       songsTapped();
                     }}
                   >
-                    <FlatList
-                      style={styles.SongList}
-                      data={playlistTracksLazy}
-                      initialNumToRender={5}
-                      viewabilityConfig={{waitForInteraction: true}}
-                      getItemLayout={(data, index) => (
-                        {length: 53, offset: 53 * index, index}
-                      )}
-                      renderItem={({ item }) => (
-                        <SongBox
-                          songCover={item.image}
-                          songName={item.name}
-                          songArtists={item.artists}
-                          songLength={item.duration}
-                        />
-                      )}
-                      listKey={(item, index) => `_key${index.toString()}`}
-                      keyExtractor={(item, index) => `_key${index.toString()}`}
-                    />
-                  </TouchableWithoutFeedback>
+                    {playlistTracksLazy.map((item, index) => {
+                      return (
+                      <SongBox
+                      songCover={item.image}
+                      songName={item.name}
+                      songArtists={item.artists}
+                      songLength={item.duration}
+                      />
+                      )
+                    })}
+                  </TouchableOpacity>
                 </ScrollView>
+                )}
               </View>
             ) : (
               <View style={{ width: "100%", flexDirection: "row" }}>
@@ -390,41 +382,32 @@ function PostBox(props) {
                   <Text
                     style={{ color: "white", marginLeft: 30, marginTop: 20 }}
                   >
-                    No songs in this playlist...
+                    No songs...
                   </Text>
                 ) : (
                   <ScrollView
                     overScrollMode="never"
-                    style={{ maxHeight: 205, marginVertical: 10 }}
+                    style={{ maxHeight: 205, marginVertical: 10, marginHorizontal:10, }}
+                    scrollEnabled={false}
                     nestedScrollEnabled={false}
                   >
-                    <TouchableWithoutFeedback
+                    <TouchableOpacity
+                      activeOpacity={1}
                       onPress={() => {
                         songsTapped();
                       }}
                     >
-                      <FlatList
-                        style={styles.SongList}
-                        data={playlistTracksLazy}
-                        initialNumToRender={5}
-                        viewabilityConfig={{waitForInteraction: true}}
-                        getItemLayout={(data, index) => (
-                          {length: 53, offset: 53 * index, index}
-                        )}
-                        renderItem={({ item }) => (
-                          <SongBox
-                            songCover={item.image}
-                            songName={item.name}
-                            songArtists={item.artists}
-                            songLength={item.duration}
-                          />
-                        )}
-                        listKey={(item, index) => `_key${index.toString()}`}
-                        keyExtractor={(item, index) =>
-                          `_key${index.toString()}`
-                        }
-                      />
-                    </TouchableWithoutFeedback>
+                      {playlistTracksLazy.map((item, index) => {
+                        return (
+                        <SongBox
+                        songCover={item.image}
+                        songName={item.name}
+                        songArtists={item.artists}
+                        songLength={item.duration}
+                        />
+                        )
+                      })}
+                    </TouchableOpacity>
                   </ScrollView>
                 )}
               </View>
