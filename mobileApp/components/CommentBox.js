@@ -1,11 +1,23 @@
-import {React, useState, useEffect} from "react";
+import React, {useState, useEffect} from "react";
 import { Text, View, StyleSheet, Image, TouchableOpacity, ActivityIndicator, TouchableWithoutFeedback} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { API_URL } from "../constants/Info";
 import { useIsFocused } from "@react-navigation/native";
 
+
+//Prevents re-rendering when data is the same
+export default React.memo(CommentBox, areEqual)
+
+const areEqual = (prevProps, nextProps) => {
+  if (nextProps == prevProps)
+    return true;
+  else
+    return false;
+}
+
 // COMPONENT BODY
-export default function CommentBox(props) {
+function CommentBox(props) {
+  console.log("\tRendering Comment:" + props.comment)
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [tapped, setTapped] = useState(false);
   //checks if user owns this comment before allowing access to delete button
@@ -67,7 +79,11 @@ export default function CommentBox(props) {
         <View style={{flexDirection: 'row', maxWidth: "60%"}}>
           {/* profile pic */}
           <Image
-            source={{uri: props.author.profileImageUrl}}
+             source={
+              (props.author.profileImageUrl != undefined)
+                ? { uri: props.author.profileImageUrl }
+                : require("../assets/images/defaultSmile.png")
+            } //default image
             style={styles.ProfilePic}
           />
           <View style={{flexDirection: 'column', marginStart: 5, marginTop: 10, }}>

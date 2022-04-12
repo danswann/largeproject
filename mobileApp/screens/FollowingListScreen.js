@@ -64,6 +64,7 @@ export default function FollowingListScreen({ route, navigation }) {
         renderItem={({ item }) => (
           <SearchResultBox
             username={item.username}
+            image={item.profileImageUrl}
             userID={item.userID}
             myUserID={route.params.myUserID}
             isFollowed={item.currentUserFollows}

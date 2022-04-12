@@ -73,7 +73,11 @@ export default function SearchResultBox(props) {
       <View style={styles.infoContainer}>
         {/* profile pic */}
         <Image
-          source={require("../assets/images/defaultSmile.png")}
+          source={
+            (props.image != undefined)
+              ? { uri: props.image }
+              : require("../assets/images/defaultSmile.png")
+          } //default image
           style={styles.ProfilePic}
         />
         <Text numberOfLines={1} style={styles.MainText}>

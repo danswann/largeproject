@@ -60,6 +60,7 @@ export default function FollowersListScreen({ route, navigation }) {
         renderItem={({ item }) => (
           <SearchResultBox
             username={item.username}
+            image={item.profileImageUrl}
             userID={item.userID}
             isFollowed={item.currentUserFollows}
             myUserID={route.params.myUserID}

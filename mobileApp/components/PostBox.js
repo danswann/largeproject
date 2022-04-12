@@ -19,13 +19,24 @@ import { API_URL } from "../constants/Info";
 import CommentBox from "./CommentBox";
 import { AuthContext } from "../Context";
 
+
+//Prevents re-rendering when data is the same
+export default React.memo(PostBox, areEqual)
+
+const areEqual = (prevProps, nextProps) => {
+  if (nextProps == prevProps)
+    return true;
+  else
+    return false;
+}
+
 // COMPONENT BODY
-export default function PostBox(props) {
+function PostBox(props) {
   /*
     postID={item._id} 
     isReposted={item.isReposted}
     originalPostID={item.likedBy}
-    */
+  */
   const [comments, setComments] = useState(props.comments);
   const [commentCount, setCommentCount] = useState(props.comments.length);
   const [commentInput, setCommentInput] = useState("");
@@ -49,7 +60,10 @@ export default function PostBox(props) {
   );
   const [playlistIsPublic, setPlaylistIsPublic] = useState(false);
   const [playlistTracks, setPlaylistTracks] = useState([]);
+  const [playlistTracksLazy, setPlaylistTracksLazy] = useState([]);
   const [songCount, setSongCount] = useState(0);
+
+  console.log("Rendering Post:" + playlistName)
 
   useEffect(() => {
     getPlaylistDataFromID();
@@ -77,6 +91,7 @@ export default function PostBox(props) {
         setPlaylistCover(response.playlist.image);
         setPlaylistIsPublic(response.playlist.public);
         setPlaylistTracks(response.playlist.tracks);
+        setPlaylistTracksLazy(response.playlist.tracks.slice(0, 4))
         setSongCount(response.playlist.tracks.length);
         setLoading(false);
       });
@@ -105,6 +120,7 @@ export default function PostBox(props) {
 
   //expands songs
   function songsTapped() {
+    setPlaylistTracksLazy(playlistTracks);
     if (songsExpanded) setSongsExpanded(false);
     else setSongsExpanded(true);
   }
@@ -204,7 +220,7 @@ export default function PostBox(props) {
                 {/* profile pic */}
                 <Image
                   source={
-                    props.hasProfileImage
+                    (props.author.profileImageUrl != undefined)
                       ? { uri: props.author.profileImageUrl }
                       : require("../assets/images/defaultSmile.png")
                   } //default image
@@ -307,7 +323,12 @@ export default function PostBox(props) {
                   >
                     <FlatList
                       style={styles.SongList}
-                      data={playlistTracks}
+                      data={playlistTracksLazy}
+                      initialNumToRender={5}
+                      viewabilityConfig={{waitForInteraction: true}}
+                      getItemLayout={(data, index) => (
+                        {length: 54, offset: 54 * index, index}
+                      )}
                       renderItem={({ item }) => (
                         <SongBox
                           songCover={item.image}
@@ -369,7 +390,7 @@ export default function PostBox(props) {
                   <ScrollView
                     overScrollMode="never"
                     style={{ maxHeight: 205, marginVertical: 10 }}
-                    nestedScrollEnabled={true}
+                    nestedScrollEnabled={false}
                   >
                     <TouchableWithoutFeedback
                       onPress={() => {
@@ -378,7 +399,12 @@ export default function PostBox(props) {
                     >
                       <FlatList
                         style={styles.SongList}
-                        data={playlistTracks}
+                        data={playlistTracksLazy}
+                        initialNumToRender={5}
+                        viewabilityConfig={{waitForInteraction: true}}
+                        getItemLayout={(data, index) => (
+                          {length: 54, offset: 54 * index, index}
+                        )}
                         renderItem={({ item }) => (
                           <SongBox
                             songCover={item.image}

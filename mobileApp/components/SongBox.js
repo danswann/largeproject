@@ -1,8 +1,20 @@
 import React from "react";
 import { Text, View, StyleSheet, Image, TouchableOpacity, } from "react-native";
 
+
+//Prevents re-rendering when data is the same
+export default React.memo(SongBox, areEqual)
+
+const areEqual = (prevProps, nextProps) => {
+  if (nextProps == prevProps)
+    return true;
+  else
+    return false;
+}
+
 // COMPONENT BODY
-export default function SongBox(props) {
+function SongBox(props) {
+    console.log("\tRendering Song:" + props.songName)
     function getSongLength()
     {
         const seconds = (props.songLength / 1000)

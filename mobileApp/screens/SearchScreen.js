@@ -38,7 +38,6 @@ export default function SearchScreen({ route, navigation }) {
     fetch(`${API_URL}/api/user/searchByUsername`, requestOptions)
       .then((response) => response.json())
       .then((response) => {
-        console.log(response);
         if (response.ok) {
           if (isFocused) {
             setSearching(true);
@@ -81,6 +80,7 @@ export default function SearchScreen({ route, navigation }) {
           renderItem={({ item }) => (
             <SearchResultBox
               username={item.username}
+              image={item.profileImageUrl}
               isFollowed={item.currentUserFollows}
               followers={item.followers}
               userID={item._id}

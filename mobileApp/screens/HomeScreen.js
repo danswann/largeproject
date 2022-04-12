@@ -11,24 +11,27 @@ export default function HomeScreen({ route, navigation }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [feed, setFeed] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [newPostsLoading, setNewPostsLoading] = useState(false);
+  const [endOfFeed, setEndOfFeed] = useState(false);
 
   const { refresh } = React.useContext(AuthContext);
 
   const isFocused = useIsFocused();
   useEffect(() => {
-    getFeed()
+    getFeed(0)
   }, [isFocused]);
   
 
-  async function getFeed()
+  async function getFeed(index)
   {
     //refreshes access token (this function must be async)
     //const access = await refresh(userID, refreshToken)
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({userID: userID, currentIndex: currentIndex, numberOfPosts: 5, accessToken: accessToken})
+      body: JSON.stringify({userID: userID, currentIndex: index, numberOfPosts: 5, accessToken: accessToken})
     };
+    console.log("Loading at index: " + index)
     fetch(`${API_URL}/api/post/homeFeed`, requestOptions)
       .then((response) => response.json())
       .then((response) => {
@@ -36,10 +39,20 @@ export default function HomeScreen({ route, navigation }) {
         {
           if(isFocused)
           {
-            if(currentIndex != 0)
+            if(index != 0)
+            {
+              console.log("Loading more posts...")
               setFeed(feed.concat(response.posts))
+              if(response.posts.length == 0)
+                setEndOfFeed(true)
+              setNewPostsLoading(false)
+            }
             else
+            {
+              console.log("Refresh posts...")
               setFeed(response.posts)
+              setLoading(false)
+            }
           }
         }
         else
@@ -50,8 +63,6 @@ export default function HomeScreen({ route, navigation }) {
             console.log(response.error) //This keeps spitting out undefined
           }
         }
-        if(isFocused)
-          setLoading(false)
       })
   }
   return (
@@ -69,9 +80,19 @@ export default function HomeScreen({ route, navigation }) {
       </View>) :
       (<FlatList
         data={feed}
-        onRefresh={() => [setCurrentIndex(0), setLoading(true), getFeed()]}
-        refreshing={loading}
-        onEndReached={() => [setCurrentIndex(currentIndex + 5), getFeed()]}
+        onRefresh={() => [setLoading(true), getFeed(0), setCurrentIndex(0)]}
+        refreshing={(loading || newPostsLoading)}
+        onEndReached={() => [setNewPostsLoading(true), getFeed(currentIndex + 5), setCurrentIndex(currentIndex + 5)]}
+        onEndReachedThreshold={.2}
+        ListFooterComponent={
+          <View style={{width: "100%", height: 70, marginTop: 50}}>
+            {(endOfFeed ?
+            <Text style ={styles.emptyText}>{"There are no more posts in your feed!"}</Text>
+            :
+            <ActivityIndicator size={25} color="white" />
+            )}
+          </View>
+        }
         renderItem={({item}) => <PostBox 
           navigation={navigation} 
           postID={item._id} 
