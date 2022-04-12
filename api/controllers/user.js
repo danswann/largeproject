@@ -681,7 +681,7 @@ exports.changePassword = async function(req, res, next) {
 
     // Searchs for single user and updates password field
     const filter = {_id: userID};
-    const update = {password: password, canChangePassword: false};
+    const update = {password: password};
     const user = await User.findOneAndUpdate(filter, update);
 
     // If user is found return ok:true
@@ -759,7 +759,7 @@ exports.confirmChangePassword = async function(req, res, next) {
         const user = await User.findOne({passwordToken: req.query.token});
         if (user) {
             // Will take in whatever the token is, find a user with that token, and will change value of "canChangePassword" to true.
-            user.passwordToken = null;
+            user.passwordToken = undefined;
             user.canChangePassword = true;
 
             await user.save(function (err) {
@@ -790,7 +790,31 @@ exports.confirmChangePassword = async function(req, res, next) {
         response.error = err.message;
         res.status(200).json(response);
     }
-    
+
+}
+
+exports.changePasswordByEmail = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true};
+
+    // Incoming values
+    const email = req.body.email;
+    const password = req.body.password;
+
+    // Check if user exists with the email
+    const filter = {email: email};
+    const update = {password: password, canChangePassword: false};
+    const user = await User.findOneAndUpdate(filter, update);
+
+    if(user)
+    {
+        res.status(200).json(response);
+    }
+    else
+    {
+        response.ok = false;
+        res.status(200).json(response);
+    }
 }
 
 exports.searchByUsername = async function(req, res, next) {

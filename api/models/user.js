@@ -25,7 +25,7 @@ const UserSchema = new Schema({
     isVerified: {type:Boolean, default:false},
     emailToken: {type:String},
     refreshToken: {type:String},
-    passwordToken: {type:String, default:null},
+    passwordToken: {type:String},
     canChangePassword: {type:Boolean, default:false},
     spotify: {
         connected: {type:Boolean, required:true, default:false},
