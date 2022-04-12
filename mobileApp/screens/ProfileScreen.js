@@ -21,6 +21,8 @@ import { ScreenStackHeaderBackButtonImage } from "react-native-screens";
 export default function ProfileScreen({ route, navigation }) {
   const userID = route.params.userID;
   const myUserID = route.params.myUserID;
+  const accessToken = route.params.accessToken;
+  const isFollowed = route.params.isFollowed;
 
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
@@ -181,6 +183,8 @@ export default function ProfileScreen({ route, navigation }) {
         followingCount={followingCount}
         myUserID={myUserID}
         targetUserID={userID}
+        isFollowed={isFollowed}
+        accessToken={accessToken}
         navigation={navigation}
       />
       {/* Container for navigation between posts and likes */}

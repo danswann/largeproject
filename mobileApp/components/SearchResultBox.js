@@ -66,7 +66,7 @@ export default function SearchResultBox(props) {
       onPress={() => {
         props.navigation.navigate({
           name: "OtherProfile",
-          params: { userID: props.userID },
+          params: { userID: props.userID, isFollowed: followed },
         });
       }}
     >
@@ -74,7 +74,7 @@ export default function SearchResultBox(props) {
         {/* profile pic */}
         <Image
           source={
-            (props.image != undefined)
+            props.image != undefined
               ? { uri: props.image }
               : require("../assets/images/defaultSmile.png")
           } //default image
