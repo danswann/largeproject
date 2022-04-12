@@ -282,7 +282,7 @@ exports.verifyEmail = async function(req, res, next) {
                 }
                 else
                 {
-                    response.ok = false;
+                    response.ok = true;
                     response.status = "Email confirmed";
                     res.status(200).json(response);
                 }
@@ -681,7 +681,7 @@ exports.changePassword = async function(req, res, next) {
 
     // Searchs for single user and updates password field
     const filter = {_id: userID};
-    const update = {password: password};
+    const update = {password: password, canChangePassword: false};
     const user = await User.findOneAndUpdate(filter, update);
 
     // If user is found return ok:true
@@ -696,6 +696,101 @@ exports.changePassword = async function(req, res, next) {
         response.error = 'User not found';
         res.status(200).json(response);
     }
+}
+
+exports.forgotPassword = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true};
+
+    // Incoming values
+    const email = req.body.email;
+
+    // Check if user exists with the email
+    const filter = {email: email};
+    var newPasswordToken = crypto.randomBytes(64).toString('hex');
+    const update = {passwordToken: newPasswordToken};
+    const user = await User.findOneAndUpdate(filter, update);
+
+    if(user)
+    {
+        const msg = {
+            to: user.email,
+            from: 'soundlink.donotreply2@gmail.com',
+            subject: 'Password Recovery Confirmation',
+            text: `
+                You have asked to change your password for Soundlink.
+                If this wasn't you, DO NOT click the link below.
+                If this was you, click the link below to allow for a password reset:
+                https://cop4331-large.herokuapp.com/api/user/confirmChangePassword?token=${newPasswordToken}
+            `,
+            html: `
+                <p>You have asked to change your password for Soundlink.</p>
+                <p>If this wasn't you, DO NOT click the link below.</p>
+                <p>If this was you, please click the link below to allow for a password reset:</p>
+                <a href = "https://cop4331-large.herokuapp.com/api/user/confirmChangePassword?token=${newPasswordToken}">Change your password</a>
+            `
+        }
+
+        // Sends the email through sendgrid
+        sgMail.send(msg).then(() => {
+            // console.log('Email sent')
+        }).catch((error) => {
+            console.error(error)
+        });
+
+        res.status(200).json(response);
+    }
+    else
+    {
+        response.ok = false;
+        response.error = "User not found with email " + email;
+        res.status(200).json(response);
+    }
+}
+
+exports.confirmChangePassword = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true};
+
+    try {
+        // Searches for user based on the email token provided after the link
+        // Example: https://cop4331-large.herokuapp.com/api/user/confirmChangePassword?token=XXXXXXXXXXXXXXXXXXXXXXXX
+
+        const user = await User.findOne({passwordToken: req.query.token});
+        if (user) {
+            // Will take in whatever the token is, find a user with that token, and will change value of "canChangePassword" to true.
+            user.passwordToken = null;
+            user.canChangePassword = true;
+
+            await user.save(function (err) {
+                if(err)
+                {
+                    response.ok = false;
+                    response.error = err;
+                    res.status(200).json(response);
+                }
+                else
+                {
+                    response.ok = true;
+                    response.status = "Can now change password from within the app";
+                    res.status(200).json(response);
+                }
+            });
+        }
+        else
+        {
+            // If user not found, then error return.
+            response.ok = false;
+            response.error = "User not found";
+            res.status(200).json(response);
+        }
+
+    } catch (err) {
+        response.ok = false;
+        response.error = err.message;
+        res.status(200).json(response);
+    }
+    
 }
 
 exports.searchByUsername = async function(req, res, next) {
