@@ -64,12 +64,12 @@ exports.callback = async function(req, res, next) {
         currentUser.profileImageUrl = me.body['images'][0]?.url;
         await currentUser.save();
         // Redirect to a success message on the main website
-        res.redirect(C.DOMAIN_ROOT + '/message/spotifyconnect/success');
+        res.redirect(C.DOMAIN_ROOT + '/spotifyconnect/success');
         return;
     }
 
     // Redirect to a failure message on the main website
-    res.redirect(C.DOMAIN_ROOT + '/message/spotifyconnect/failure');
+    res.redirect(C.DOMAIN_ROOT + '/spotifyconnect/failure');
 }
 
 /**
@@ -103,7 +103,7 @@ exports.getMyPlaylists = async function(req, res, next) {
             response.playlists = response.playlists.concat(result.body.items.map(x => ({
                 name:x.name,
                 id:x.id,
-                image:x.images[0]?.url||'http://placehold.jp/3d4070/ffffff/100x100.png?text=No%0Art',
+                image:x.images[0]?.url||'https://placehold.jp/e0e0e0/787878/150x150.png?text=No%0AArt',
                 public:x.public,
                 owner: x.owner.id
             })));
