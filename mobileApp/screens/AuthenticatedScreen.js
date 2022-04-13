@@ -41,6 +41,7 @@ const AuthenticatedScreen = ({ route, navigation }) => {
 
             if (route.name === "Home") {
               iconName = focused ? "home" : "home-outline";
+              route.params.reload = false;
             } else if (route.name === "Search") {
               iconName = focused ? "search" : "search-outline";
             } else if (route.name === "Post") {
@@ -72,6 +73,7 @@ const AuthenticatedScreen = ({ route, navigation }) => {
             userID: userID,
             accessToken: accessToken,
             refreshToken: refreshToken,
+            reload: true,
           }}
         />
         <Tab.Screen
@@ -107,7 +109,12 @@ const AuthenticatedScreen = ({ route, navigation }) => {
         <Tab.Screen
           name="Profile"
           component={ProfileScreen}
-          initialParams={{ userID: userID, myUserID: userID }}
+          initialParams={{
+            userID: userID,
+            myUserID: userID,
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+          }}
         />
         <Tab.Screen
           name="Chat"
@@ -123,7 +130,13 @@ const AuthenticatedScreen = ({ route, navigation }) => {
           name="OtherProfile"
           component={ProfileScreen}
           options={{ tabBarButton: () => null }}
-          initialParams={{ userID: 0, myUserID: userID }}
+          initialParams={{
+            userID: 0,
+            myUserID: userID,
+            isFollowed: false,
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+          }}
         />
         <Tab.Screen
           name="FollowersList"

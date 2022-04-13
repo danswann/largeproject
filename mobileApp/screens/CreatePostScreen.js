@@ -148,6 +148,16 @@ export default function PostScreen({ route, navigation }) {
     setPlaylistImage(playlist.image);
   };
 
+  function clearScreen() {
+    setDropped(false);
+    setCaption("")
+    setPlaylistIsPublic(false);
+    setPlaylistID(0);
+    setPlaylistSongs([]);
+    setPlaylistTitle("");
+    setPlaylistImage("uri");
+  };
+
   function createPost() {
     const requestOptions = {
       method: "POST",
@@ -166,7 +176,10 @@ export default function PostScreen({ route, navigation }) {
           console.log(response.error);
           return;
         }
-        navigation.navigate("Home");
+        clearScreen()
+        navigation.navigate({name: "Home",
+        params: {reload: true},
+        });
       });
   }
 
@@ -410,7 +423,6 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     marginLeft: 20,
     color: "white",
-    backgroundColor: "red",
     justifyContent: "center",
     textAlignVertical:"auto",
   },

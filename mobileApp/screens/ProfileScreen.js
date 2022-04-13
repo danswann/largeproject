@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import ProfileBox from "../components/ProfileBox";
 import RowBox from "../components/RowBox";
+import PostBox from "../components/PostBox";
 import { API_URL } from "../constants/Info";
 import { useIsFocused } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -21,6 +22,8 @@ import { ScreenStackHeaderBackButtonImage } from "react-native-screens";
 export default function ProfileScreen({ route, navigation }) {
   const userID = route.params.userID;
   const myUserID = route.params.myUserID;
+  const accessToken = route.params.accessToken;
+  const isFollowed = route.params.isFollowed;
 
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
@@ -35,6 +38,8 @@ export default function ProfileScreen({ route, navigation }) {
   const [likedPostGridComplete, setLikedPostGridComplete] = useState([]);
   const [postsOrLikes, setPostsOrLikes] = useState("posts");
   const [isLoading, setIsLoading] = useState(true);
+
+  const [postBox, setPostBox] = useState(<></>);
 
   const isFocused = useIsFocused();
   useEffect(() => {
@@ -166,87 +171,145 @@ export default function ProfileScreen({ route, navigation }) {
     }
   }
 
+  const [postVisible, setPostVisible] = useState(false);
+  const openPost =  async (postID) => {
+    setPostBox(await getPostBoxFromID(postID))
+    setPostVisible(true)
+  }
+
+  function getPostBoxFromID(postID) {
+    return new Promise((res, rej) => {
+		const requestOptions = {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ postID: postID })
+		};
+		fetch(`${API_URL}/api/post/getPost`, requestOptions)
+			.then((response) => response.json())
+			.then((response) => {
+        console.log(response)
+				if (!response.ok) {
+					console.log(response.error)
+					res(<></>)
+				}
+        res(
+          <PostBox 
+            navigation={navigation} 
+            postID={response.post._id} 
+            author={response.post.author} 
+            caption={response.post.caption}
+            comments={response.post.comments}
+            isReposted={response.post.isReposted}
+            likedBy={response.post.likedBy}
+            originalPostID={response.post.originalPostID}
+            playlistID={response.post.playlistID} 
+            timeStamp={response.post.timeStamp}
+            myUserID={userID} 
+            accessToken={accessToken} 
+          />
+        )
+			})
+    })
+	}
+
   const Tab = createMaterialTopTabNavigator();
 
   return (
     <View style={styles.MainContainer}>
-      {/*Profile Info */}
-      <ProfileBox
-        username={username}
-        bio={bio}
-        image={image}
-        hasProfileImage={hasProfileImage}
-        postCount={postCount}
-        followerCount={followerCount}
-        followingCount={followingCount}
-        myUserID={myUserID}
-        targetUserID={userID}
-        navigation={navigation}
-      />
-      {/* Container for navigation between posts and likes */}
-      <View style={styles.NavContainer}>
-        {/* Posts and likes filter buttons */}
+      {(postVisible ? (
+      <View style={styles.PostContainer}>
+        {/* Post that was tapped*/}
+        {postBox}
+        {/* Close button */}
         <TouchableOpacity
-          hitSlop={{ top: 40, bottom: 40, left: 100, right: 100 }}
-          onPress={() => setPostsOrLikes("posts")}
+          style={styles.closeBtn}
+          onPress={() => setPostVisible(false)}
         >
-          {postsOrLikes === "posts" ? (
-            <Ionicons name="grid" size={20} color="#573C6B" />
-          ) : (
-            <Ionicons name="grid" size={20} color="white" />
-          )}
-        </TouchableOpacity>
-        <TouchableOpacity
-          hitSlop={{ top: 40, bottom: 40, left: 100, right: 100 }}
-          onPress={() => setPostsOrLikes("likes")}
-        >
-          {postsOrLikes === "likes" ? (
-            <Ionicons name="heart" size={20} color="#573C6B" />
-          ) : (
-            <Ionicons name="heart" size={20} color="white" />
-          )}
+          <Text style={styles.btnText}>Back</Text>
         </TouchableOpacity>
       </View>
-      {/* Grid container */}
-      <View style={{ width: "100%", alignItems: "center" }}>
-        {isLoading ? (
-          <View style={{ justifyContent: "center", marginTop: 60 }}>
-            <ActivityIndicator size="large" color="#573C6B" />
-          </View>
-        ) : (
-          <View>
+      ) : (
+      <View>
+        <ProfileBox
+          username={username}
+          bio={bio}
+          image={image}
+          hasProfileImage={hasProfileImage}
+          postCount={postCount}
+          followerCount={followerCount}
+          followingCount={followingCount}
+          myUserID={myUserID}
+          targetUserID={userID}
+          isFollowed={isFollowed}
+          accessToken={accessToken}
+          navigation={navigation}
+        />
+        {/* Container for navigation between posts and likes */}
+        <View style={styles.NavContainer}>
+          {/* Posts and likes filter buttons */}
+          <TouchableOpacity
+            hitSlop={{ top: 40, bottom: 40, left: 100, right: 100 }}
+            onPress={() => setPostsOrLikes("posts")}
+          >
             {postsOrLikes === "posts" ? (
-              // Posts container
-              <View style={styles.GridColumnContainer}>
-                {postCount == 0 ? (
-                  <Text style={{ color: "white", alignSelf: "center" }}>
-                    This user has no posts
-                  </Text>
-                ) : (
-                  <FlatList
-                    data={postGridComplete}
-                    renderItem={({ item }) => <RowBox row={item.row} />}
-                  />
-                )}
-              </View>
+              <Ionicons name="grid" size={20} color="#573C6B" />
             ) : (
-              // Likes container
-              <View style={styles.GridColumnContainer}>
-                {likedPostCount == 0 ? (
-                  <Text style={{ color: "white", alignSelf: "center" }}>
-                    This user has no liked posts
-                  </Text>
-                ) : (
-                  <FlatList
-                    data={likedPostGridComplete}
-                    renderItem={({ item }) => <RowBox row={item.row} />}
-                  />
-                )}
-              </View>
+              <Ionicons name="grid" size={20} color="white" />
             )}
-          </View>
-        )}
+          </TouchableOpacity>
+          <TouchableOpacity
+            hitSlop={{ top: 40, bottom: 40, left: 100, right: 100 }}
+            onPress={() => setPostsOrLikes("likes")}
+          >
+            {postsOrLikes === "likes" ? (
+              <Ionicons name="heart" size={20} color="#573C6B" />
+            ) : (
+              <Ionicons name="heart" size={20} color="white" />
+            )}
+          </TouchableOpacity>
+        </View>
+        {/* Grid container */}
+        <View style={{ width: "100%", alignItems: "center" }}>
+          {isLoading ? (
+            <View style={{ justifyContent: "center", marginTop: 60 }}>
+              <ActivityIndicator size="large" color="#573C6B" />
+            </View>
+          ) : (
+            <View>
+              {postsOrLikes === "posts" ? (
+                // Posts container
+                <View style={styles.GridColumnContainer}>
+                  {postCount == 0 ? (
+                    <Text style={{ color: "white", alignSelf: "center" }}>
+                      This user has no posts
+                    </Text>
+                  ) : (
+                    <FlatList
+                      data={postGridComplete}
+                      renderItem={({ item }) => <RowBox row={item.row} openPost={openPost}/>}
+                    />
+                  )}
+                </View>
+              ) : (
+                // Likes container
+                <View style={styles.GridColumnContainer}>
+                  {likedPostCount == 0 ? (
+                    <Text style={{ color: "white", alignSelf: "center" }}>
+                      This user has no liked posts
+                    </Text>
+                  ) : (
+                    <FlatList
+                      data={likedPostGridComplete}
+                      renderItem={({ item }) => <RowBox row={item.row} openPost={openPost}/>}
+                    />
+                  )}
+                </View>
+              )}
+            </View>
+          )}
+        </View>
       </View>
+      ))}
     </View>
   );
 }
@@ -268,11 +331,33 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   GridColumnContainer: {
-    backgroundColor: "blue",
     marginTop: 40,
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "space-around",
     width: "80%",
+  },
+  PostContainer: {
+    flex: 1,
+    flexDirection: "column",
+    width: "100%",
+    height:"60%",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    backgroundColor: "black",
+  },
+  btnText: {
+    fontSize: 15,
+    marginHorizontal: 10,
+    color: "white",
+  },
+  closeBtn: {
+    width: "80%",
+    borderRadius: 25,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 20,
+    backgroundColor: "#573C6B",
   },
 });

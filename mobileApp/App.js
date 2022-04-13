@@ -150,8 +150,11 @@ export default function App() {
                   userID = data.user._id;
                   cacheData(userID, data.refreshToken)
                   dispatch({ type: "LOGGEDIN", userID: userID, refresh: data.refreshToken, access: data.accessToken });
+                  res(false);
                 }
-                res(false);
+                else {
+                  res(true);
+                }
               } else {
                 console.log("Invalid username or password");
                 res(true);
@@ -159,46 +162,61 @@ export default function App() {
             })
             .catch(() => {
               console.log("Api error: Server is probably down")
-              res(false)
+              res(true)
             })
         })
         return promise;
       },
       signUp: async (
-        firstName,
-        lastName,
         email,
-        phoneNumber,
         username,
         password,
-        dob
       ) => {
         // Object that specifies what we need for the request since it is a POST
         const hashedPassword = await getHashedPassword(password)
-        console.log("Sign up is hashing as " + hashedPassword)
         const requestOptions = {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            firstName: firstName,
-            lastName: lastName,
             email: email,
-            phoneNumber: phoneNumber,
             username: username,
             password: hashedPassword,
-            dob: dob,
           }),
         };
         fetch(`${API_URL}/api/user/register`, requestOptions)
           .then((response) => response.text())
-          .then((data) => {
-            if(!data.ok)
-              console.log(data)
+          .then((response) => {
+            if(!response.ok)
+              console.log("Register Error: " + response)
           }
           );
       },
       signOut: () => {
         deleteRefreshToken()
+      },
+      getHash: async (password) => {
+        return await getHashedPassword(password)
+      },
+      changePassword: async (
+        userID,
+        password,
+      ) => {
+        const hashedPassword = await getHashedPassword(password)
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userID: userID,
+            password: hashedPassword,
+          }),
+        };
+        fetch(`${API_URL}/api/user/changePassword`, requestOptions)
+          .then((response) => response.text())
+          .then((data) => {
+            if(!data.ok)
+              console.log("Password change Error: " + data.error)
+          }
+        );
       },
       refresh: (userID, refreshToken) => {
         return new Promise((res, rej) => {

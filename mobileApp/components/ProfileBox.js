@@ -1,7 +1,54 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { API_URL } from "../constants/Info";
+import { AuthContext } from "../Context";
 
 export default function ProfileBox(props) {
+  const { refresh } = React.useContext(AuthContext);
+
+  // Track whether or not you follow this user
+  const [isFollowed, setIsFollowed] = useState(props.isFollowed);
+
+  // Follow a user
+  async function followUser() {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userID: props.myUserID,
+        followingID: props.targetUserID,
+        accessToken: props.accessToken,
+      }),
+    };
+    fetch(`${API_URL}/api/user/followUser`, requestOptions)
+      .then((response) => response.json())
+      .then((response) => {
+        if (response.ok) {
+          setIsFollowed(true);
+        } else console.log(response.error);
+      });
+  }
+
+  // Unfollow a user
+  async function unfollowUser() {
+    const access = await refresh(props.myUserID, props.refreshToken);
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userID: props.myUserID,
+        followingID: props.targetUserID,
+        accessToken: props.accessToken,
+      }),
+    };
+    fetch(`${API_URL}/api/user/unfollowUser`, requestOptions)
+      .then((response) => response.json())
+      .then((response) => {
+        if (response.ok) {
+          setIsFollowed(false);
+        } else console.log(response.error);
+      });
+  }
   return (
     // Container for all content on page
     <View style={styles.MainContainer}>
@@ -24,15 +71,36 @@ export default function ProfileBox(props) {
             <Text style={styles.UsernameText}>{props.username}</Text>
             <Text style={styles.BioText}>{props.bio}</Text>
           </View>
-          {/* Edit profile button */}
-          <TouchableOpacity
-            style={styles.EditProfileBtn}
-            onPress={() => {
-              props.navigation.navigate("EditProfile");
-            }}
-          >
-            <Text style={styles.MainText}>Edit Profile</Text>
-          </TouchableOpacity>
+          {/* Edit profile button or follow button */}
+          {props.myUserID === props.targetUserID ? (
+            <TouchableOpacity
+              style={styles.EditProfileBtn}
+              onPress={() => {
+                props.navigation.navigate("EditProfile");
+              }}
+            >
+              <Text style={styles.MainText}>Edit Profile</Text>
+            </TouchableOpacity>
+          ) : (
+            // Follow or unfollow button rendered based on the state of isFollowed
+            <View>
+              {isFollowed ? (
+                <TouchableOpacity
+                  onPress={() => unfollowUser()}
+                  style={styles.unfollowButton}
+                >
+                  <Text style={styles.MainText}>Unfollow</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => followUser()}
+                  style={styles.followButton}
+                >
+                  <Text style={styles.MainText}>Follow</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
         </View>
         {/* Profile stats */}
         <View style={styles.ProfileStatsContainer}>
@@ -108,7 +176,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    backgroundColor: "#595959",
+    backgroundColor: "#573C6B",
     alignSelf: "stretch",
     borderRadius: 10,
     padding: 5,
@@ -140,7 +208,23 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   EditProfileBtn: {
-    backgroundColor: "#595959",
+    backgroundColor: "#573C6B",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 25,
+    width: 100,
+    height: 30,
+  },
+  followButton: {
+    backgroundColor: "#573C6B",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 25,
+    width: 100,
+    height: 30,
+  },
+  unfollowButton: {
+    backgroundColor: "#23192B",
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 25,

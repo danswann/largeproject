@@ -16,7 +16,7 @@ router.post('/showFollowings', userController.showFollowings);
 router.post('/searchByUsername', userController.searchByUsername);
 router.post('/forgotPassword', userController.forgotPassword);
 router.get('/confirmChangePassword', userController.confirmChangePassword);
-
+router.post('/changePasswordByEmail', userController.changePasswordByEmail);
 
 // Call middleware function
 router.use(auth.jwtAuth);

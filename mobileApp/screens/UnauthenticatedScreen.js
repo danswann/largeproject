@@ -18,6 +18,7 @@ import { NavigationContainer, useIsFocused } from "@react-navigation/native";
 import { StatusBar, ActivityIndicator } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AuthContext } from "../Context";
+import PasswordChangeScreen from "./PasswordChangeScreen";
 
 // Login screen
 function LoginScreen({ navigation }) {
@@ -91,7 +92,7 @@ function LoginScreen({ navigation }) {
           <Text style={styles.forgotText}>
             Forgot your password?{" "}
             <Text
-              //onPress={() => navigation.navigate("ForgotPassword")}
+              onPress={() => navigation.navigate("PasswordChange")}
               style={styles.clickableText}
             >
               Click Here!
@@ -144,7 +145,7 @@ function RegisterScreen({ navigation }) {
   const { signUp } = React.useContext(AuthContext);
   const [loading, setLoading] = useState(false);
 
-  async function verifyRegisterData()
+  function verifyRegisterData()
   {
     if (username === "")
       return "Username field must be filled"
@@ -158,24 +159,14 @@ function RegisterScreen({ navigation }) {
       return "Password field must be filled"
     else if(password !== confirmPassword)
       return "Passwords do not match"
-    signUp(password, "", email, "", username, password, "")
-    navigation.navigate("EmailVerification", {usernameParam: username, passwordParam: password, emailParam: email})
+    signUp(email, username, password)
+    navigation.navigate("EmailVerification", {username: username, password: password, email: email})
     return "Verified"
   }
   function verifyEmailFormat(email) //verifies format of string@string.string
   {
     var reg = /\S+@\S+\.\S+/;
     return reg.test(email);
-  }
-
-
-  const getHashedPassword = async () => {
-    return new Promise((res, rej) => {
-      JSHash(password, CONSTANTS.HashAlgorithms.sha256)
-        .then(async(hash) => {
-          res(hash)
-        })
-    })
   }
 
   function tryRegister()
@@ -291,7 +282,7 @@ function RegisterScreen({ navigation }) {
 
 // Email Verification screen
 function EmailVerificationScreen({ route, navigation }) {
-  const { usernameParam, passwordParam, emailParam } = route.params;
+  const { username, password, email } = route.params;
   const [failedVerification, setFailedVerification] = useState(false);
   const { signIn } = React.useContext(AuthContext);
   const [loading, setLoading] = useState(false);
@@ -300,7 +291,7 @@ function EmailVerificationScreen({ route, navigation }) {
   {
     if(!loading) {
       setLoading(true)
-      if (await signIn(JSON.parse(JSON.stringify(usernameParam)), JSON.parse(JSON.stringify(passwordParam))))
+      if (await signIn(JSON.parse(JSON.stringify(username)), JSON.parse(JSON.stringify(password))))
         setFailedVerification(true);
       setLoading(false)
     }
@@ -319,7 +310,7 @@ function EmailVerificationScreen({ route, navigation }) {
           We've just sent an email to:
       </Text>
       <Text style={styles.emailText}>
-        {JSON.stringify(emailParam)}
+        {JSON.stringify(email)}
       </Text>
       <Text style={styles.signUpText}>
           Please verify your email before continuing.
@@ -335,10 +326,10 @@ function EmailVerificationScreen({ route, navigation }) {
       </TouchableOpacity>
       {/* Conditionally renders error message if user is unverified */}
       {failedVerification ? (
-          <Text style={styles.errorText}>Email is not verified</Text>
-        ) : (
-          <Text></Text>
-        )}
+        <Text style={styles.errorText}>Email is not verified</Text>
+      ) : (
+        <Text></Text>
+      )}
     </View>
   )
 }
@@ -354,6 +345,7 @@ function UnauthenticatedScreen() {
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="EmailVerification" component={EmailVerificationScreen} initialParams={{ usernameParam: "", passwordParam: "", emailParam: "Test" }}/>
+      <Stack.Screen name="PasswordChange" component={PasswordChangeScreen}/>
     </Stack.Navigator>
   );
 }

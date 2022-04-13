@@ -347,15 +347,20 @@ exports.getPost = async function(req, res, next) {
 
     // Find post by postID
     const filter = {_id:postID};
-    const post = await Post.findOne(filter);
-    // .populate('originalPost')
+    const post = await Post.findOne(filter).populate({path: 'author comments.author', select: '_id username profileImageUrl'}).populate({path: 'originalPost', populate: {path: 'author comments.author', select: '_id username profileImageUrl'}});
 
     // If the post exists, return ok:true
     if(post)
     {
         response.post = post.toObject();
-        response.post.playlist = await Spotify.getPlaylistData(post.userID, post.playlistID);
-        console.log(response.post.playlist);
+        if (response.post.isReposted == true)
+        {
+            response.post.originalPost.playlist = await Spotify.getPlaylistData(response.post.originalPost.author, response.post.originalPost.playlistID);
+        }
+        else
+        {
+            response.post.playlist = await Spotify.getPlaylistData(response.post.author, response.post.playlistID);
+        }
         res.status(200).json(response);
     }
     // Otherwise return ok:false and the error message
@@ -410,7 +415,7 @@ exports.homeFeed = async function(req, res, next) {
         if(post)
         {
             response.posts = post;
-            for (var i = 0; i < response.posts.length; i++) {
+            /*for (var i = 0; i < response.posts.length; i++) {
                 try {
                     if (response.posts[i].isReposted == true)
                     {
@@ -427,7 +432,7 @@ exports.homeFeed = async function(req, res, next) {
                     // response.error = 'Could not fetch playlist with ID "' + p.playlistID + '" and author "' + p.author + '"';
                     // return res.status(200).json(response);
                 }
-            };
+            };*/
             res.status(200).json(response);
         }
         // Otherwise return ok:false and the error message
@@ -528,9 +533,9 @@ exports.userLikedPosts = async function(req, res, next) {
     }
 
     // Find liked posts by userID
-    const filter = {$reverseArray: {likedBy: {$elemMatch: {$eq: userID}}}};
+    const filter = {likedBy:{$oid:userID}};
     const projection = {_id: 1, isReposted: 1, originalPost: 1, author: 1, playlistID: 1};
-    const posts = await Post.find(filter, projection).populate('originalPost', 'author playlistID').skip(currentIndex).limit(numberOfPosts).lean();
+    const posts = await Post.find(filter, projection).sort({timeStamp: 'desc'}).populate('originalPost', 'author playlistID').skip(currentIndex).limit(numberOfPosts).lean();
 
     response.posts = posts;
     for (var i = 0; i < response.posts.length; i++) {
