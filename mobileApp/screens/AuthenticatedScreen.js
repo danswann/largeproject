@@ -21,6 +21,7 @@ import ChatScreen from "./ChatScreen";
 import EditProfileScreen from "./EditProfileScreen";
 import FollowersListScreen from "./FollowersListScreen";
 import FollowingListScreen from "./FollowingListScreen";
+import NewMessageScreen from "./newMessageScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -30,7 +31,7 @@ const AuthenticatedScreen = ({ route, navigation }) => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ height: "100%", width: "100%", backgroundColor: "#23192B" }}
+      style={{ height: "100%", width: "100%", backgroundColor: "#23192B"  }}
     >
       <Tab.Navigator
         backBehavior={"history"}
@@ -148,6 +149,17 @@ const AuthenticatedScreen = ({ route, navigation }) => {
           }}
           backBehavior={"history"}
         />
+        <Tab.Screen
+          name="NewMessage"
+          component={NewMessageScreen}
+          options={{ tabBarButton: () => null }}
+          initialParams ={{
+            userID: 0,    
+            accessToken: accessToken,
+            refreshToken: refreshToken,        
+          }}
+          backBehavior={"history"}
+          ></Tab.Screen>
       </Tab.Navigator>
     </KeyboardAvoidingView>
   );

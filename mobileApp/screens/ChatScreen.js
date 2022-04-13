@@ -15,10 +15,11 @@ import {
   ActivityIndicator,
   ScrollView,
   TouchableHighlight} from "react-native";
+  
 
 import ChatBox from "../components/ChatBox";
 import { API_URL } from "../constants/Info";
-import { NavigationContainer, NavigationHelpersContext } from '@react-navigation/native';
+import { NavigationContainer, NavigationHelpersContext, useIsFocused } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { Ionicons } from "@expo/vector-icons";
@@ -27,23 +28,50 @@ import { Ionicons } from "@expo/vector-icons";
 const Tab = createMaterialTopTabNavigator();
 
 export default function ChatScreen({ route, navigation }) {
-  const { myUserID, name, messages } = route.params;  
+  
+  const { myUserID, name, messages, accessToken } = route.params;    
   const [messageInput, setMessageInput] = useState("");
   const [messageLoading, setMessageLoading] = useState(false);
   const [messageArray, setMessageArray] = useState(messages)
+  
+  console.log("chat screen")
+
   function sentByMe(userID) {
     if (userID === myUserID)
       return true
     return false
   }  
 
+  function getAllChats(userID) {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      
+      body: JSON.stringify({userID: myUserID, accessToken:accessToken})
+    };
+    fetch(`${API_URL}/api/directMessage/getAllChat`, requestOptions)
+    .then((response) => response.json())
+    .then((response) => {
+      if(!response.ok)
+      {
+        console.log(response.error)
+        return
+      }
+      else
+      {
+        console.log(response.data)
+        // response
+      }  
+    })
+  }
+
   function updateChat(messages) {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({dmID: messages.postID})
+      body: JSON.stringify({})
     };
-    fetch(`${API_URL}/api/directMessage/getChat`, requestOptions)
+    fetch(`${API_URL}/api/directMessage/getAllChats`, requestOptions)
     .then((response) => response.json())
     .then((response) => {
       if(!response.ok)

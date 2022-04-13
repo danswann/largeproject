@@ -1,5 +1,5 @@
 import {React, useState, useEffect} from "react";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused, useLinkProps } from "@react-navigation/native";
 import {
   StyleSheet,
   Text,
@@ -58,12 +58,36 @@ function NotificationTab() {
 
 function MessageTab({ route, navigation }) {  
   const {myUserID, accessToken, refreshToken} = route.params;
-  const [dmList, setdmList] = useState([]);
+  const [dmList, setdmList] = useState([]);  
 
   const isFocused = useIsFocused();
   useEffect(() => {
     getdmList()
   }, [isFocused]);
+
+  useEffect(async() => {    
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      
+      body: JSON.stringify({userID: myUserID, accessToken:accessToken})
+    };
+    
+    fetch(`${API_URL}/api/directMessage/getAllChat`, requestOptions)
+    .then((response) => response.json())
+    .then((response) => {
+      if(!response.ok)
+      {
+        console.log(response.error)
+        return
+      }
+      else
+      {
+        console.log(response)
+        // response
+      }  
+    })        
+  },[isFocused])
   
   // Gets user data from api
   function getdmList()
@@ -96,7 +120,10 @@ function MessageTab({ route, navigation }) {
       {/* create new message button */}
       {/*  onPress={() => navigation.navigate("Notification")} */}
       <View style={styles.newMessageButton}>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("NewMessage");            
+          }}>
           <View>
             <Ionicons style={{ color: "white", borderStyle: "solid" }} name="create-outline" size={25} />            
           </View>            
