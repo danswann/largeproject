@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Animated,
   Text,
@@ -12,6 +12,7 @@ import {
   Pressable,
   ScrollView,
   ActivityIndicator,
+  Linking,
 } from "react-native";
 import SongBox from "./SongBox";
 import { Ionicons } from "@expo/vector-icons";
@@ -189,6 +190,38 @@ export default function PostBox(props) {
     setCommentCount(comments.length);
   };
 
+  //Redirect to url button component
+  const OpenURLButton = ({ children }) => {
+    const handlePress = useCallback(async () => {
+      const url = "spotify:playlist:" + props.playlistID + ":play"
+      console.log(url)
+      await Linking.openURL(url);
+    });
+    return (
+      <TouchableOpacity 
+        style={{
+          width: "80%",
+          borderRadius: 15,
+          height: 30,
+          alignItems: "center",
+          justifyContent: "center",
+          marginVertical: 10,
+          backgroundColor: "#573C6B",
+        }} 
+        onPress={handlePress}>
+        <Text 
+        style={{
+          color:"white",
+          flexDirection: "row",
+          alignItems: "center",
+          margin: 5,
+        }}>
+          {children}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <View style={styles.PostContainer}>
       {loading ? (
@@ -199,15 +232,15 @@ export default function PostBox(props) {
         <View>
           {/* Post Message */}
           <View style={styles.MessageContainer}>
-            <TouchableOpacity
+            <View style={{ flexDirection: "row"  }}>
+              <TouchableOpacity style={{ flexDirection: "row", width: "75%" }}
               onPress={() => {
                 props.navigation.navigate({
                   name: "OtherProfile",
                   params: { userID: props.author._id },
                 });
               }}
-            >
-              <View style={{ flexDirection: "row" }}>
+              >
                 {/* profile pic */}
                 <Image
                   source={
@@ -242,27 +275,29 @@ export default function PostBox(props) {
                       alignItems: "center",
                       marginTop: 5,
                       marginBottom: 10,
-                      minWidth: "85%",
-                      maxWidth: "85%",
                     }}
                   >
                     <Text style={styles.MainText}>{props.caption}</Text>
                   </View>
                 </View>
-              </View>
-            </TouchableOpacity>
-            {/* Timestamp */}
-            <Text
-              style={{
-                color: "white",
-                textAlign: "right",
-                marginTop: 10,
-                marginRight: 20,
-                fontSize: 11,
-              }}
-            >
-              {getTimeSince()}
-            </Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{flexDirection:"column", alignItems: "center", justifyContent:"space-between"}}>
+              {/* Timestamp */}
+              <Text
+                style={{
+                  color: "white",
+                  textAlign: "right",
+                  marginTop: 10,
+                  marginRight: 20,
+                  fontSize: 11,
+                }}
+              >
+                {getTimeSince()}
+              </Text>
+              {/* Listen button */}
+              <OpenURLButton>Listen</OpenURLButton>
+            </View>
           </View>
 
           {/* Playlist Info */}

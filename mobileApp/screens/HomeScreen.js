@@ -90,6 +90,7 @@ export default function HomeScreen({ route, navigation }) {
       </View>) :
       (<FlatList
         data={feed}
+        overScrollMode="never"
         onRefresh={() => [setLoading(true), getFeed(0), setCurrentIndex(0)]}
         refreshing={(loading || newPostsLoading)}
         onEndReached={() => [setNewPostsLoading(true), getFeed(currentIndex + 5), setCurrentIndex(currentIndex + 5)]}
