@@ -223,9 +223,17 @@ exports.register = async function(req, res, next) {
         // If an error occurs, return ok:false and the error message
         if(err)
         {
+            if (err.keyPattern.username == 1)
+            {
+                response.error = "username is taken";
+            }
+            if (err.keyPattern.email == 1)
+            {
+                response.error = "email is taken";
+            }
+
             response.ok = false;
-            response.error = err;
-            res.status(200).json(response);
+            return res.status(200).json(response);
         }
         // Otherwise return a success message
         else
