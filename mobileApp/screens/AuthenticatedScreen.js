@@ -21,7 +21,7 @@ import ChatScreen from "./ChatScreen";
 import EditProfileScreen from "./EditProfileScreen";
 import FollowersListScreen from "./FollowersListScreen";
 import FollowingListScreen from "./FollowingListScreen";
-import NewMessageScreen from "./newMessageScreen";
+import NewMessageScreen from "./NewMessageScreen";
 
 const Tab = createBottomTabNavigator();
 
