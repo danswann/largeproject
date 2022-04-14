@@ -1,4 +1,4 @@
-import { 
+import {
   StyleSheet,
   Text,
   View,
@@ -16,56 +16,99 @@ import {
 import React, { useState, useEffect } from "react";
 import { StatusBar, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { NavigationContainer, StackActions} from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  NavigationContainer,
+  StackActions,
+  useIsFocused,
+} from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import EditProfileBox from "../components/EditProfileBox";
 
-export default function EditProfileScreen({navigation}) {
+export default function EditProfileScreen({ route, navigation }) {
+  const isFocused = useIsFocused();
+  const [biography, setBiography] = useState(route.params.bio);
+  const [username, setUsername] = useState(route.params.username);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  useEffect(() => {
+    setBiography(route.params.bio);
+    setUsername(route.params.username);
+    setPassword("");
+    setConfirmPassword("");
+  }, [isFocused]);
+
+  function submitInfo() {
+    if (password.length === 0 && confirmPassword.length === 0) {
+      // Dont do anything
+    } else if (password != confirmPassword) {
+      return "Passwords do not match";
+    } else if (password.length < 6) {
+      return "Password too short";
+    } else {
+      // API call to change password
+    }
+
+    if (username != route.params.username) {
+      // API call to change username
+    }
+
+    if (biography != route.params.bio) {
+      // API call to change bio
+    }
+    navigation.navigate("Profile");
+  }
+
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>      
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.MainContainer}>
-
         <View style={styles.Header}>
-
           {/* back button */}
           <View style={styles.backButton}>
-            <TouchableOpacity onPress={() => navigation.navigate("Profile")} hitSlop={{top: 100, bottom: 100, left: 8, right: 5}}>
-              <Ionicons style={{ color: "white", marginRight: 5 }} name="chevron-back-outline" size={25} />
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Profile")}
+              hitSlop={{ top: 100, bottom: 100, left: 8, right: 5 }}
+            >
+              <Ionicons
+                style={{ color: "white", marginRight: 5 }}
+                name="chevron-back-outline"
+                size={25}
+              />
             </TouchableOpacity>
-          </View>  
+          </View>
 
-          <View style={{flexDirection: "row"}}>
+          <View style={{ flexDirection: "row" }}>
             {/* profile pic */}
             <Image
-                source={require('../assets/images/defaultSmile.png')}
-                style={styles.ProfilePic}
-            />        
+              source={require("../assets/images/defaultSmile.png")}
+              style={styles.ProfilePic}
+            />
 
             {/* display username up top */}
-            <Text style={styles.nameText}>MobileUser</Text> 
+            <Text style={styles.nameText}>MobileUser</Text>
           </View>
-   
 
           {/* done button */}
           <View style={styles.backButton}>
-            <TouchableOpacity 
-              onPress={() => navigation.navigate("Profile")} 
-              hitSlop={{top: 100, bottom: 100, left: 8, right: 5}}>
+            <TouchableOpacity
+              onPress={() => submitInfo()}
+              hitSlop={{ top: 100, bottom: 100, left: 8, right: 5 }}
+            >
               <Text style={styles.doneButton}>Done</Text>
             </TouchableOpacity>
           </View>
-        </View>                   
-    
+        </View>
+
         {/* edit bio field */}
         <View style={styles.bioView}>
           <TextInput
             style={styles.TextInput}
-            placeholder="Edit Bio"
+            value={biography}
             placeholderTextColor="white"
-            selectionColor={"#573C6B"}            
+            selectionColor={"#573C6B"}
+            clearButtonMode="while-editing"
             multiline={true}
-            onChangeText={(editBio) => setBiography(editBio)
-            }
+            onChangeText={(editBio) => setBiography(editBio)}
           />
         </View>
 
@@ -73,7 +116,7 @@ export default function EditProfileScreen({navigation}) {
         <View style={styles.inputView}>
           <TextInput
             style={styles.TextInput}
-            placeholder="New Username"
+            value={username}
             placeholderTextColor="white"
             clearButtonMode="while-editing"
             selectionColor={"#573C6B"}
@@ -108,14 +151,11 @@ export default function EditProfileScreen({navigation}) {
           />
         </View>
 
-
         {/* <FlatList>renderItem={({item}) => <EditProfileBox/>}</FlatList> */}
       </View>
-
     </TouchableWithoutFeedback>
-
   );
-};
+}
 
 const styles = StyleSheet.create({
   MainContainer: {
@@ -135,8 +175,8 @@ const styles = StyleSheet.create({
   },
 
   nameText: {
-    color: 'white',
-    textAlign: 'center',
+    color: "white",
+    textAlign: "center",
     paddingTop: 12,
     paddingBottom: 10,
     fontSize: 25,
@@ -169,7 +209,7 @@ const styles = StyleSheet.create({
     height: 100,
     marginBottom: 20,
   },
-  
+
   ProfilePic: {
     width: 50,
     height: 50,
@@ -185,9 +225,8 @@ const styles = StyleSheet.create({
 
   doneButton: {
     textDecorationLine: "underline",
-    color: 'white',
+    color: "white",
     fontSize: 20,
-    marginRight: 10,      
+    marginRight: 10,
   },
-
 });

@@ -31,7 +31,7 @@ const AuthenticatedScreen = ({ route, navigation }) => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ height: "100%", width: "100%", backgroundColor: "#23192B"  }}
+      style={{ height: "100%", width: "100%", backgroundColor: "#23192B" }}
     >
       <Tab.Navigator
         backBehavior={"history"}
@@ -124,6 +124,12 @@ const AuthenticatedScreen = ({ route, navigation }) => {
         <Tab.Screen
           name="EditProfile"
           component={EditProfileScreen}
+          initialParams={{
+            myUserID: userID,
+            bio: "",
+            username: "",
+            accessToken: accessToken,
+          }}
           options={{ tabBarButton: () => null }}
         />
         <Tab.Screen
@@ -166,13 +172,13 @@ const AuthenticatedScreen = ({ route, navigation }) => {
           name="NewMessage"
           component={NewMessageScreen}
           options={{ tabBarButton: () => null }}
-          initialParams ={{
-            userID: 0,    
+          initialParams={{
+            userID: 0,
             accessToken: accessToken,
-            refreshToken: refreshToken,        
+            refreshToken: refreshToken,
           }}
           backBehavior={"history"}
-          ></Tab.Screen>
+        ></Tab.Screen>
       </Tab.Navigator>
     </KeyboardAvoidingView>
   );

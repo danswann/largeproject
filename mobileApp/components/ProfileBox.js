@@ -76,7 +76,14 @@ export default function ProfileBox(props) {
             <TouchableOpacity
               style={styles.EditProfileBtn}
               onPress={() => {
-                props.navigation.navigate("EditProfile");
+                props.navigation.navigate({
+                  name: "EditProfile",
+                  params: {
+                    myUserID: props.myUserID,
+                    username: "aaa",
+                    bio: "aaa",
+                  },
+                });
               }}
             >
               <Text style={styles.MainText}>Edit Profile</Text>
