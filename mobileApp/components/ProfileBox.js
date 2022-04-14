@@ -66,10 +66,22 @@ export default function ProfileBox(props) {
             } //default image
           />
 
-          {/* Username and bio (bio length is limited need to fix)*/}
+          {/* Username and bio */}
           <View style={styles.UsernameBioContainer}>
-            <Text style={styles.UsernameText}>{props.username}</Text>
-            <Text style={styles.BioText}>{props.bio}</Text>
+            <Text
+              style={styles.UsernameText}
+              adjustsFontSizeToFit={true}
+              numberOfLines={1}
+            >
+              {[props.username]}
+            </Text>
+            <Text
+              style={styles.BioText}
+              adjustsFontSizeToFit={true}
+              numberOfLines={3}
+            >
+              {props.bio}
+            </Text>
           </View>
           {/* Edit profile button or follow button */}
           {props.myUserID === props.targetUserID ? (
@@ -185,17 +197,22 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 25,
     padding: 20,
+    // backgroundColor: "blue",
+    width: "100%",
   },
   ProfileHeadInfoContainer: {
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
+    // backgroundColor: "yellow",
+    width: "85%",
   },
   UsernameBioContainer: {
     flexDirection: "column",
-    maxWidth: 155,
-    maxHeight: 60,
     marginLeft: 10,
+    // backgroundColor: "green",
+    width: "50%",
+    height: "100%",
   },
   ProfileStatsContainer: {
     flexDirection: "row",
@@ -230,14 +247,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
     textAlign: "left",
     fontSize: 12,
-    alignSelf: "flex-start",
   },
   button: {
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 25,
     marginHorizontal: 5,
-    paddingVertical: 5,
+    paddingVertical: 8,
     paddingHorizontal: 8,
   },
 });

@@ -87,8 +87,13 @@ export default function EditProfileScreen({ route, navigation }) {
       };
       await fetch(`${API_URL}/api/user/changeUsername`, requestOptions);
     }
-
-    if (biography != route.params.bio) {
+    if (biography.length > 69) {
+      setErrorMessage(
+        <Text style={{ color: "red" }}>Bio can be up to 69 characters</Text>
+      );
+      return;
+    } else if (biography === route.params.bio) {
+    } else {
       const requestOptions = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -115,8 +120,8 @@ export default function EditProfileScreen({ route, navigation }) {
           {/* back button */}
           <View style={styles.backButton}>
             <TouchableOpacity
-              onPress={() => navigation.navigate("Profile")}
-              hitSlop={{ top: 100, bottom: 100, left: 8, right: 5 }}
+              onPress={() => navigation.goBack()}
+              hitSlop={{ top: 100, bottom: 70, left: 20, right: 70 }}
             >
               <Ionicons
                 style={{ color: "white", marginRight: 5 }}
@@ -242,6 +247,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     marginLeft: 20,
+    marginRight: 20,
     color: "white",
   },
 
