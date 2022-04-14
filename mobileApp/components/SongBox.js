@@ -6,7 +6,7 @@ import { Text, View, StyleSheet, Image, TouchableOpacity, } from "react-native";
 export default React.memo(SongBox, areEqual)
 
 const areEqual = (prevProps, nextProps) => {
-  if (nextProps == prevProps)
+  if (nextProps.songID == prevProps.songID)
     return true;
   else
     return false;
@@ -14,7 +14,6 @@ const areEqual = (prevProps, nextProps) => {
 
 // COMPONENT BODY
 function SongBox(props) {
-    console.log("\tRendering Song:" + props.songName)
     function getSongLength()
     {
         const seconds = (props.songLength / 1000)

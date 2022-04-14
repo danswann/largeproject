@@ -9,6 +9,9 @@ import { AuthContext } from "../Context";
 export default function HomeScreen({ route, navigation }) {
   const { userID, accessToken, refreshToken, reload } = route.params;
 
+  //Number of posts loaded per batch for lazy loading
+  const numPostsLoaded = 5;
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [feed, setFeed] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +36,7 @@ export default function HomeScreen({ route, navigation }) {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({userID: userID, currentIndex: index, numberOfPosts: 5, accessToken: accessToken})
+      body: JSON.stringify({userID: userID, currentIndex: index, numberOfPosts: numPostsLoaded, accessToken: accessToken})
     };
     console.log("Loading at index: " + index)
     fetch(`${API_URL}/api/post/homeFeed`, requestOptions)
@@ -48,12 +51,10 @@ export default function HomeScreen({ route, navigation }) {
               console.log("Loading more posts...")
               setFeed(feed.concat(response.posts))
               if(response.posts.length == 0)
-              {
                 setEndOfFeed(true)
-                setCurrentIndex(currentIndex - 5)
-              }
               else
                 setEndOfFeed(false)
+              setCurrentIndex(currentIndex + numPostsLoaded)
               setNewPostsLoading(false)
             }
             else
@@ -61,6 +62,7 @@ export default function HomeScreen({ route, navigation }) {
               console.log("Refresh posts...")
               setEndOfFeed(false)
               setFeed(response.posts)
+              setCurrentIndex(0)
               setLoading(false)
             }
           }
@@ -91,9 +93,9 @@ export default function HomeScreen({ route, navigation }) {
       (<FlatList
         data={feed}
         overScrollMode="never"
-        onRefresh={() => [setLoading(true), getFeed(0), setCurrentIndex(0)]}
+        onRefresh={() => [setLoading(true), getFeed(0)]}
         refreshing={(loading || newPostsLoading)}
-        onEndReached={() => [setNewPostsLoading(true), getFeed(currentIndex + 5), setCurrentIndex(currentIndex + 5)]}
+        onEndReached={() => [getFeed(currentIndex + numPostsLoaded)]}
         onEndReachedThreshold={.2}
         ListFooterComponent={
           <View style={{width: "100%", height: 70, marginTop: 50}}>
@@ -119,7 +121,8 @@ export default function HomeScreen({ route, navigation }) {
           accessToken={accessToken} 
           refreshToken={refreshToken}
         />}
-        keyExtractor={(item, index) => index.toString()}
+        listKey={(item, index) => `_key${index.toString()}`}
+        keyExtractor={(item, index) => `_key${index.toString()}`}
       />))
       :
       <View style ={styles.emptyContainer}>

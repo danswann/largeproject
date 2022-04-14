@@ -5,18 +5,8 @@ import { API_URL } from "../constants/Info";
 import { useIsFocused } from "@react-navigation/native";
 
 
-//Prevents re-rendering when data is the same
-export default React.memo(CommentBox, areEqual)
-
-const areEqual = (prevProps, nextProps) => {
-  if (nextProps == prevProps)
-    return true;
-  else
-    return false;
-}
-
 // COMPONENT BODY
-function CommentBox(props) {
+export default function CommentBox(props) {
   console.log("\tRendering Comment:" + props.comment)
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [tapped, setTapped] = useState(false);

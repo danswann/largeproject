@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   Animated,
   Text,
@@ -29,13 +29,13 @@ export default function PostBox(props) {
     isReposted={item.isReposted}
     originalPostID={item.likedBy}
   */
-  const [comments, setComments] = useState(props.comments);
-  const [commentCount, setCommentCount] = useState(props.comments.length);
+  const comments = useRef(props.comments)
+  const commentCount = useRef(props.comments.length)
+
+  const liked = useRef(props.likedBy.find((user) => user === props.myUserID))
+  const likeCount = useRef(props.likedBy.length)
+
   const [commentInput, setCommentInput] = useState("");
-  const [liked, setLiked] = useState(
-    props.likedBy.find((user) => user === props.myUserID)
-  );
-  const [likeCount, setLikeCount] = useState(props.likedBy.length);
 
   const [loading, setLoading] = useState(true);
   const [commentLoading, setCommentLoading] = useState(false);
@@ -46,16 +46,12 @@ export default function PostBox(props) {
 
   const isFocused = useIsFocused();
 
-  const [playlistName, setPlaylistName] = useState("");
-  const [playlistCover, setPlaylistCover] = useState(
-    "http://placehold.jp/3d4070/ffffff/100x100.png?text=No%0Art"
-  );
-  const [playlistIsPublic, setPlaylistIsPublic] = useState(false);
-  const [playlistTracks, setPlaylistTracks] = useState([]);
-  const [playlistTracksLazy, setPlaylistTracksLazy] = useState([]);
-  const [songCount, setSongCount] = useState(0);
-
-  console.log("Rendering Post:" + playlistName)
+  const playlistName = useRef("")
+  const playlistCover = useRef("http://placehold.jp/3d4070/ffffff/100x100.png?text=No%0Art")
+  const playlistIsPublic = useRef(false)
+  const playlistTracks = useRef([])
+  const playlistTracksLazy = useRef([])
+  const songCount = useRef(0)
 
   useEffect(() => {
     getPlaylistDataFromID();
@@ -79,12 +75,13 @@ export default function PostBox(props) {
           console.log(response.error);
           return;
         }
-        setPlaylistName(response.playlist.name);
-        setPlaylistCover(response.playlist.image);
-        setPlaylistIsPublic(response.playlist.public);
-        setPlaylistTracks(response.playlist.tracks);
-        setPlaylistTracksLazy(response.playlist.tracks.slice(0, 4))
-        setSongCount(response.playlist.tracks.length);
+        playlistName.current = response.playlist.name
+        playlistCover.current = response.playlist.image
+        playlistIsPublic.current = response.playlist.public
+        playlistTracks.current = response.playlist.tracks
+        playlistTracksLazy.current = response.playlist.tracks.slice(0, 4)
+        songCount.current = response.playlist.tracks.length
+        console.log("Rendering Post:" + playlistName)
         setLoading(false);
       });
   }
@@ -112,7 +109,7 @@ export default function PostBox(props) {
 
   //expands songs
   function songsTapped() {
-    setPlaylistTracksLazy(playlistTracks);
+    playlistTracksLazy.current = playlistTracks.current
     if (songsExpanded) setSongsExpanded(false);
     else setSongsExpanded(true);
   }
@@ -145,10 +142,8 @@ export default function PostBox(props) {
           return;
         }
         if (isFocused) {
-          setLikeCount(response.post.likedBy.length);
-          setLiked(
-            response.post.likedBy.find((user) => user === props.myUserID)
-          );
+          likeCount.current = response.post.likedBy.length
+          liked.current = response.post.likedBy.find((user) => user === props.myUserID)
           setLikeLoading(false);
         }
       });
@@ -177,17 +172,17 @@ export default function PostBox(props) {
           console.log(response.error);
           return;
         } else {
-          setComments(response.post.comments);
-          setCommentCount(response.post.comments.length);
+          comments.current = response.post.comments
+          commentCount.current = response.post.comments.length
           setCommentInput("");
           setCommentLoading(false);
         }
       });
   }
 
-  const updatePostComments = (comments) => {
-    setComments(comments);
-    setCommentCount(comments.length);
+  const updatePostComments = (commentsUpdate) => {
+    comments.current = commentsUpdate
+    commentCount.current = commentsUpdate.length
   };
 
   //Redirect to url button component
@@ -200,24 +195,17 @@ export default function PostBox(props) {
     return (
       <TouchableOpacity 
         style={{
-          width: "80%",
+          width: 30,
           borderRadius: 15,
           height: 30,
           alignItems: "center",
           justifyContent: "center",
-          marginVertical: 10,
+          margin: 20,
           backgroundColor: "#573C6B",
         }} 
-        onPress={handlePress}>
-        <Text 
-        style={{
-          color:"white",
-          flexDirection: "row",
-          alignItems: "center",
-          margin: 5,
-        }}>
-          {children}
-        </Text>
+        onPress={handlePress}
+      >
+        <Ionicons name="play" color="white" size={15} style={{marginLeft:3}}/>
       </TouchableOpacity>
     );
   };
@@ -295,8 +283,6 @@ export default function PostBox(props) {
               >
                 {getTimeSince()}
               </Text>
-              {/* Listen button */}
-              <OpenURLButton>Listen</OpenURLButton>
             </View>
           </View>
 
@@ -305,7 +291,7 @@ export default function PostBox(props) {
             {/* When songs are tapped, song list expands and can be scrolled */}
             {songsExpanded ? (
               <View style={{ width: "100%", flexDirection: "row" }}>
-                <View style={{ flexDirection: "row", display: "none" }}>
+                <View style={{ flexDirection: "row", display: "none"}}>
                   <View
                     style={{
                       flexDirection: "column",
@@ -326,23 +312,23 @@ export default function PostBox(props) {
                           
                         }}
                       >
-                        {playlistName}
+                        {playlistName.current}
                       </Text>
 
                       {/* Song Count */}
                       <Text style={{ color: "white", fontSize: 8 }}>
-                        {songCount} songs
+                        {songCount.current} songs
                       </Text>
                     </View>
                     {/* Playlist Image */}
                     <Image
-                      source={{ uri: playlistCover }}
+                      source={{ uri: playlistCover.current }}
                       style={styles.PlaylistPic}
                     />
                   </View>
                 </View>
                 {/* Playlist Songs */}
-                {songCount == 0 ? (
+                {songCount.current == 0 ? (
                   <Text
                     style={{ color: "white", marginLeft: 30, marginTop: 20 }}
                   >
@@ -361,13 +347,14 @@ export default function PostBox(props) {
                       songsTapped();
                     }}
                   >
-                    {playlistTracksLazy.map((item, index) => {
+                    {playlistTracksLazy.current.map((item, index) => {
                       return (
                       <SongBox
-                      songCover={item.image}
-                      songName={item.name}
-                      songArtists={item.artists}
-                      songLength={item.duration}
+                        key={index.toString()}
+                        songCover={item.image}
+                        songName={item.name}
+                        songArtists={item.artists}
+                        songLength={item.duration}
                       />
                       )
                     })}
@@ -377,7 +364,6 @@ export default function PostBox(props) {
               </View>
             ) : (
               <View style={{ width: "100%", flexDirection: "row" }}>
-                <View style={{ flexDirection: "row" }}>
                   <View
                     style={{
                       flexDirection: "column",
@@ -386,34 +372,40 @@ export default function PostBox(props) {
                       marginTop: 5,
                     }}
                   >
-                    <View style={{width: 150}}>
-                      {/* Playlist Title */}
-                      <Text
-                        numberOfLines={1}
-                        style={{
-                          color: "white",
-                          fontWeight: "bold",
-                          fontSize: 18,
-                          textDecorationLine: "underline",
-                        }}
-                      >
-                        {playlistName}
-                      </Text>
+                    <View style={{ flexDirection: "row"}}>
+                      <View style={{width: 110}}>
+                        {/* Playlist Title */}
+                        <Text
+                          numberOfLines={1}
+                          style={{
+                            color: "white",
+                            fontWeight: "bold",
+                            fontSize: 18,
+                            textDecorationLine: "underline",
+                          }}
+                        >
+                          {playlistName.current}
+                        </Text>
 
-                      {/* Song Count */}
-                      <Text style={{ color: "white", fontSize: 8 }}>
-                        {songCount} songs
-                      </Text>
+                        {/* Song Count */}
+                        <Text style={{ color: "white", fontSize: 8 }}>
+                          {songCount.current} songs
+                        </Text>
+
+                      </View>
+                      <View style={{width:40, height: 40, justifyContent:"center", alignItems: "center"}}>
+                        {/* Listen button */}
+                        <OpenURLButton/>
+                      </View>
                     </View>
                     {/* Playlist Image */}
                     <Image
-                      source={{ uri: playlistCover }}
+                      source={{ uri: playlistCover.current }}
                       style={styles.PlaylistPic}
                     />
                   </View>
-                </View>
                 {/* Playlist Songs */}
-                {songCount == 0 ? (
+                {songCount.current == 0 ? (
                   <Text
                     style={{ color: "white", marginLeft: 30, marginTop: 20 }}
                   >
@@ -432,13 +424,14 @@ export default function PostBox(props) {
                         songsTapped();
                       }}
                     >
-                      {playlistTracksLazy.map((item, index) => {
+                      {playlistTracksLazy.current.map((item, index) => {
                         return (
                         <SongBox
-                        songCover={item.image}
-                        songName={item.name}
-                        songArtists={item.artists}
-                        songLength={item.duration}
+                          key={index.toString()}
+                          songCover={item.image}
+                          songName={item.name}
+                          songArtists={item.artists}
+                          songLength={item.duration}
                         />
                         )
                       })}
@@ -452,7 +445,7 @@ export default function PostBox(props) {
           {/* Comments */}
           {commentsExpanded ? (
             <View style={styles.CommentsContainer}>
-              {comments.length == 0 ? (
+              {comments.current.length == 0 ? (
                 <Text
                   style={{ color: "white", marginLeft: 20, marginVertical: 10 }}
                 >
@@ -475,7 +468,7 @@ export default function PostBox(props) {
                     Comments:{" "}
                   </Text>
                   <FlatList
-                    data={comments}
+                    data={comments.current}
                     initialScrollIndex={0}
                     renderItem={({ item }) => (
                       <CommentBox
@@ -490,8 +483,7 @@ export default function PostBox(props) {
                         refreshToken={props.refreshToken}
                       />
                     )}
-                    listKey={(item, index) => `_key${index.toString()}`}
-                    keyExtractor={(item, index) => `_key${index.toString()}`}
+                    keyExtractor={(item, index) => index.toString()}
                   />
                 </ScrollView>
               )}
@@ -549,7 +541,7 @@ export default function PostBox(props) {
                 <TouchableOpacity onPress={() => likePost()}>
                   <Ionicons
                     style={
-                      liked
+                      liked.current
                         ? { color: "#573C6B", marginRight: 20 }
                         : { color: "white", marginRight: 20 }
                     }
@@ -596,7 +588,7 @@ export default function PostBox(props) {
                       fontSize: 9,
                     }}
                   >
-                    {likeCount}
+                    {likeCount.current}
                   </Text>
                   <Text
                     style={{ color: "white", textAlign: "right", fontSize: 9 }}
@@ -615,7 +607,7 @@ export default function PostBox(props) {
                       fontSize: 9,
                     }}
                   >
-                    {commentCount}
+                    {commentCount.current}
                   </Text>
                   <Text
                     style={{ color: "white", textAlign: "right", fontSize: 9 }}
