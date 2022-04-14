@@ -899,3 +899,29 @@ exports.topUsers = async function(req, res, next) {
     response.users = listUsers;
     res.status(200).json(response);
 }
+
+exports.changeBio = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true}
+
+    const userID = req.body.userID;
+    const newBio = req.body.biography;
+
+    // Searchs for single user and updates biography field
+    const filter = {_id: userID};
+    const update = {biography: newBio};
+    const user = await User.findOneAndUpdate(filter, update);
+
+    // If user is found return ok:true
+    if(user)
+    {
+        res.status(200).json(response);
+    }
+    // If userID is not found return error
+    else
+    {
+        response.ok = false;
+        response.error = 'User not found';
+        res.status(200).json(response);
+    }
+}

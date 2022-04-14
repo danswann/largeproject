@@ -27,6 +27,7 @@ router.post('/followUser', userController.followUser);
 router.post('/unfollowUser', userController.unfollowUser);
 router.post('/changeUsername', userController.changeUsername);
 router.post('/changePassword', userController.changePassword);
+router.post('/changeBio', userController.changeBio);
 
 
 
