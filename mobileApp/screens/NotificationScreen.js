@@ -65,55 +65,30 @@ function MessageTab({ route, navigation }) {
     getdmList()
   }, [isFocused]);
 
-  useEffect(async() => {    
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      
-      body: JSON.stringify({userID: myUserID, accessToken:accessToken})
-    };
-    
-    fetch(`${API_URL}/api/directMessage/getAllChat`, requestOptions)
-    .then((response) => response.json())
-    .then((response) => {
-      if(!response.ok)
-      {
-        console.log(response.error)
-        return
-      }
-      else
-      {
-        console.log(response)
-        // response
-      }  
-    })        
-  },[isFocused])
-  
   // Gets user data from api
   function getdmList()
   {
     const requestOptions = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({userID: myUserID, currentIndex: 0, numberOfDMs: 10, accessToken: accessToken})
+        body: JSON.stringify({userID: myUserID, accessToken: accessToken})
     };
     fetch(`${API_URL}/api/directMessage/getAllChats`, requestOptions)
-    .then((response) => response.json())
-    .then((response) => {
+      .then((response) => response.json())
+      .then((response) => {
         if(!response.ok)
         {
         console.log(response.error)
-        return
         }
         setdmList(response.dm)
-    })
+      })
   }  
   
   return (
     <View style={styles.MainContainer}>
       <FlatList
         data={dmList} 
-        renderItem={({item}) => <MessageBox myUserID={myUserID} users={item.users} messages={item.chat} navigation={navigation}/>}
+        renderItem={({item}) => <MessageBox myUserID={myUserID} chatID={item._id} users={item.users} messages={item.chat} accessToken={accessToken} navigation={navigation}/>}
         keyExtractor={(item, index) => index.toString()}
       />
 
@@ -122,9 +97,9 @@ function MessageTab({ route, navigation }) {
       <View style={styles.newMessageButton}>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("NewMessage");            
+            navigation.navigate("NewChat");            
           }}>
-          <View>
+          <View style= {{backgroundColor:"#573C6B", width: 54, height: 54, borderRadius:27, justifyContent: "center", alignItems: "center"}}>
             <Ionicons style={{ color: "white", borderStyle: "solid" }} name="create-outline" size={25} />            
           </View>            
         </TouchableOpacity>
@@ -174,17 +149,9 @@ const styles = StyleSheet.create({
   },
 
   newMessageButton: {
-    // backgroundColor: "white", 
-    // opacity: 0.25, 
-    borderRadius: 10, 
-    width: 45, 
-    height: 45,
-    // flexDirection: "row",    
-    marginBottom: 10, 
-    marginLeft: 325,
-    padding: 10,
-    justifyContent: "center",
-    // alignSelf: "right",
+    alignSelf: "flex-end",
+    marginEnd: 20,
+    marginBottom: 20,
   },
 
 });

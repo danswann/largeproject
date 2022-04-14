@@ -14,7 +14,7 @@ import {
     ActivityIndicator} from "react-native";
 
 export default function ChatBox(props) {    
-
+    const [tapped, setTapped] = useState(false)
     // get time since message sent
     function getTimeSince(timeStamp)
     {
@@ -44,11 +44,16 @@ export default function ChatBox(props) {
     }
     
     return (
-        <View style={props.sentByMe ? (styles.rightMessage) : (styles.leftMessage)}>
-            {/* <Text style={styles.MainText}>{props.message + " " + props.timeStamp}</Text> */}
-            <Text style={props.sentByMe ? (styles.rightText) : (styles.leftText)}>{props.message}</Text>
-        </View>
-
+        <TouchableOpacity onPress={() => setTapped(!tapped)}>
+            <View style={props.sentByMe ? (styles.rightMessage) : (styles.leftMessage)}>
+                {/* <Text style={styles.MainText}>{props.message + " " + props.timeStamp}</Text> */}
+                <Text style={props.sentByMe ? (styles.rightText) : (styles.leftText)}>{props.message}</Text>
+            </View>
+            {(tapped 
+                ? <Text style={props.sentByMe ? ([styles.rightText, {fontSize: 11, alignSelf: "flex-end", marginTop: 5, marginRight: 10}]) : ([styles.leftText, {fontSize: 11, alignSelf: "flex-start", marginTop: 5, marginLeft: 10}])}>{getTimeSince(props.timeStamp)}</Text>
+                : <></>
+            )}
+        </TouchableOpacity>
     )
 }
 const styles = StyleSheet.create({
@@ -56,13 +61,13 @@ const styles = StyleSheet.create({
         color: "white",
         alignSelf: "center",
         // justifyContent: "center",
-        paddingLeft: 10,
+        paddingHorizontal: 10,
     },
 
     rightText: {
         color: "white",
         alignSelf: "center",
-        paddingLeft: 10,
+        paddingHorizontal: 10,
         justifyContent: "space-evenly",
     },
 
@@ -70,32 +75,30 @@ const styles = StyleSheet.create({
         backgroundColor: "#573C6B",
         flexDirection: "row",
         alignSelf: "flex-end",
-        marginStart: 10,
-        marginEnd: 10,
+        marginHorizontal: 10,
         marginTop: 15,
         borderBottomLeftRadius: 25,
         borderBottomRightRadius: 25,
-        borderTopRightRadius: 25,
+        borderTopRightRadius: 5,
         borderTopLeftRadius: 25,
-        width: "75%",
-        height: 25,
+        maxWidth: "70%",
         borderColor: "transparent",
+        padding:8,
     },
 
     leftMessage: {
         backgroundColor: "gray",
         flexDirection: "row",
         alignSelf: "flex-start",
-        marginStart: 10,
-        marginEnd: 10,
+        marginHorizontal: 10,
         marginTop: 15,
         borderBottomLeftRadius: 25,
         borderBottomRightRadius: 25,
         borderTopRightRadius: 25,
-        borderTopLeftRadius: 25,        
-        width: "75%",
-        height: 25,
+        borderTopLeftRadius: 5,        
+        maxWidth: "70%",
         borderColor: "transparent",
+        padding:8,
     },
 
 })
