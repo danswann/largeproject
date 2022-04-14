@@ -21,8 +21,7 @@ import {
   StackActions,
   useIsFocused,
 } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import EditProfileBox from "../components/EditProfileBox";
+import { API_URL } from "../constants/Info";
 
 export default function EditProfileScreen({ route, navigation }) {
   const isFocused = useIsFocused();
@@ -30,27 +29,63 @@ export default function EditProfileScreen({ route, navigation }) {
   const [username, setUsername] = useState(route.params.username);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState(<Text></Text>);
 
   useEffect(() => {
     setBiography(route.params.bio);
     setUsername(route.params.username);
     setPassword("");
     setConfirmPassword("");
+    setErrorMessage(<Text></Text>);
   }, [isFocused]);
 
-  function submitInfo() {
+  async function submitInfo() {
     if (password.length === 0 && confirmPassword.length === 0) {
       // Dont do anything
     } else if (password != confirmPassword) {
-      return "Passwords do not match";
+      setErrorMessage(
+        <Text style={{ color: "red" }}>Passwords do not match</Text>
+      );
+      return;
     } else if (password.length < 6) {
-      return "Password too short";
+      setErrorMessage(
+        <Text style={{ color: "red" }}>
+          Password must be at least 6 characters long
+        </Text>
+      );
+      return;
     } else {
-      // API call to change password
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userID: route.params.myUserID,
+          password: password,
+          accessToken: route.params.accessToken,
+        }),
+      };
+      await fetch(`${API_URL}/api/user/changePassword`, requestOptions);
     }
 
-    if (username != route.params.username) {
-      // API call to change username
+    if (username === route.params.username) {
+    } else if (username.length < 6) {
+      setErrorMessage(
+        <Text style={{ color: "red" }}>
+          Username must be at least 6 characters long
+        </Text>
+      );
+      return;
+    } else {
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userID: route.params.myUserID,
+          username: username,
+          accessToken: route.params.accessToken,
+        }),
+      };
+      await fetch(`${API_URL}/api/user/changeUsername`, requestOptions);
     }
 
     if (biography != route.params.bio) {
@@ -85,7 +120,7 @@ export default function EditProfileScreen({ route, navigation }) {
             />
 
             {/* display username up top */}
-            <Text style={styles.nameText}>MobileUser</Text>
+            <Text style={styles.nameText}>{username}</Text>
           </View>
 
           {/* done button */}
@@ -120,6 +155,7 @@ export default function EditProfileScreen({ route, navigation }) {
             placeholderTextColor="white"
             clearButtonMode="while-editing"
             selectionColor={"#573C6B"}
+            maxLength={18}
             onChangeText={(username) => setUsername(username)}
           />
         </View>
@@ -151,7 +187,7 @@ export default function EditProfileScreen({ route, navigation }) {
           />
         </View>
 
-        {/* <FlatList>renderItem={({item}) => <EditProfileBox/>}</FlatList> */}
+        <View>{errorMessage}</View>
       </View>
     </TouchableWithoutFeedback>
   );

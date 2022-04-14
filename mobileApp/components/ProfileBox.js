@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { API_URL } from "../constants/Info";
 import { AuthContext } from "../Context";
 import { Ionicons } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 
 export default function ProfileBox(props) {
-
   // Track whether or not you follow this user
   const [isFollowed, setIsFollowed] = useState(props.isFollowed);
 
@@ -48,6 +48,7 @@ export default function ProfileBox(props) {
         } else console.log(response.error);
       });
   }
+
   return (
     // Container for all content on page
     <View style={styles.MainContainer}>
@@ -73,14 +74,14 @@ export default function ProfileBox(props) {
           {/* Edit profile button or follow button */}
           {props.myUserID === props.targetUserID ? (
             <TouchableOpacity
-              style={[styles.button, {backgroundColor: "#573C6B"}]}
+              style={[styles.button, { backgroundColor: "#573C6B" }]}
               onPress={() => {
                 props.navigation.navigate({
                   name: "EditProfile",
                   params: {
                     myUserID: props.myUserID,
-                    username: "aaa",
-                    bio: "aaa",
+                    username: props.username,
+                    bio: props.bio,
                   },
                 });
               }}
@@ -89,40 +90,40 @@ export default function ProfileBox(props) {
             </TouchableOpacity>
           ) : (
             // Follow or unfollow button rendered based on the state of isFollowed
-            <View  styles={{flexDirection: "row"}}>
+            <View styles={{ flexDirection: "row" }}>
               {isFollowed ? (
                 <TouchableOpacity
                   onPress={() => unfollowUser()}
-                  style={[styles.button, {backgroundColor: "#23192B"}]}
+                  style={[styles.button, { backgroundColor: "#23192B" }]}
                 >
                   <Text style={styles.MainText}>Unfollow</Text>
                 </TouchableOpacity>
               ) : (
                 <TouchableOpacity
                   onPress={() => followUser()}
-                  style={[styles.button, {backgroundColor: "#573C6B"}]}
+                  style={[styles.button, { backgroundColor: "#573C6B" }]}
                 >
                   <Text style={styles.MainText}>Follow</Text>
                 </TouchableOpacity>
               )}
               {/* Direct Message button */}
               <TouchableOpacity
-                  style={[styles.button, {backgroundColor: "gray"}]}
-                  onPress={() => {
-                    props.navigation.navigate({
-                      name: "Chat",
-                      params: {
-                        myUserID: props.myUserID,
-                        otherUserID: props.targetUserID,
-                        name: props.username,
-                        newChat: true,
-                        accessToken: props.accessToken,
-                      },
-                    });
-                  }}
-                >
-                  <Ionicons name="chatbox" color="white" size={20}/>
-                </TouchableOpacity>
+                style={[styles.button, { backgroundColor: "gray" }]}
+                onPress={() => {
+                  props.navigation.navigate({
+                    name: "Chat",
+                    params: {
+                      myUserID: props.myUserID,
+                      otherUserID: props.targetUserID,
+                      name: props.username,
+                      newChat: true,
+                      accessToken: props.accessToken,
+                    },
+                  });
+                }}
+              >
+                <Ionicons name="chatbox" color="white" size={20} />
+              </TouchableOpacity>
             </View>
           )}
         </View>
