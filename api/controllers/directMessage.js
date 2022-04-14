@@ -32,7 +32,7 @@ exports.newChat = async function(req, res, next) {
         }
     }
 
-    const filter = {users: users};
+    const filter = {users: {$all: users}};
     const dm = await DirectMessage.findOne(filter);
 
     // If direct message group already exists, return its chatID
