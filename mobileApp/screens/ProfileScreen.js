@@ -229,7 +229,7 @@ export default function ProfileScreen({ route, navigation }) {
         </TouchableOpacity>
       </View>
       ) : (
-      <View>
+      <View style={styles.MainContainer}>
         <ProfileBox
           username={username}
           bio={bio}
