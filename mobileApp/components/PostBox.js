@@ -81,7 +81,7 @@ export default function PostBox(props) {
         playlistTracks.current = response.playlist.tracks
         playlistTracksLazy.current = response.playlist.tracks.slice(0, 4)
         songCount.current = response.playlist.tracks.length
-        console.log("Rendering Post:" + playlistName)
+        console.log("Rendering Post:" + playlistName.current)
         setLoading(false);
       });
   }
