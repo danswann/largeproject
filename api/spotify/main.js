@@ -4,7 +4,7 @@ exports.getPlaylistData = async function(userID, playlistID) {
     var playlist = {};
 
     const swa = await SpotifyManager.getHandle(userID);
-    
+
     // Get playlist metadata
     const result = await swa.getPlaylist(playlistID, {fields:'name,images,public'});
     playlist.name = result.body.name;
@@ -39,6 +39,23 @@ exports.getPlaylistData = async function(userID, playlistID) {
     playlist.tracks = playlist.tracks.filter(x => x.type=='track' && !x.local);
     // Remove extra fields
     playlist.tracks = playlist.tracks.map(({local, type, ...rest}) => {return rest});
+
+    // Return value
+    return playlist;
+}
+
+exports.getPlaylistNameandImage = async function(userID, playlistID) {
+    var playlist = {};
+
+    const swa = await SpotifyManager.getHandle(userID);
+
+    // Get playlist metadata
+    const result = await swa.getPlaylist(playlistID, {fields:'name,images'});
+    playlist.name = result.body.name;
+    if(result.body.images && result.body.images.length > 0)
+        playlist.image = result.body.images[0].url;
+
+    else playlist.image = 'https://placehold.jp/e0e0e0/787878/150x150.png?text=No%0AArt';
 
     // Return value
     return playlist;

@@ -1,5 +1,7 @@
 const User = require('../models/user');
+const Post = require('../models/post');
 const Notification = require('../models/notification');
+const Spotify = require('../spotify/main');
 const crypto = require('crypto');
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -863,5 +865,37 @@ exports.searchByUsername = async function(req, res, next) {
     }
 
     response.user = user;
+    res.status(200).json(response);
+}
+
+exports.topUsers = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true}
+
+    const userProjection = {_id: 1, username: 1, profileImageUrl: 1, followers: 1};
+    var listUsers = await User.find({}, userProjection).sort({"followers":-1}).lean();
+    listUsers = listUsers.splice(0, 10);
+
+    for (var i = 0; i < listUsers.length; i++)
+    {
+        const postFilter = {author: listUsers[i]._id};
+        const postProjection = {_id: 1, author: 1, playlistID: 1, likes: 1};
+        var listPosts = await Post.find(postFilter, postProjection).sort({"likes":-1}).lean();
+        listPosts = listPosts.splice(0, 3);
+
+        for (var j = 0; j < 3; j++) {
+            try {
+                var data = await Spotify.getPlaylistNameandImage(listPosts[j].author, listPosts[j].playlistID);
+                listPosts[j].name = data.name;
+                listPosts[j].image = data.image;
+            }
+            catch(err) {
+                listPosts.splice(i, 1);
+            }
+        };
+        listUsers[i].posts = listPosts;
+    }
+
+    response.users = listUsers;
     res.status(200).json(response);
 }

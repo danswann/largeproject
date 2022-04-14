@@ -38,7 +38,7 @@ exports.getAuthLink = async function(req, res, next) {
 exports.callback = async function(req, res, next) {
     // Get a SpotifyWebApi instance
     const swa = await SpotifyManager.getHandle();
-    
+
     // Use the code returned by Spotify to get tokens
     const code = req.query.code;
     const userID = req.query.state;
@@ -47,7 +47,7 @@ exports.callback = async function(req, res, next) {
     // Use the new tokens to fetch one-time info about the user (name, picture)
     swa.setAccessToken(result.body['access_token']);
     swa.setRefreshToken(result.body['refresh_token']);
-    
+
     // Get additional data from Spotify profile
     const me = await swa.getMe();
 
@@ -135,10 +135,31 @@ exports.getPlaylistData = async function(req, res, next) {
 
     // Input userID and playlistID
     const { userID, playlistID } = req.body;
-    
+
     // Get playlist data
     try {
         response.playlist = await Spotify.getPlaylistData(userID, playlistID);
+    } catch(err) {
+        response.ok = false;
+        response.error = err.name + ": " + err.message;
+        res.status(200).json(response);
+        return;
+    }
+
+    // Return result
+    res.status(200).json(response);
+}
+
+exports.getPlaylistNameandImage = async function(req, res, next) {
+    // Default response object
+    var response = {ok:true}
+
+    // Input userID and playlistID
+    const { userID, playlistID } = req.body;
+
+    // Get playlist data
+    try {
+        response.playlist = await Spotify.getPlaylistNameandImage(userID, playlistID);
     } catch(err) {
         response.ok = false;
         response.error = err.name + ": " + err.message;
