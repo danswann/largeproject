@@ -18,8 +18,6 @@ export default function SearchResultBox(props) {
     }, [props.isFollowed])
   );
 
-  console.log(props.username);
-  console.log(followed);
 
   const { refresh } = React.useContext(AuthContext);
   async function followUser() {

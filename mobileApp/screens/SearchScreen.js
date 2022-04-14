@@ -60,7 +60,7 @@ export default function SearchScreen({ route, navigation }) {
       <View style={!searching ? styles.inputView : styles.inputViewSearching}>
         <TextInput
           style={styles.textInput}
-          placeholder="Search posts"
+          placeholder="Search users"
           placeholderTextColor="#573C6B"
           onChangeText={(text) => getResults(text)}
         />

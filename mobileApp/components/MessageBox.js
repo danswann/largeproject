@@ -6,34 +6,47 @@ import { Ionicons } from "@expo/vector-icons";
 import { API_URL } from "../constants/Info";
 
 // COMPONENT BODY
-export default function MessageBox(props) {   
+export default function MessageBox(props) { 
     const [username, setUsername] = useState("");
+    const [image, setImage] = useState("uri");
 
     const isFocused = useIsFocused();
     useEffect(() => {
-        getOtherUsername(props.users)
+        getOtherUsernameAndImage(props.users)
     }, [isFocused]);
     
     // returns whoever isn't the current user
-    function getOtherUsername(users) {
+    function getOtherUsernameAndImage(users) {
         if (users[0]._id == props.myUserID)
+        {
             setUsername(users[1].username)
+            if(users[1].profileImageUrl != undefined)
+                setImage(users[1].profileImageUrl)
+        }
         else
+        {
             setUsername(users[0].username)
+            if(users[0].profileImageUrl != undefined)
+                setImage(users[0].profileImageUrl)
+        }
     }
     
     return (
     <TouchableOpacity 
         style={{minWidth: "100%"}}
         onPress={() => {
-            props.navigation.navigate('Chat', {myUserID: props.myUserID, name: username, messages: props.messages})
+            props.navigation.navigate('Chat', {myUserID: props.myUserID, chatID: props.chatID, name: username, newChat: false, accessToken: props.accessToken})
         }}>
         <View style={styles.MessageContainer}>        
             <View style={{flexDirection: 'row'}}>
 
                 {/* profile pic */}
                 <Image
-                    source={require('../assets/images/defaultSmile.png')}
+                    source={
+                        image != "uri"
+                            ? { uri: image }
+                            : require("../assets/images/defaultSmile.png")
+                    }
                     style={styles.ProfilePic}
                 />
 

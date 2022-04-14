@@ -1,4 +1,4 @@
-import {React, useState, useEffect} from "react";
+import {React, useState, useEffect, useRef} from "react";
 import {
   StyleSheet, 
   TouchableWithoutFeedback,
@@ -28,60 +28,60 @@ import { Ionicons } from "@expo/vector-icons";
 const Tab = createMaterialTopTabNavigator();
 
 export default function ChatScreen({ route, navigation }) {
-  
-  const { myUserID, name, messages, accessToken } = route.params;    
+  const { myUserID, chatID, otherUserID, newChat, name, messages, accessToken} = route.params;
+  const currentChatID = useRef(chatID)
   const [messageInput, setMessageInput] = useState("");
   const [messageLoading, setMessageLoading] = useState(false);
   const [messageArray, setMessageArray] = useState(messages)
-  
-  console.log("chat screen")
+
+  useEffect(() => {
+    if(newChat)
+      createChat()
+    else
+      getChat()
+  }, []);
+
+  function getChat()
+  {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({userID: myUserID, chatID: currentChatID.current, accessToken: accessToken})
+    };
+    console.log(currentChatID.current)
+    fetch(`${API_URL}/api/directMessage/getChat`, requestOptions)
+      .then((response) => response.json())
+      .then((response) => {
+        if(!response.ok)
+        {
+        console.log(response.error)
+        }
+        setMessageArray(response.dm.chat)
+      })
+  }
+  function createChat()
+  {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({users: [myUserID, otherUserID]})
+    };
+    fetch(`${API_URL}/api/directMessage/newChat`, requestOptions)
+      .then((response) => response.json())
+      .then((response) => {
+        if(!response.ok)
+        {
+        console.log(response.error)
+        }
+        currentChatID.current = response.dm
+      })
+  }
 
   function sentByMe(userID) {
-    if (userID === myUserID)
+    if (userID == myUserID)
       return true
     return false
   }  
-
-  function getAllChats(userID) {
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      
-      body: JSON.stringify({userID: myUserID, accessToken:accessToken})
-    };
-    fetch(`${API_URL}/api/directMessage/getAllChat`, requestOptions)
-    .then((response) => response.json())
-    .then((response) => {
-      if(!response.ok)
-      {
-        console.log(response.error)
-        return
-      }
-      else
-      {
-        console.log(response.data)
-        // response
-      }  
-    })
-  }
-
-  function updateChat(messages) {
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({})
-    };
-    fetch(`${API_URL}/api/directMessage/getAllChats`, requestOptions)
-    .then((response) => response.json())
-    .then((response) => {
-      if(!response.ok)
-      {
-      console.log(response.error)
-      return
-      }
-      setMessageArray(response.dm)
-    })
-  }
 
   function sendMessage() {
     if (messageInput == "")
@@ -90,61 +90,73 @@ export default function ChatScreen({ route, navigation }) {
     const requestOptions = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({id: messageArray.postID, text: messageInput, userID: myUserID})            
+        body: JSON.stringify({userID: myUserID, chatID: currentChatID.current, text: messageInput, accessToken: accessToken})            
     };
-    fetch('${API_URL}/api/directMessage/sendMessage', requestOptions)
+    fetch(`${API_URL}/api/directMessage/sendMessage`, requestOptions)
     .then((response) => response.json())
     .then((response) => {
-        if(!response.ok)
-        {
-            console.log(response.error)
-            return
-        }
-        else
-        {
-            setMessageInput("")
-            updateChat()
-            setMessageLoading(false)
-        }
+      console.log(response)
+      if(!response.ok)
+      {
+          console.log(response.error)
+          setMessageLoading(false)
+          return
+      }
+      else
+      {
+          setMessageInput("")
+          setMessageArray(response.dm.chat)
+          setMessageLoading(false)
+      }
     })
-}
+  }
 
   return (
     <View style={styles.MainContainer}>
-      {/* back button */}
-      <View style={styles.backButton}>
+
+      <View style={{backgroundColor: "#12081A", flexDirection: "row", justifyContent:"space-between"}}>
+        {/* back button */}
         <TouchableOpacity onPress={() => navigation.navigate("Notification")}>
-          <View style={{width: 25, height: 25}}>
+          <View style={{margin: 15, width: 25, height: 25}}>
             <Ionicons style={{ color: "white", marginRight: 5 }} name="chevron-back-outline" size={25} />
           </View>            
         </TouchableOpacity>
+        {/* name on top */}
+        <Text style={styles.nameText}>{name}</Text>  
+        {/*Spacer*/}
+        <View style={{margin: 15, width: 25, height: 25}}/>
       </View>
       
-      {/* name on top */}
-      <Text style={styles.nameText}>{name}</Text>      
+     
+          
       <FlatList
         data= {messageArray}
+        ListHeaderComponent={<View style={{flexDirection:"row", height:50, marginBottom: 10, width:"50%", alignSelf:"center"}}><Text style={[styles.textInput, {color: "#A57FC1", textAlign: "center", alignSelf: "flex-end", borderBottomColor: "#A57FC1", borderBottomWidth: 1}]}>Start of conversation</Text></View>}
+        ListFooterComponent={<View style={{height:30}}/>}
         // sentByMe(item.userID)
-        renderItem={({item}) => <ChatBox message={item.text} timeStamp={item.timeStamp} sentByMe={sentByMe(item.userID)}/>}
+        renderItem={({item}) => <ChatBox message={item.text} timeStamp={item.timeStamp} sentByMe={sentByMe(item.author)}/>}
         keyExtractor={(item, index) => index.toString()}
       />
-
-      {/* message input */}      
-      <View style={styles.sendContainer}>
-          <TextInput
-            value={messageInput}
-            style={styles.textInput}
-            placeholder="Send a message..."
-            placeholderTextColor="white"
-            onChangeText={(text) => setMessageInput(text)}
-            multiline={true}
-          />
-          <TouchableOpacity onPress={() => {[sendMessage()]}}>
-            <View style={{marginHorizontal: 10}}>
-            {(messageLoading ?  <ActivityIndicator size={25} color="#12081A"/> : <Ionicons name="arrow-forward-outline" size={25} color={"#12081A"}/>)}  
-            </View>
-          </TouchableOpacity>
-      </View>             
+      <View style={{backgroundColor:"#12081A", padding: 5}}>
+        {/* message input */}      
+        <View style={styles.sendContainer}>
+            <TextInput
+              value={messageInput}
+              style={styles.textInput}
+              placeholder="Send a message..."
+              placeholderTextColor="#12081A"
+              onChangeText={(text) => setMessageInput(text)}
+              multiline={true}
+              clearButtonMode="while-editing"
+              selectionColor={"#573C6B"}
+            />
+            <TouchableOpacity style={{alignSelf:"center"}}onPress={() => {sendMessage()}}>
+              <View style={{marginHorizontal: 10}}>
+              {(messageLoading ?  <ActivityIndicator size={25} color="#573C6B"/> : <Ionicons name="arrow-forward-outline" size={25} color={"#573C6B"}/>)}  
+              </View>
+            </TouchableOpacity>
+        </View>  
+      </View>           
     </View>  
 
   );
@@ -165,7 +177,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingTop: 12,
     paddingBottom: 10,
-    fontSize: 25,
+    fontSize: 20,
   },
 
   sendContainer: {
@@ -174,28 +186,23 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 30,
     borderColor: "#573C6B",
-    backgroundColor: "gray",
+    backgroundColor: "white",
     width: "95%",
-    height: 40,
     marginBottom: 4,
     marginVertical: 5,
     flexDirection: "row",
+    
   },
 
   textInput: {
     justifyContent: "center",
-    height: 50,
     flex: 1,
-    padding: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     marginLeft: 10,
-    color: "white"
-  },
-
-  backButton: {
-    paddingLeft: 5,
-    paddingTop: 10,
-    // backgroundColor: 'white',
-    // opacity: 0.25,
+    color: "#12081A",
+    alignSelf: "center",
+    textAlignVertical:"auto",
   },
 
   sendButton: {

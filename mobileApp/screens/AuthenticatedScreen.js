@@ -21,7 +21,7 @@ import ChatScreen from "./ChatScreen";
 import EditProfileScreen from "./EditProfileScreen";
 import FollowersListScreen from "./FollowersListScreen";
 import FollowingListScreen from "./FollowingListScreen";
-import NewMessageScreen from "./NewMessageScreen";
+import NewChatScreen from "./NewChatScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -120,6 +120,12 @@ const AuthenticatedScreen = ({ route, navigation }) => {
           name="Chat"
           component={ChatScreen}
           options={{ tabBarButton: () => null }}
+          initialParams={{
+            myUserID: userID,
+            name: "",
+            newChat: true,
+            accessToken: accessToken,
+          }}
         />
         <Tab.Screen
           name="EditProfile"
@@ -169,11 +175,11 @@ const AuthenticatedScreen = ({ route, navigation }) => {
           backBehavior={"history"}
         />
         <Tab.Screen
-          name="NewMessage"
-          component={NewMessageScreen}
+          name="NewChat"
+          component={NewChatScreen}
           options={{ tabBarButton: () => null }}
           initialParams={{
-            userID: 0,
+            userID: userID,
             accessToken: accessToken,
             refreshToken: refreshToken,
           }}
