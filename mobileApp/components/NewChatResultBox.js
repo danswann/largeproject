@@ -41,7 +41,7 @@ export default function NewChatResultBox(props) {
               name: "Chat",
               params: {
                 myUserID: props.myUserID,
-                otherUserID: props.targetUserID,
+                otherUserID: props.userID,
                 name: props.username,
                 newChat: true,
                 accessToken: props.accessToken,

@@ -122,6 +122,7 @@ const AuthenticatedScreen = ({ route, navigation }) => {
           options={{ tabBarButton: () => null }}
           initialParams={{
             myUserID: userID,
+            chatID: 0,
             name: "",
             newChat: true,
             accessToken: accessToken,
