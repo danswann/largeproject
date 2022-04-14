@@ -2,3 +2,7 @@ body {
     background-color: #23192b;
     color: white;
 }
+
+title {
+    color: red;
+}
