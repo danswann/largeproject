@@ -32,26 +32,39 @@ exports.newChat = async function(req, res, next) {
         }
     }
 
-    // Create new direct message group
-    var newDM = new DirectMessage({
-        users: users
-    });
+    const filter = {users: users};
+    const dm = await DirectMessage.findOne(filter);
 
-    // Save to database
-    newDM.save(function (err) {
-        if(err)
-        {
-            response.ok = false;
-            response.error = err;
-            res.status(200).json(response);
-        }
-        // Return chatID
-        else
-        {
-            response.dm = newDM._id;
-            res.status(200).json(response);
-        }
-    });
+    // If direct message group already exists, return its chatID
+    if (dm)
+    {
+        response.dm = dm._id;
+        res.status(200).json(response);
+    }
+    else
+    {
+        // Create new direct message group
+        var newDM = new DirectMessage({
+            users: users
+        });
+
+        // Save to database
+        newDM.save(function (err) {
+            // If error, return error message
+            if(err)
+            {
+                response.ok = false;
+                response.error = err;
+                res.status(200).json(response);
+            }
+            // Return chatID
+            else
+            {
+                response.dm = newDM._id;
+                res.status(200).json(response);
+            }
+        });
+    }
 }
 
 exports.sendMessage = async function(req, res, next) {
