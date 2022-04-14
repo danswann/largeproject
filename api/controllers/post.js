@@ -533,7 +533,7 @@ exports.userLikedPosts = async function(req, res, next) {
     }
 
     // Find liked posts by userID
-    const filter = {likedBy:{$oid:userID}};
+    const filter = {likedBy:{$elemMatch:{$eq:userID}}};
     const projection = {_id: 1, isReposted: 1, originalPost: 1, author: 1, playlistID: 1};
     const posts = await Post.find(filter, projection).sort({timeStamp: 'desc'}).populate('originalPost', 'author playlistID').skip(currentIndex).limit(numberOfPosts).lean();
 
