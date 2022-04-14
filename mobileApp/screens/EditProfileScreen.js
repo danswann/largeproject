@@ -89,7 +89,21 @@ export default function EditProfileScreen({ route, navigation }) {
     }
 
     if (biography != route.params.bio) {
-      // API call to change bio
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userID: route.params.myUserID,
+          biography: biography,
+          accessToken: route.params.accessToken,
+        }),
+      };
+      let response = await fetch(
+        `${API_URL}/api/user/changeBio`,
+        requestOptions
+      );
+      let reponseJSON = JSON.stringify(response);
+      console.log(reponseJSON);
     }
     navigation.navigate("Profile");
   }
@@ -133,61 +147,69 @@ export default function EditProfileScreen({ route, navigation }) {
             </TouchableOpacity>
           </View>
         </View>
+        <View
+          style={{
+            flexDirection: "column",
+            width: "100%",
+            alignItems: "center",
+            marginTop: 10,
+          }}
+        >
+          {/* edit bio field */}
+          <View style={styles.bioView}>
+            <TextInput
+              style={styles.TextInput}
+              value={biography}
+              placeholderTextColor="white"
+              selectionColor={"#573C6B"}
+              clearButtonMode="while-editing"
+              multiline={true}
+              onChangeText={(editBio) => setBiography(editBio)}
+            />
+          </View>
 
-        {/* edit bio field */}
-        <View style={styles.bioView}>
-          <TextInput
-            style={styles.TextInput}
-            value={biography}
-            placeholderTextColor="white"
-            selectionColor={"#573C6B"}
-            clearButtonMode="while-editing"
-            multiline={true}
-            onChangeText={(editBio) => setBiography(editBio)}
-          />
+          {/* edit username field */}
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.TextInput}
+              value={username}
+              placeholderTextColor="white"
+              clearButtonMode="while-editing"
+              selectionColor={"#573C6B"}
+              maxLength={18}
+              onChangeText={(username) => setUsername(username)}
+            />
+          </View>
+
+          {/* edit password field */}
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.TextInput}
+              placeholder="New Password"
+              placeholderTextColor="white"
+              clearButtonMode="while-editing"
+              selectionColor={"#573C6B"}
+              onChangeText={(password) => setPassword(password)}
+            />
+          </View>
+
+          {/* confirm password field */}
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.TextInput}
+              placeholder="Confirm Password"
+              placeholderTextColor="white"
+              clearButtonMode="while-editing"
+              selectionColor={"#573C6B"}
+              secureTextEntry={true}
+              onChangeText={(confirmPassword) =>
+                setConfirmPassword(confirmPassword)
+              }
+            />
+          </View>
+
+          <View>{errorMessage}</View>
         </View>
-
-        {/* edit username field */}
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.TextInput}
-            value={username}
-            placeholderTextColor="white"
-            clearButtonMode="while-editing"
-            selectionColor={"#573C6B"}
-            maxLength={18}
-            onChangeText={(username) => setUsername(username)}
-          />
-        </View>
-
-        {/* edit password field */}
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.TextInput}
-            placeholder="New Password"
-            placeholderTextColor="white"
-            clearButtonMode="while-editing"
-            selectionColor={"#573C6B"}
-            onChangeText={(password) => setPassword(password)}
-          />
-        </View>
-
-        {/* confirm password field */}
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.TextInput}
-            placeholder="Confirm Password"
-            placeholderTextColor="white"
-            clearButtonMode="while-editing"
-            selectionColor={"#573C6B"}
-            secureTextEntry={true}
-            onChangeText={(confirmPassword) =>
-              setConfirmPassword(confirmPassword)
-            }
-          />
-        </View>
-
-        <View>{errorMessage}</View>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -202,12 +224,9 @@ const styles = StyleSheet.create({
   },
 
   Header: {
-    // backgroundColor: "red",
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
-    // alignContent: "space-between",
-    alignItems: "stretch",
   },
 
   nameText: {
