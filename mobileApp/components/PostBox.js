@@ -467,24 +467,22 @@ export default function PostBox(props) {
                   >
                     Comments:{" "}
                   </Text>
-                  <FlatList
-                    data={comments.current}
-                    initialScrollIndex={0}
-                    renderItem={({ item }) => (
-                      <CommentBox
-                        postID={props.postID}
-                        commentID={item._id}
-                        author={item.author}
-                        comment={item.comment}
-                        timeStamp={item.timeStamp}
-                        update={updatePostComments}
-                        myUserID={props.myUserID}
-                        accessToken={props.accessToken}
-                        refreshToken={props.refreshToken}
-                      />
-                    )}
-                    keyExtractor={(item, index) => index.toString()}
-                  />
+                  {comments.current.map((item, index) => {
+                    return (
+                    <CommentBox
+                      key={index.toString()}
+                      postID={props.postID}
+                      commentID={item._id}
+                      author={item.author}
+                      comment={item.comment}
+                      timeStamp={item.timeStamp}
+                      update={updatePostComments}
+                      myUserID={props.myUserID}
+                      accessToken={props.accessToken}
+                      refreshToken={props.refreshToken}
+                    />
+                    )
+                  })}
                 </ScrollView>
               )}
               <View style={styles.MakeCommentContainer}>
