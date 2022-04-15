@@ -95,7 +95,7 @@ export default function ChatScreen({ route, navigation }) {
     const requestOptions = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({userID: myUserID, chatID: currentChatID.current, text: messageInput, accessToken: accessToken})            
+        body: JSON.stringify({userID: myUserID, chatID: chatID, text: messageInput, accessToken: accessToken})            
     };
     fetch(`${API_URL}/api/directMessage/sendMessage`, requestOptions)
     .then((response) => response.json())
