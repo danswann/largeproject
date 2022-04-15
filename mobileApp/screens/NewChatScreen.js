@@ -10,11 +10,12 @@ import {
 } from "react-native";
 import { API_URL } from "../constants/Info";
 import NewChatResultBox from "../components/NewChatResultBox";
+import SearchResultBox from "../components/SearchResultBox";
 import { useIsFocused } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 
 // COMPONENT BODY
-export default function NewMessageScreen({ route, navigation }) {
+export default function NewChatScreen({ route, navigation }) {
   const { userID, accessToken, refreshToken } = route.params;
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -54,6 +55,34 @@ export default function NewMessageScreen({ route, navigation }) {
         if (isFocused) setLoading(false);
       });
   }
+
+  const [followings, setFollowings] = useState([]);
+  const requestOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      userID: userID,
+      targetID: userID,
+    }),
+  };
+  // Fetch the following list of this user
+  useEffect(async () => {
+    let response = await fetch(
+      `${API_URL}/api/user/showFollowings`,
+      requestOptions
+    );
+    if (!response.ok) {
+      console.log(response.error);
+      return;
+    } else {
+      let data = await response.json();
+      console.log("DATA FOLLOWING ", data.following);
+      // Set the following list of the user
+      console.log("DATA FOLLOWING LIST SCREEN", data);
+      setFollowings(data.following);
+    }
+  }, [isFocused]);
+
   return (
     // Main container
     <View style={styles.container}>
@@ -106,6 +135,28 @@ export default function NewMessageScreen({ route, navigation }) {
           keyExtractor={(item, index) => index.toString()}
         />
       </View>
+      {/*List of following*/}
+      {(searching ? <></> :
+      <View  style={{marginTop:50}}>
+        <Text style={{color: "white", fontSize: 18, alignSelf: "center", marginBottom: 10}}>Users you've followed:</Text>
+        <FlatList
+          data={followings}
+          renderItem={({ item }) => (
+            <SearchResultBox
+              username={item.username}
+              image={item.profileImageUrl}
+              userID={item.userID}
+              myUserID={route.params.myUserID}
+              isFollowed={item.currentUserFollows}
+              accessToken={accessToken}
+              refreshToken={refreshToken}
+              navigation={navigation}
+            />
+          )}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      </View>
+      )}
     </View>
   );
 }
