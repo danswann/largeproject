@@ -193,7 +193,7 @@ exports.commentOnPost = async function(req, res, next) {
     const update = {$push:{comments:{comment:comment,author:userID}}};
     const projection = {author: 1, comments: 1};
     const options = {projection: projection, new: true};
-    const post = await Post.findOneAndUpdate(filter, update, options);
+    const post = await Post.findOneAndUpdate(filter, update, options).populate({path: 'comments.author', select: '_id username profileImageUrl'});
 
     // If the postID exists, return ok:true
     if(post)
