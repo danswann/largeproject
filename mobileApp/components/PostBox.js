@@ -173,9 +173,7 @@ export default function PostBox(props) {
           console.log(response.error);
           return;
         } else {
-          console.log(comments.current)
           comments.current = response.post.comments
-          console.log(comments.current)
           commentCount.current = response.post.comments.length
           setCommentInput("");
           scrollRef.current.scrollToEnd()

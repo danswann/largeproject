@@ -149,14 +149,16 @@ function RegisterScreen({ navigation }) {
   {
     if (username === "")
       return "Username field must be filled"
-    else if (username.length < 3)
-      return "Username is too short (At least 3 characters)"
+    else if (username.length < 6)
+      return "Username is too short (At least 6 characters)"
     else if (email === "")
       return "Email field must be filled"
     else if (!verifyEmailFormat(email)) 
       return "Email format is invalid"
     else if (password === "")
       return "Password field must be filled"
+    else if (password.length < 6)
+      return "Password is too short (At least 6 characters)"
     else if(password !== confirmPassword)
       return "Passwords do not match"
     signUp(email, username, password)
