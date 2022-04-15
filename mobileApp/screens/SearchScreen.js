@@ -11,6 +11,7 @@ import {
 import { API_URL } from "../constants/Info";
 import SearchResultBox from "../components/SearchResultBox";
 import { useIsFocused } from "@react-navigation/native";
+import TopUsersBox from "../components/TopUsersBox";
 
 // COMPONENT BODY
 export default function SearchScreen({ route, navigation }) {
@@ -18,9 +19,25 @@ export default function SearchScreen({ route, navigation }) {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
+  const [topUsers, setTopUsers] = useState([]);
 
   const isFocused = useIsFocused();
-  useEffect(() => {}, [isFocused]);
+  useEffect(() => {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({}),
+    };
+    fetch(`${API_URL}/api/user/topUsers`, requestOptions)
+      .then((response) => response.json())
+      .then((response) => {
+        if (response.ok) {
+          // console.log("TOP USERS: ", response.users[0].posts[0].image);
+          setTopUsers(response.users);
+        } else {
+        }
+      });
+  }, [isFocused]);
 
   //Gets user data from api
   function getResults(input) {
@@ -93,6 +110,35 @@ export default function SearchScreen({ route, navigation }) {
           keyExtractor={(item, index) => index.toString()}
         />
       </View>
+      {!searching && (
+        <View style={{ width: "100%", top: "5%" }}>
+          <FlatList
+            data={topUsers}
+            initialScrollIndex={0}
+            renderItem={({ item, index }) => {
+              console.log("ITEM", item);
+              return (
+                <TopUsersBox
+                  username={item.username}
+                  followerCount={item.followers.length}
+                  rank={index}
+                  profilePic={item.profileImageUrl}
+                  postImage1={
+                    item.posts.length > 0 ? item.posts[0].image : null
+                  }
+                  postImage2={
+                    item.posts.length > 1 ? item.posts[1].image : null
+                  }
+                  postImage3={
+                    item.posts.length > 2 ? item.posts[2].image : null
+                  }
+                />
+              );
+            }}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </View>
+      )}
     </View>
   );
 }
