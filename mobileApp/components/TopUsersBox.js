@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import React from "react";
 
 export default function TopUsersBox(props) {
@@ -17,11 +17,12 @@ export default function TopUsersBox(props) {
         style={{
           marginTop: 30,
           flexDirection: "row",
-          // backgroundColor: "red",
+          // backgroundColor: "yellow",
           width: "100%",
           justifyContent: "space-around",
         }}
       >
+        {/* Rank */}
         <View
           style={{
             width: "10%",
@@ -33,20 +34,31 @@ export default function TopUsersBox(props) {
             #{props.rank + 1}
           </Text>
         </View>
-        <View style={{ width: "10%" }}>
-          <Image
-            style={styles.profilePic}
-            source={
-              props.profilePic
-                ? { uri: props.profilePic }
-                : require("../assets/images/defaultSmile.png")
-            }
-          />
-        </View>
-        <View style={{ width: "30%" }}>
-          <Text style={styles.usernameText}>{props.username}</Text>
-        </View>
-        <View style={{ width: "25%" }}>
+        {/* Profile pic and username */}
+        <TouchableOpacity
+          style={{
+            flexDirection: "row",
+            width: "55%",
+            left: "-5%",
+            justifyContent: "space-around",
+          }}
+          hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
+        >
+          <View style={{ width: "10%" }}>
+            <Image
+              style={styles.profilePic}
+              source={
+                props.profilePic
+                  ? { uri: props.profilePic }
+                  : require("../assets/images/defaultSmile.png")
+              }
+            />
+          </View>
+          <View style={{ width: "60%", left: "5%" }}>
+            <Text style={styles.usernameText}>{props.username}</Text>
+          </View>
+        </TouchableOpacity>
+        <View style={{ width: "25%", right: "30%" }}>
           <Text style={{ color: "white" }}>
             {props.followerCount} Followers
           </Text>
@@ -57,9 +69,9 @@ export default function TopUsersBox(props) {
           style={{
             flexDirection: "row",
             position: "absolute",
-            left: "20%",
+            left: "15%",
             marginTop: 20,
-            width: "66%",
+            width: "68%",
             //   backgroundColor: "green",
           }}
         >
@@ -87,7 +99,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 20,
     fontWeight: "bold",
-    left: "5%",
+    left: "3%",
   },
   usernameText: {
     color: "white",
