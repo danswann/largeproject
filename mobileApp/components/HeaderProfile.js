@@ -8,9 +8,6 @@ export default function HeaderProfile() {
   const { signOut } = React.useContext(AuthContext);
   return (
     <View style={HeaderProfileStyles.HeaderProfileStyles}>
-      <TouchableOpacity style={{marginRight: 10}} onPress={() => {}} >
-        <Ionicons name="person-circle" size={25} style={{ color: "white"}}/>
-      </TouchableOpacity>
       <TouchableOpacity style={{marginRight: 10}} onPress={() => signOut()} >
         <Ionicons name="log-out-outline" size={25} style={{ color: "white"}}/>
       </TouchableOpacity>

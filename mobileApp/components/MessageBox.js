@@ -96,12 +96,12 @@ const styles = StyleSheet.create({
     },
     
     MessageContainer: {
-        backgroundColor: "#573C6B",
+        backgroundColor: "#12081A",
         flexDirection: "row",
         justifyContent: "space-between",
         marginStart: 10,
         marginEnd: 10,
-        marginTop: 15,
+        marginTop: 10,
         borderRadius: 10,
     },
 
