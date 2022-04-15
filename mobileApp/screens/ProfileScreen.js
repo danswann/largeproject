@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "center",
-    backgroundColor: "black",
+    backgroundColor: "#23192B",
   },
   NavContainer: {
     flexDirection: "row",
@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
     height:"60%",
     justifyContent: "flex-start",
     alignItems: "center",
-    backgroundColor: "black",
+    backgroundColor: "#23192B",
   },
   btnText: {
     fontSize: 15,

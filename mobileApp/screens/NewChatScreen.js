@@ -95,7 +95,7 @@ export default function NewChatScreen({ route, navigation }) {
           </View>            
         </TouchableOpacity>
         {/* name on top */}
-        <Text style={{color: "white", alignSelf: "center", fontSize:20}}>New Chat</Text>  
+        <Text style={{color: "white", alignSelf: "center", fontSize:15}}>NEW CHAT</Text>  
         {/*Spacer*/}
         <View style={{margin: 15, width: 25, height: 25}}/>
       </View>
