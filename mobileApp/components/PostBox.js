@@ -36,6 +36,7 @@ export default function PostBox(props) {
   const likeCount = useRef(props.likedBy.length)
 
   const [commentInput, setCommentInput] = useState("");
+  const scrollRef = useRef()
 
   const [loading, setLoading] = useState(true);
   const [commentLoading, setCommentLoading] = useState(false);
@@ -172,9 +173,12 @@ export default function PostBox(props) {
           console.log(response.error);
           return;
         } else {
+          console.log(comments.current)
           comments.current = response.post.comments
+          console.log(comments.current)
           commentCount.current = response.post.comments.length
           setCommentInput("");
+          scrollRef.current.scrollToEnd()
           setCommentLoading(false);
         }
       });
@@ -456,6 +460,7 @@ export default function PostBox(props) {
                   overScrollMode="never"
                   style={{ maxHeight: 205 }}
                   nestedScrollEnabled={true}
+                  ref={scrollRef}
                 >
                   <Text
                     style={{
@@ -467,24 +472,22 @@ export default function PostBox(props) {
                   >
                     Comments:{" "}
                   </Text>
-                  <FlatList
-                    data={comments.current}
-                    initialScrollIndex={0}
-                    renderItem={({ item }) => (
-                      <CommentBox
-                        postID={props.postID}
-                        commentID={item._id}
-                        author={item.author}
-                        comment={item.comment}
-                        timeStamp={item.timeStamp}
-                        update={updatePostComments}
-                        myUserID={props.myUserID}
-                        accessToken={props.accessToken}
-                        refreshToken={props.refreshToken}
-                      />
-                    )}
-                    keyExtractor={(item, index) => index.toString()}
-                  />
+                  {comments.current.map((item, index) => {
+                    return (
+                    <CommentBox
+                      key={index.toString()}
+                      postID={props.postID}
+                      commentID={item._id}
+                      author={item.author}
+                      comment={item.comment}
+                      timeStamp={item.timeStamp}
+                      update={updatePostComments}
+                      myUserID={props.myUserID}
+                      accessToken={props.accessToken}
+                      refreshToken={props.refreshToken}
+                    />
+                    )
+                  })}
                 </ScrollView>
               )}
               <View style={styles.MakeCommentContainer}>

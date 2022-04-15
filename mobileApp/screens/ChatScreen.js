@@ -30,10 +30,13 @@ const Tab = createMaterialTopTabNavigator();
 export default function ChatScreen({ route, navigation }) {
   const { myUserID, chatID, otherUserID, newChat, name, messages, accessToken} = route.params;
   const [chatLoading, setChatLoading] = useState();
-  const [messageInput, setMessageInput] = useState("");
+  const messageInput = useRef("");
+  const messageInputRef = useRef();
   const [messageLoading, setMessageLoading] = useState(false);
   const messageArray = useRef(messages)
+  const flatListRef = useRef()
   console.log(chatID)
+
   useEffect(() => {
     setChatLoading(true)
     if(newChat)
@@ -41,6 +44,19 @@ export default function ChatScreen({ route, navigation }) {
     else
       getChat(chatID)
   }, [chatID])
+
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        flatListRef.current.scrollToEnd()
+      }
+    );
+    return () => {
+      keyboardDidShowListener.remove();
+    };
+  }, []);
 
   function getChat(chatID)
   {
@@ -89,13 +105,13 @@ export default function ChatScreen({ route, navigation }) {
   }  
 
   function sendMessage() {
-    if (messageInput == "")
+    if (messageInput.current == "")
         return
     setMessageLoading(true)        
     const requestOptions = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({userID: myUserID, chatID: currentChatID.current, text: messageInput, accessToken: accessToken})            
+        body: JSON.stringify({userID: myUserID, chatID: chatID, text: messageInput.current, accessToken: accessToken})            
     };
     fetch(`${API_URL}/api/directMessage/sendMessage`, requestOptions)
     .then((response) => response.json())
@@ -109,8 +125,10 @@ export default function ChatScreen({ route, navigation }) {
       }
       else
       {
-          setMessageInput("")
+          messageInput.current = ""
+          messageInputRef.current.clear()
           messageArray.current = response.dm.chat
+          flatListRef.current.scrollToEnd()
           setMessageLoading(false)
       }
     })
@@ -138,22 +156,25 @@ export default function ChatScreen({ route, navigation }) {
       :
       <View style={styles.MainContainer}> 
         <FlatList
+          ref={flatListRef}
           data= {messageArray.current}
           ListHeaderComponent={<View style={{flexDirection:"row", height:50, marginBottom: 10, width:"50%", alignSelf:"center"}}><Text style={[styles.textInput, {color: "#A57FC1", textAlign: "center", alignSelf: "flex-end", borderBottomColor: "#A57FC1", borderBottomWidth: 1}]}>Start of conversation</Text></View>}
           ListFooterComponent={<View style={{height:30}}/>}
-          // sentByMe(item.userID)
           renderItem={({item}) => <ChatBox message={item.text} timeStamp={item.timeStamp} sentByMe={sentByMe(item.author)}/>}
           keyExtractor={(item, index) => index.toString()}
+          getItemLayout={(data, index) => (
+            {length: 70, offset: 70 * index + 60, index}
+          )}
         />
         <View style={{backgroundColor:"#12081A", padding: 5}}>
           {/* message input */}      
           <View style={styles.sendContainer}>
               <TextInput
-                value={messageInput}
+                ref={messageInputRef}
                 style={styles.textInput}
                 placeholder="Send a message..."
                 placeholderTextColor="#12081A"
-                onChangeText={(text) => setMessageInput(text)}
+                onChangeText={(text) => messageInput.current = text}
                 multiline={true}
                 clearButtonMode="while-editing"
                 selectionColor={"#573C6B"}
