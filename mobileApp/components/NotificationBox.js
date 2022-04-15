@@ -44,7 +44,7 @@ export default function NotificationBox(props) {
             props.openPost(props.postID)
     }}>
         <View style={styles.NotificationContainer}>
-            <TouchableOpacity style={{flexDirection: 'row'}}
+            <TouchableOpacity style={{flexDirection: 'row' , maxWidth: "75%"}}
                 onPress={() => {
                     props.navigation.navigate({
                         name: "OtherProfile",
@@ -62,7 +62,7 @@ export default function NotificationBox(props) {
                     style={styles.ProfilePic}
                 /> 
             
-                <View style={{flexDirection: 'column', marginStart: 15, marginTop: 5, minWidth:"40%", maxWidth:"60%"}}>
+                <View style={{flexDirection: 'column', marginLeft: 15, marginTop: 5, minWidth:"50%", maxWidth:"50%"}}>
 
                     {/* name */}
                     <Text style={{color: 'white', fontWeight: 'bold', textDecorationLine: "underline"}}>{props.username}</Text>
@@ -74,7 +74,7 @@ export default function NotificationBox(props) {
                     </View>
                 </View>
             </TouchableOpacity>
-            <View style={{justifyContent: "flex-end"}}>
+            <View style={{justifyContent: "flex-end", margin:0}}>
                 {/* Playlist Image */}
                 {(props.notificationType == 0 ? <></> : 
                 <Image
