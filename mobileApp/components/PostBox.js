@@ -183,8 +183,10 @@ export default function PostBox(props) {
   }
 
   const updatePostComments = (commentsUpdate) => {
+    setCommentLoading(true)
     comments.current = commentsUpdate
     commentCount.current = commentsUpdate.length
+    setCommentLoading(false)
   };
 
   //Redirect to url button component
