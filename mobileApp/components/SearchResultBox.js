@@ -5,6 +5,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { useFocusEffect } from "@react-navigation/native";
 import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { AuthContext } from "../Context";
+import { Ionicons } from "@expo/vector-icons";
 
 // COMPONENT BODY
 export default function SearchResultBox(props) {
@@ -103,6 +104,23 @@ export default function SearchResultBox(props) {
           <Text style={styles.buttonText}>Followed</Text>
         </TouchableOpacity>
       )}
+      <TouchableOpacity
+        style={[styles.button, {backgroundColor: "gray", paddingHorizontal: 8, paddingVertical: 8, marginRight: 20}]}
+        onPress={() => {
+          props.navigation.navigate({
+            name: "Chat",
+            params: {
+              myUserID: props.myUserID,
+              otherUserID: props.userID,
+              name: props.username,
+              newChat: true,
+              accessToken: props.accessToken,
+            },
+          });
+        }}
+      >
+        <Ionicons name="chatbox" color="white" size={20}/>
+      </TouchableOpacity>
     </TouchableOpacity>
   );
 }
@@ -121,12 +139,10 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "#573C6B",
     borderRadius: 25,
-    marginHorizontal: 20,
   },
   buttonFollowed: {
     backgroundColor: "#23192B",
     borderRadius: 25,
-    marginHorizontal: 20,
   },
   infoContainer: {
     flexDirection: "row",
