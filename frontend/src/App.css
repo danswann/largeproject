@@ -1,8 +1,18 @@
-body {
-    background-color: #23192b;
-    color: white;
+* {
+    background-color: #12081A;
+    /* background-color: #23192b; */
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;    
 }
 
-title {
-    color: red;
+body {
+    background-color: #23192b;
+    /* color: white; */
 }
+
+.description {
+    color: #A57FC1;
+}
+
