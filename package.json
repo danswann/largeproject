@@ -24,7 +24,9 @@
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.4.1",
     "mongoose": "^6.2.6",
+    "react-router-dom": "^6.3.0",
     "spotify-web-api-node": "^5.0.2",
+    "styled-components": "^5.3.5",
     "superagent": "^7.1.2",
     "supertest": "^6.2.2",
     "yarn": "^1.22.17"
