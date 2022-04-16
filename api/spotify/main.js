@@ -82,7 +82,7 @@ exports.runUpdateLoop = async function() {
     const swa = await SpotifyManager.getHandle();
 
     // Get a list of all posts
-    const posts = await Post.find({}, {playlistID:1});
+    const posts = await Post.find({isReposted:false}, {playlistID:1});
 
     // Loop through all posts and update playlist data
     for(post of posts) {
