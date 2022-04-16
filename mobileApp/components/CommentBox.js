@@ -29,10 +29,13 @@ export default function CommentBox(props) {
     fetch(`${API_URL}/api/post/deleteComment`, requestOptions)
     .then((response) => response.json())
     .then((response) => {
+      console.log(response)
       if(!response.ok)
         console.log(response.error)
       else
+      {
         props.update(response.post.comments)
+      }
   })
   };
 

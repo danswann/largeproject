@@ -94,6 +94,7 @@ exports.likePost = async function(req, res, next) {
         const projection = {likedBy: 1};
         const options = {projection: projection, new: true};
         const post = await Post.findOneAndUpdate(filter, update, options);
+        const notification = await Notification.deleteOne({sender:userID, post:postID, notificationType: 1});
 
         // If the postID exists, return ok:true
         if(post)
@@ -202,6 +203,7 @@ exports.commentOnPost = async function(req, res, next) {
         var newNotification = new Notification({
             notificationType: 3,
             post: postID,
+            commentID: post.comments[post.comments.length - 1]._id,
             user: post.author,
             sender: userID
         });
@@ -259,6 +261,7 @@ exports.deletePost = async function(req, res, next) {
     }
 
     const post = await Post.deleteOne({_id:postID, userID:userID});
+    const notification = await Notification.deleteMany({post:postID});
 
     // If the post exists, return ok:true
     if(post.deletedCount > 0)
@@ -309,7 +312,8 @@ exports.deleteComment = async function(req, res, next) {
     const update = { $pull: {comments: {_id:commentID, author:userID}}};
     const projection = {author: 1, comments: 1};
     const options = {projection: projection, new: true};
-    const post = await Post.findOneAndUpdate(filter, update, options);
+    const post = await Post.findOneAndUpdate(filter, update, options).populate({path: 'comments.author', select: '_id username profileImageUrl'});
+    const notification = await Notification.deleteOne({commentID:commentID});
 
     // If the post exists, return ok:true
     if(post)
@@ -487,22 +491,19 @@ exports.getAllUsersPost = async function(req, res, next) {
         try {
             if (response.posts[i].isReposted == true)
             {
-                var data = await Spotify.getPlaylistData(response.posts[i].originalPost.author, response.posts[i].originalPost.playlistID);
+                var data = await Spotify.getPlaylistNameandImage(response.posts[i].originalPost.author, response.posts[i].originalPost.playlistID);
                 response.posts[i].name = data.name;
                 response.posts[i].image = data.image;
             }
             else
             {
-                var data = await Spotify.getPlaylistData(response.posts[i].author, response.posts[i].playlistID);
+                var data = await Spotify.getPlaylistNameandImage(response.posts[i].author, response.posts[i].playlistID);
                 response.posts[i].name = data.name;
                 response.posts[i].image = data.image;
             }
         }
         catch(err) {
             response.posts.splice(i, 1);
-            // response.ok = false;
-            // response.error = 'Could not fetch playlist with ID "' + p.playlistID + '" and author "' + p.author + '"';
-            // return res.status(200).json(response);
         }
     };
     res.status(200).json(response);
@@ -542,22 +543,19 @@ exports.userLikedPosts = async function(req, res, next) {
         try {
             if (response.posts[i].isReposted == true)
             {
-                var data = await Spotify.getPlaylistData(response.posts[i].originalPost.author, response.posts[i].originalPost.playlistID);
+                var data = await Spotify.getPlaylistNameandImage(response.posts[i].originalPost.author, response.posts[i].originalPost.playlistID);
                 response.posts[i].name = data.name;
                 response.posts[i].image = data.image;
             }
             else
             {
-                var data = await Spotify.getPlaylistData(response.posts[i].author, response.posts[i].playlistID);
+                var data = await Spotify.getPlaylistNameandImage(response.posts[i].author, response.posts[i].playlistID);
                 response.posts[i].name = data.name;
                 response.posts[i].image = data.image;
             }
         }
         catch(err) {
             response.posts.splice(i, 1);
-            // response.ok = false;
-            // response.error = 'Could not fetch playlist with ID "' + p.playlistID + '" and author "' + p.author + '"';
-            // return res.status(200).json(response);
         }
     };
     res.status(200).json(response);
@@ -595,6 +593,8 @@ exports.repost = async function(req, res, next) {
     repost.likedBy = undefined;
     repost.comments = undefined;
 
+    const post = await Post.findOne({_id:postID}, {author:1});
+
     // Save the new instance
     repost.save(function (err) {
         // If an error occurs, return ok:false and the error message
@@ -607,8 +607,30 @@ exports.repost = async function(req, res, next) {
         // Otherwise return a success message
         else
         {
-            response.repost = repost;
-            res.status(200).json(response);
+            // Create a new instance of notification model
+            var newNotification = new Notification({
+                notificationType: 2,
+                post: repost._id,
+                user: post.author,
+                sender: userID
+            });
+
+            // Save the new instance
+            newNotification.save(function (err) {
+                // If an error occurs, return ok:false and the error message
+                if(err)
+                {
+                    response.ok = false;
+                    response.error = err;
+                    res.status(200).json(response);
+                }
+                else
+                {
+                    response.post = post;
+                    response.repost = repost;
+                    res.status(200).json(response);
+                }
+            });
         }
     });
 }

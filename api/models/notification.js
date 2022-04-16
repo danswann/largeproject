@@ -13,6 +13,7 @@ const NotificationSchema = new Schema({
     timeStamp: {type:Date, default:Date.now},
     notificationType: {type:Number, Min: 0, Max: 3},
     post: {type:Schema.ObjectId, ref:'Post', required: false},
+    commentID: {type:Schema.ObjectId, ref:'Post', required: false},
     user: {type:Schema.ObjectId, ref:'User', required:true},
     sender: {type:Schema.ObjectId, ref:'User', required:true}
 });

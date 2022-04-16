@@ -57,7 +57,7 @@ const AuthenticatedScreen = ({ route, navigation }) => {
           tabBarActiveTintColor: "#573C6B",
           tabBarInactiveTintColor: "white",
           // keyboardHidesTabBar: true,
-          tabBarHideOnKeyboard: Platform.OS === "ios" ? true : false,
+          tabBarHideOnKeyboard: true,
           tabBarStyle: { backgroundColor: "black", borderTopColor: "gray" },
           tabBarShowLabel: false,
           headerBackground: HeaderBackground,

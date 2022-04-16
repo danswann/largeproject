@@ -1,4 +1,5 @@
 const Notification = require('../models/notification');
+const Spotify = require('../spotify/main');
 
 function checkObjectId (id) {
     const ObjectId = require('mongoose').Types.ObjectId;
@@ -32,7 +33,31 @@ exports.getAllNotifications = async function(req, res, next) {
 
     // Find all notifications by userID
     const filter = {user:userID};
-    const allNotifications = await Notification.find(filter).populate('sender', '_id username profileImageUrl');
+    const allNotifications = await Notification.find(filter).sort({timeStamp: 'desc'}).populate("sender", {_id: 1, username: 1, profileImageUrl: 1}).populate({path: 'post', select: '_id author playlistID isReposted originalPost', populate: {path: 'originalPost', select: '_id author playlistID'}}).lean();
+
+    for (var i = 0; i < allNotifications.length; i++)
+    {
+        if (allNotifications[i].notificationType != 0)
+        {
+            try
+            {
+                if (allNotifications[i].post.isReposted == true)
+                {
+                    var data = await Spotify.getPlaylistNameandImage(allNotifications[i].post.originalPost.author, allNotifications[i].post.originalPost.playlistID);
+                    allNotifications[i].post.image = data.image;
+                }
+                else
+                {
+                    var data = await Spotify.getPlaylistNameandImage(allNotifications[i].post.author, allNotifications[i].post.playlistID);
+                    allNotifications[i].post.image = data.image;
+                }
+            }
+            catch(err)
+            {
+                console.log(err);
+            }
+        }
+    }
 
     // JSON array returned
     response.notifications = allNotifications;

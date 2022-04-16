@@ -207,8 +207,8 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     paddingTop: 12,
-    paddingBottom: 10,
-    fontSize: 20,
+    paddingBottom: 12,
+    fontSize: 18,
   },
 
   sendContainer: {

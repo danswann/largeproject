@@ -2,18 +2,13 @@ const DirectMessage = require('../models/directMessage');
 
 function checkObjectId (id) {
     const ObjectId = require('mongoose').Types.ObjectId;
-
     if(ObjectId.isValid(id)) {
         if((String)(new ObjectId(id)) === id)
         {
             return true;
         }
-        return false;
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }
 
 exports.newChat = async function(req, res, next) {
@@ -91,25 +86,20 @@ exports.sendMessage = async function(req, res, next) {
     }
 
     // Find DM by chatID and add new message
-    const filter = {_id:chatID};
     const update = {$push: {chat: {text:text,author:userID}}};
     const projection = {chat: 1};
     const options = {projection: projection, new: true};
-    const dm = await DirectMessage.findOneAndUpdate(filter, update, options);
 
-    // If an error occurs, return ok:false and the error message
-    if(dm)
-    {
+    // Check for an error, and return the new DM if there is no error
+    DirectMessage.findByIdAndUpdate(chatID, update, options, function(err, dm) {
+        if(err) {
+            response.ok = false;
+            response.error = err;
+            res.status(200).json(response);
+        }
         response.dm = dm;
         res.status(200).json(response);
-    }
-    // Otherwise return ok:true
-    else
-    {
-        response.ok = false;
-        response.error = err;
-        res.status(200).json(response);
-    }
+    });
 }
 
 exports.readChat = async function(req, res, next) {
@@ -200,7 +190,8 @@ exports.getChat = async function(req, res, next) {
     }
     else
     {
-        response.dm = [];
+        response.ok = false;
+        response.error = 'Invalid chatID ' + chatID;
         res.status(200).json(response);
     }
 }
