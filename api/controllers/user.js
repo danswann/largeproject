@@ -893,9 +893,32 @@ exports.topUsers = async function(req, res, next) {
     // Default response object
     var response = {ok:true}
 
+    const userID = req.body.userID;
+
+    // Check if userID is a valid object id
+    if(!checkObjectId(userID)) {
+        response.ok = false;
+        response.error = 'Invalid userID ' + userID;
+        return res.status(200).json(response);
+    }
+
+    // .lean breaks .includes
     const userProjection = {_id: 1, username: 1, profileImageUrl: 1, followers: 1};
-    var listUsers = await User.find({}, userProjection).sort({followers: -1}).lean();
+    var listUsers = await User.find({}, userProjection).sort({followers: -1});
+    listUsers = JSON.parse(JSON.stringify(listUsers));
     listUsers = listUsers.splice(0, 10);
+
+    for (var i = 0; i < listUsers.length; i++)
+    {
+        if (listUsers[i].followers.includes(userID))
+        {
+            listUsers[i].currentUserFollows = true;
+        }
+        else
+        {
+            listUsers[i].currentUserFollows = false;
+        }
+    }
 
     for (var i = 0; i < listUsers.length; i++)
     {
