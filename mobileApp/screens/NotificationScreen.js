@@ -61,6 +61,7 @@ function NotificationTab({ route, navigation }) {
     fetch(`${API_URL}/api/notification/getAllNotifications`, requestOptions)
       .then((response) => response.json())
       .then((response) => {
+        console.log(response)
         if(!response.ok)
         {
         console.log(response.error)
@@ -158,8 +159,8 @@ function NotificationTab({ route, navigation }) {
               <NotificationBox 
                 myUserID={item.user}
                 senderID={item.sender._id}
-                postID={item.post}
-                postImage={"uri"/*item.postImage*/} //fix this
+                postID={item.post._id}
+                postImage={item.post.image}
                 openPost={openPost}
                 notificationType={item.notificationType} 
                 username={item.sender.username}
