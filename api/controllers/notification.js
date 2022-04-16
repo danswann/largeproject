@@ -24,7 +24,7 @@ exports.getAllNotifications = async function(req, res, next) {
     // Incoming values
     const userID = req.body.userID;
     var currentIndex = req.body.currentIndex;
-    var numberOfPosts = req.body.numberOfPosts;
+    var numberOfNotifications = req.body.numberOfNotifications;
 
     // Check if userID is valid object id
     if(!checkObjectId(userID)) {
@@ -35,7 +35,7 @@ exports.getAllNotifications = async function(req, res, next) {
 
     // Find all notifications by userID
     const filter = {user:userID};
-    const allNotifications = await Notification.find(filter).sort({timeStamp: 'desc'}).populate({path: 'sender', select: '_id username profileImageUrl'}).populate({path: 'post', select: '_id author playlistID isReposted originalPost'}).populate({path: 'post', populate: {path: 'originalPost', select: '_id author playlistID'}}).skip(currentIndex).limit(numberOfPosts).lean();
+    const allNotifications = await Notification.find(filter).sort({timeStamp: 'desc'}).populate({path: 'sender', select: '_id username profileImageUrl'}).populate({path: 'post', select: '_id author playlistID isReposted originalPost'}).populate({path: 'post', populate: {path: 'originalPost', select: '_id author playlistID'}}).skip(currentIndex).limit(numberOfNotifications).lean();
 
     for (var i = 0; i < allNotifications.length; i++)
     {
