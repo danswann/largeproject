@@ -1,4 +1,6 @@
 const SpotifyManager = require('./manager');
+const PlaylistData = require('../models/playlistdata');
+const Post = require('../models/post');
 
 exports.getPlaylistData = async function(userID, playlistID) {
     var playlist = {};
@@ -45,18 +47,55 @@ exports.getPlaylistData = async function(userID, playlistID) {
 }
 
 exports.getPlaylistNameandImage = async function(userID, playlistID) {
+    // Get playlist data from cache
+    var playlist = await PlaylistData.findById(playlistID, {_id:0}).lean();
+    if(playlist) return playlist;
+
     var playlist = {};
 
-    const swa = await SpotifyManager.getHandle(userID);
-
-    // Get playlist metadata
-    const result = await swa.getPlaylist(playlistID, {fields:'name,images'});
-    playlist.name = result.body.name;
-    if(result.body.images && result.body.images.length > 0)
-        playlist.image = result.body.images[0].url;
-
-    else playlist.image = 'https://placehold.jp/e0e0e0/787878/150x150.png?text=No%0AArt';
-
-    // Return value
+    // Attempt to get playlist data from cache
+    const query = await PlaylistData.findById(playlistID, {_id:0}).lean();
+    if(query) {
+        playlist.name = query.name;
+        playlist.image = query.image;
+    }
+    // Otherwise, fetch it from Spotify and create a new cache entry
+    else {
+        console.log('Cache miss!');
+        const swa = await SpotifyManager.getHandle(userID);
+        const result = await swa.getPlaylist(playlistID, {fields:'name,images'});
+        if(result.body.images && result.body.images.length > 0)
+            playlist.image = result.body.images[0].url;
+        else playlist.image = 'https://placehold.jp/e0e0e0/787878/150x150.png?text=No%0AArt';
+        playlist.name = result.body.name;
+        // Add to cache
+        PlaylistData.findByIdAndUpdate(playlistID, playlist, {upsert:true}, function(err) {
+            console.log(err);
+        });
+    }
     return playlist;
+}
+
+
+exports.runUpdateLoop = async function() {
+    // Get an instance of the SpotifyWebApi
+    const swa = await SpotifyManager.getHandle();
+
+    // Get a list of all posts
+    const posts = await Post.find({}, {playlistID:1});
+
+    // Loop through all posts and update playlist data
+    for(post of posts) {
+        // Get new data from Spotify API
+        var update = {};
+        const result = await swa.getPlaylist(post.playlistID, {fields:'name,images'});
+        if(result.body.images && result.body.images.length > 0)
+            update.image = result.body.images[0].url;
+        else update.image = 'https://placehold.jp/e0e0e0/787878/150x150.png?text=No%0AArt';
+        update.name = result.body.name;
+        // Update cache
+        PlaylistData.findByIdAndUpdate(post.playlistID, update, {upsert:true}, function(err) {
+            if(err) console.log(err);
+        });
+    }
 }
