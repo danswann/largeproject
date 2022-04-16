@@ -354,7 +354,27 @@ exports.followUser = async function(req, res, next) {
         // If the follower exists and is updated, return ok:true and the user's details
         if (user2)
         {
-            res.status(200).json(response);
+            // Create a new instance of notification model
+            var newNotification = new Notification({
+                notificationType: 0,
+                user: followingID,
+                sender: userID
+            });
+
+            // Save the new instance
+            newNotification.save(function (err) {
+                // If an error occurs, return ok:false and the error message
+                if(err)
+                {
+                    response.ok = false;
+                    response.error = err;
+                    res.status(200).json(response);
+                }
+                else
+                {
+                    res.status(200).json(response);
+                }
+            });
         }
         // Otherwise return ok:false and the error message
         else
@@ -416,6 +436,7 @@ exports.unfollowUser = async function(req, res, next) {
         const updateFollowing = {$pull: {followers: userID}};
         const optionsFollowing = {new: true};
         const user2 = await User.findOneAndUpdate(filterFollowing, updateFollowing, optionsFollowing);
+        const notification = await Notification.deleteOne({sender:userID, user:followingID, notificationType: 0});
 
         // If the follower exists and is updated, return ok:true
         if (user2)

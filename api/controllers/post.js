@@ -94,6 +94,7 @@ exports.likePost = async function(req, res, next) {
         const projection = {likedBy: 1};
         const options = {projection: projection, new: true};
         const post = await Post.findOneAndUpdate(filter, update, options);
+        const notification = await Notification.deleteOne({sender:userID, post:postID, notificationType: 1});
 
         // If the postID exists, return ok:true
         if(post)
@@ -202,6 +203,7 @@ exports.commentOnPost = async function(req, res, next) {
         var newNotification = new Notification({
             notificationType: 3,
             post: postID,
+            commentID: post.comments[post.comments.length - 1]._id,
             user: post.author,
             sender: userID
         });
@@ -259,6 +261,7 @@ exports.deletePost = async function(req, res, next) {
     }
 
     const post = await Post.deleteOne({_id:postID, userID:userID});
+    const notification = await Notification.deleteMany({post:postID});
 
     // If the post exists, return ok:true
     if(post.deletedCount > 0)
@@ -310,6 +313,7 @@ exports.deleteComment = async function(req, res, next) {
     const projection = {author: 1, comments: 1};
     const options = {projection: projection, new: true};
     const post = await Post.findOneAndUpdate(filter, update, options).populate({path: 'comments.author', select: '_id username profileImageUrl'});
+    const notification = await Notification.deleteOne({commentID:commentID});
 
     // If the post exists, return ok:true
     if(post)
