@@ -1,7 +1,50 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import React from "react";
+import PostBox from "./PostBox";
+import { useState } from "react";
 
 export default function TopUsersBox(props) {
+  // Stuff to show the post
+  const [postBox, setPostBox] = useState(<></>);
+  const [postVisible, setPostVisible] = useState(false);
+  const openPost = async (postID) => {
+    setPostBox(await getPostBoxFromID(postID));
+    setPostVisible(true);
+  };
+  function getPostBoxFromID(postID) {
+    return new Promise((res, rej) => {
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ postID: postID }),
+      };
+      fetch(`${API_URL}/api/post/getPost`, requestOptions)
+        .then((response) => response.json())
+        .then((response) => {
+          console.log(response);
+          if (!response.ok) {
+            console.log(response.error);
+            res(<></>);
+          }
+          res(
+            <PostBox
+              navigation={navigation}
+              postID={response.post._id}
+              author={response.post.author}
+              caption={response.post.caption}
+              comments={response.post.comments}
+              isReposted={response.post.isReposted}
+              likedBy={response.post.likedBy}
+              originalPostID={response.post.originalPostID}
+              playlistID={response.post.playlistID}
+              timeStamp={response.post.timeStamp}
+              myUserID={userID}
+              accessToken={accessToken}
+            />
+          );
+        });
+    });
+  }
   console.log("PROPS: ", props);
   return (
     <View
@@ -43,6 +86,12 @@ export default function TopUsersBox(props) {
             justifyContent: "space-around",
           }}
           hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
+          onPress={() => {
+            props.navigation.navigate({
+              name: "OtherProfile",
+              params: { userID: props.userID, isFollowed: props.isFollowed },
+            });
+          }}
         >
           <View style={{ width: "10%" }}>
             <Image
@@ -75,9 +124,36 @@ export default function TopUsersBox(props) {
             //   backgroundColor: "green",
           }}
         >
-          <Image style={styles.postImages} source={{ uri: props.postImage1 }} />
-          <Image style={styles.postImages} source={{ uri: props.postImage2 }} />
-          <Image style={styles.postImages} source={{ uri: props.postImage3 }} />
+          <TouchableOpacity
+            onPress={() => {
+              openPost(props.postID1);
+            }}
+          >
+            <Image
+              style={styles.postImages}
+              source={{ uri: props.postImage1 }}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              openPost(props.PostID2);
+            }}
+          >
+            <Image
+              style={styles.postImages}
+              source={{ uri: props.postImage2 }}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              openPost(props.postID3);
+            }}
+          >
+            <Image
+              style={styles.postImages}
+              source={{ uri: props.postImage3 }}
+            />
+          </TouchableOpacity>
         </View>
       </View>
     </View>

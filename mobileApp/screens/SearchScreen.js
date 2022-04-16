@@ -32,7 +32,7 @@ export default function SearchScreen({ route, navigation }) {
       .then((response) => response.json())
       .then((response) => {
         if (response.ok) {
-          // console.log("TOP USERS: ", response.users[0].posts[0].image);
+          console.log("TOP USERS", response);
           setTopUsers(response.users);
         } else {
         }
@@ -120,7 +120,12 @@ export default function SearchScreen({ route, navigation }) {
               return (
                 <TopUsersBox
                   username={item.username}
+                  userID={item._id}
+                  // isFollowed={item.currentUserFollows}
                   followerCount={item.followers.length}
+                  postID1={item.posts.length > 0 ? item.posts[0]._id : null}
+                  postID2={item.posts.length > 0 ? item.posts[1]._id : null}
+                  postID3={item.posts.length > 0 ? item.posts[2]._id : null}
                   rank={index}
                   profilePic={item.profileImageUrl}
                   postImage1={
@@ -132,6 +137,7 @@ export default function SearchScreen({ route, navigation }) {
                   postImage3={
                     item.posts.length > 2 ? item.posts[2].image : null
                   }
+                  navigation={navigation}
                 />
               );
             }}
