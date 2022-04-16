@@ -491,22 +491,19 @@ exports.getAllUsersPost = async function(req, res, next) {
         try {
             if (response.posts[i].isReposted == true)
             {
-                var data = await Spotify.getPlaylistData(response.posts[i].originalPost.author, response.posts[i].originalPost.playlistID);
+                var data = await Spotify.getPlaylistNameandImage(response.posts[i].originalPost.author, response.posts[i].originalPost.playlistID);
                 response.posts[i].name = data.name;
                 response.posts[i].image = data.image;
             }
             else
             {
-                var data = await Spotify.getPlaylistData(response.posts[i].author, response.posts[i].playlistID);
+                var data = await Spotify.getPlaylistNameandImage(response.posts[i].author, response.posts[i].playlistID);
                 response.posts[i].name = data.name;
                 response.posts[i].image = data.image;
             }
         }
         catch(err) {
             response.posts.splice(i, 1);
-            // response.ok = false;
-            // response.error = 'Could not fetch playlist with ID "' + p.playlistID + '" and author "' + p.author + '"';
-            // return res.status(200).json(response);
         }
     };
     res.status(200).json(response);
@@ -546,22 +543,19 @@ exports.userLikedPosts = async function(req, res, next) {
         try {
             if (response.posts[i].isReposted == true)
             {
-                var data = await Spotify.getPlaylistData(response.posts[i].originalPost.author, response.posts[i].originalPost.playlistID);
+                var data = await Spotify.getPlaylistNameandImage(response.posts[i].originalPost.author, response.posts[i].originalPost.playlistID);
                 response.posts[i].name = data.name;
                 response.posts[i].image = data.image;
             }
             else
             {
-                var data = await Spotify.getPlaylistData(response.posts[i].author, response.posts[i].playlistID);
+                var data = await Spotify.getPlaylistNameandImage(response.posts[i].author, response.posts[i].playlistID);
                 response.posts[i].name = data.name;
                 response.posts[i].image = data.image;
             }
         }
         catch(err) {
             response.posts.splice(i, 1);
-            // response.ok = false;
-            // response.error = 'Could not fetch playlist with ID "' + p.playlistID + '" and author "' + p.author + '"';
-            // return res.status(200).json(response);
         }
     };
     res.status(200).json(response);
