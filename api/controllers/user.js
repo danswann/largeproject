@@ -891,7 +891,7 @@ exports.searchByUsername = async function(req, res, next) {
 
 exports.topUsers = async function(req, res, next) {
     // Default response object
-    var response = {ok:true}
+    var response = {ok:true};
 
     const userID = req.body.userID;
 

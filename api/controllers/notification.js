@@ -23,8 +23,6 @@ exports.getAllNotifications = async function(req, res, next) {
 
     // Incoming values
     const userID = req.body.userID;
-    var currentIndex = req.body.currentIndex;
-    var numberOfNotifications = req.body.numberOfNotifications;
 
     // Check if userID is valid object id
     if(!checkObjectId(userID)) {
@@ -35,18 +33,12 @@ exports.getAllNotifications = async function(req, res, next) {
 
     // Find all notifications by userID
     const filter = {user:userID};
-    const allNotifications = await Notification.find(filter).sort({timeStamp: 'desc'}).populate({path: 'sender', select: '_id username profileImageUrl'}).populate({path: 'post', select: '_id author playlistID isReposted originalPost'}).populate({path: 'post', populate: {path: 'originalPost', select: '_id author playlistID'}}).skip(currentIndex).limit(numberOfNotifications).lean();
+    const allNotifications = await Notification.find(filter).sort({timeStamp: 'desc'}).populate("sender", {_id: 1, username: 1, profileImageUrl: 1}).populate({path: 'post', select: '_id author playlistID isReposted originalPost', populate: {path: 'originalPost', select: '_id author playlistID'}}).lean();
 
     for (var i = 0; i < allNotifications.length; i++)
     {
         if (allNotifications[i].notificationType != 0)
         {
-            if (allNotifications[i].post == null)
-            {
-                allNotifications.splice(i, 1);
-                i--;
-                continue;
-            }
             try
             {
                 if (allNotifications[i].post.isReposted == true)
@@ -68,7 +60,6 @@ exports.getAllNotifications = async function(req, res, next) {
     }
 
     // JSON array returned
-    response.length = allNotifications.length;
     response.notifications = allNotifications;
     res.status(200).json(response);
 }
