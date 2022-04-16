@@ -20,6 +20,5 @@ router.post('/deleteComment', postController.deleteComment);
 router.post('/deletePost', postController.deletePost);
 router.post('/repost', postController.repost);
 router.post('/homeFeed', postController.homeFeed);
-// router.post('/topPosts', postController.topPosts);
 
 module.exports = router;

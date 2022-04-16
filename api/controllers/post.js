@@ -309,7 +309,7 @@ exports.deleteComment = async function(req, res, next) {
     const update = { $pull: {comments: {_id:commentID, author:userID}}};
     const projection = {author: 1, comments: 1};
     const options = {projection: projection, new: true};
-    const post = await Post.findOneAndUpdate(filter, update, options);
+    const post = await Post.findOneAndUpdate(filter, update, options).populate({path: 'comments.author', select: '_id username profileImageUrl'});
 
     // If the post exists, return ok:true
     if(post)
@@ -595,6 +595,8 @@ exports.repost = async function(req, res, next) {
     repost.likedBy = undefined;
     repost.comments = undefined;
 
+    const post = await Post.findOne({_id:postID}, {author:1});
+
     // Save the new instance
     repost.save(function (err) {
         // If an error occurs, return ok:false and the error message
@@ -607,8 +609,30 @@ exports.repost = async function(req, res, next) {
         // Otherwise return a success message
         else
         {
-            response.repost = repost;
-            res.status(200).json(response);
+            // Create a new instance of notification model
+            var newNotification = new Notification({
+                notificationType: 2,
+                post: repost._id,
+                user: post.author,
+                sender: userID
+            });
+
+            // Save the new instance
+            newNotification.save(function (err) {
+                // If an error occurs, return ok:false and the error message
+                if(err)
+                {
+                    response.ok = false;
+                    response.error = err;
+                    res.status(200).json(response);
+                }
+                else
+                {
+                    response.post = post;
+                    response.repost = repost;
+                    res.status(200).json(response);
+                }
+            });
         }
     });
 }
