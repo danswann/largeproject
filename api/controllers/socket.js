@@ -10,9 +10,9 @@ exports.chat = async function(ws, req) {
         msg = JSON.parse(msg);
         var clients = Array.from(req.app.wsInstance.getWss().clients);
         console.log(clients);
-        clients = clients.filter(c => c.protocol == 'chat' && c.chatID == ws.chatID && c.userID != ws.userID);
+        clients = clients.filter(c => c.protocol == 'chat' && c.chatID == ws.chatID/* && c.userID != ws.userID*/);
         for(c of clients) {
-            c.send(JSON.stringify({user:ws.userID, text:msg.text}));
+            c.send(JSON.stringify({author:ws.userID, text:msg.text, timestamp:Date.now()}));
         }
         // Update the database
         const update = {$push: {chat: {text:msg.text, author:ws.userID}}};
