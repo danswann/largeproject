@@ -9,6 +9,10 @@ const C = require('./constants.js');
 
 // Create and configure express app
 const app = express();
+
+const expressWs = require('express-ws')(app);
+app.wsInstance = expressWs;
+
 app.set('port', C.PORT);
 app.use(cors());
 app.use(bodyParser.json());
@@ -37,6 +41,9 @@ app.use('/api/directMessage', directMessageRouter);
 
 const spotifyRouter = require('./api/routes/spotify');
 app.use('/api/spotify', spotifyRouter);
+
+const socketRouter = require('./api/routes/socket');
+app.use('/api/socket', socketRouter);
 
 
 // Configure paths for static files
