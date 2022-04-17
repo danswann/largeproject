@@ -24,7 +24,6 @@ import { NavigationContainer, NavigationHelpersContext } from '@react-navigation
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { Ionicons } from "@expo/vector-icons";
-import WebSocket from "ws";
 import { withSafeAreaInsets } from "react-native-safe-area-context";
 
 const Tab = createMaterialTopTabNavigator();
@@ -51,11 +50,11 @@ export default function ChatScreen({ route, navigation }) {
   const ws = new WebSocket(`${SOCKET_URL}/api/socket/chat?userID=${myUserID}&chatID=${chatIDRef.current}`, 'chat');
   useEffect(() => {
     //Creates a listener for new messages
-    ws.on('message', function message(data) {
-      setMessageLoading(true)
-      messageArray.current.push(JSON.parse(data))
-      setMessageLoading(false)
-    });
+    ws.onmessage = function(event) {
+      setMessageLoading(true);
+      messageArray.current.push(JSON.parse(event.data));
+      setMessageLoading(false);
+    }
     //Creates a listener for keyboard opening
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
