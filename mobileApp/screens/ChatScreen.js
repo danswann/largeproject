@@ -37,7 +37,7 @@ export default function ChatScreen({ route, navigation }) {
   const [messageLoading, setMessageLoading] = useState(false);
   const messageArray = useRef(messages)
   const flatListRef = useRef()
-  console.log(chatID)
+  const ws = useRef()
 
   useEffect(() => {
     setChatLoading(true)
@@ -47,14 +47,7 @@ export default function ChatScreen({ route, navigation }) {
       getChat()
   }, [chatID])
 
-  const ws = new WebSocket(`${SOCKET_URL}/api/socket/chat?userID=${myUserID}&chatID=${chatIDRef.current}`, 'chat');
   useEffect(() => {
-    //Creates a listener for new messages
-    ws.onmessage = function(event) {
-      setMessageLoading(true);
-      messageArray.current.push(JSON.parse(event.data));
-      setMessageLoading(false);
-    }
     //Creates a listener for keyboard opening
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
@@ -64,7 +57,7 @@ export default function ChatScreen({ route, navigation }) {
     );
 
     return () => {
-      ws.close()
+      ws.current.close()
       keyboardDidShowListener.remove();
     };
   }, []);
@@ -85,6 +78,12 @@ export default function ChatScreen({ route, navigation }) {
         }
         else{
           messageArray.current = response.dm.chat
+          ws.current = new WebSocket(`${SOCKET_URL}/api/socket/chat?userID=${myUserID}&chatID=${chatIDRef.current}`, 'chat');
+          ws.current.onmessage = function(event) {
+            setMessageLoading(true);
+            messageArray.current.push(JSON.parse(event.data));
+            setMessageLoading(false);
+          }
           setChatLoading(false)
         }
       })
@@ -151,7 +150,7 @@ export default function ChatScreen({ route, navigation }) {
   function sendLiveMessage()
   {
     setMessageLoading(true)    
-    ws.send(JSON.stringify({text: messageInput.current}))
+    ws.current.send(JSON.stringify({text: messageInput.current}))
     messageInput.current = ""
     messageInputRef.current.clear()
     flatListRef.current.scrollToEnd()
