@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { Text, View, StyleSheet, ActivityIndicator } from "react-native";
+import { Text, KeyboardAvoidingView, View, StyleSheet, ActivityIndicator } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AuthenticatedScreen from "./screens/AuthenticatedScreen";
@@ -270,21 +270,26 @@ export default function App() {
   }
   return (
     // Use authcontext provider to track the users authentication status across the whole app
-    <AuthContext.Provider value={authContext}>
-      <NavigationContainer>
-        { /* Transitions to authenticated screen once user data is valid*/}
-        {(loginState.userID != null && loginState.accessToken != null) ? (
-          <LoggedInStack.Navigator screenOptions={{ headerShown: false }}>
-            <LoggedInStack.Screen
-              name="Authenticated"
-              component={AuthenticatedScreen}
-              initialParams={{userID: loginState.userID, accessToken: loginState.accessToken, refreshToken: loginState.refreshToken}}
-            />
-          </LoggedInStack.Navigator>
-        ) : (
-          <UnauthenticatedScreen />
-        )}
-      </NavigationContainer>
-    </AuthContext.Provider>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ height: "100%", width: "100%", backgroundColor: "#23192B" }}
+    >
+      <AuthContext.Provider value={authContext}>
+        <NavigationContainer>
+          { /* Transitions to authenticated screen once user data is valid*/}
+          {(loginState.userID != null && loginState.accessToken != null) ? (
+            <LoggedInStack.Navigator screenOptions={{ headerShown: false }}>
+              <LoggedInStack.Screen
+                name="Authenticated"
+                component={AuthenticatedScreen}
+                initialParams={{userID: loginState.userID, accessToken: loginState.accessToken, refreshToken: loginState.refreshToken}}
+              />
+            </LoggedInStack.Navigator>
+          ) : (
+            <UnauthenticatedScreen />
+          )}
+        </NavigationContainer>
+      </AuthContext.Provider>
+    </KeyboardAvoidingView>
   );
 }
