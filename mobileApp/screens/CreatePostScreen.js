@@ -198,23 +198,29 @@ export default function PostScreen({ route, navigation }) {
           </View>
         ) : (
           <View>
+            {playlistTitle == "" && !dropped ?
+            <View style={{ alignItems: "center", marginTop: 100 }}>
+              <Image
+                source={require("../assets/images/defaultSmile.png")} //make this something more relevant
+                style={{ height: 100, width: 100 }}
+              />
+              <Text style={styles.mainText}>
+                What've you been listening to?
+              </Text>
+            </View>
+            :
+            <></>
+            }
             {!connected ? (
-              <View style={{ alignItems: "center", marginVertical: 100 }}>
-                <Image
-                  source={require("../assets/images/defaultSmile.png")} //make this something more relevant
-                  style={{ height: 100, width: 100 }}
-                />
-                <Text style={styles.mainText}>
-                  What've you been listening to?
-                </Text>
+              <View style={{ alignItems: "center"}}>
                 <OpenURLButton>Connect your Spotify!</OpenURLButton>
               </View>
             ) : (
-              <View style={{ alignItems: "center", marginVertical: 50 }}>
+              <View style={{ alignItems: "center", marginTop: 10}}>
 
                 {dropped ? (
                   <View onStartShouldSetResponder={() => true}
-                  style={{ width: "90%", height: "80%" }}>
+                  style={{ width: "90%", height: "80%", marginTop: 10 }}>
                     <TouchableOpacity
                       style={styles.playlistsBtn}
                       onPress={() => {

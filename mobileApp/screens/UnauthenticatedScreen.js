@@ -145,7 +145,7 @@ function RegisterScreen({ navigation }) {
   const { signUp } = React.useContext(AuthContext);
   const [loading, setLoading] = useState(false);
 
-  function verifyRegisterData()
+  async function verifyRegisterData()
   {
     if (username === "")
       return "Username field must be filled"
@@ -161,9 +161,18 @@ function RegisterScreen({ navigation }) {
       return "Password is too short (At least 6 characters)"
     else if(password !== confirmPassword)
       return "Passwords do not match"
-    signUp(email, username, password)
-    navigation.navigate("EmailVerification", {username: username, password: password, email: email})
-    return "Verified"
+    else {
+      const signUpResult = await signUp(email, username, password)
+      if(signUpResult == "Registration Successful")
+        navigation.navigate("EmailVerification", {username: username, password: password, email: email})
+      else if (signUpResult == "username is taken")
+        return "This username has been taken by another account."
+      else if (signUpResult == "email is taken")
+        return "This email address has been taken by another account."
+      else
+        return "An error occurred while completing your registration."
+    }
+    return ""
   }
   function verifyEmailFormat(email) //verifies format of string@string.string
   {
@@ -171,11 +180,11 @@ function RegisterScreen({ navigation }) {
     return reg.test(email);
   }
 
-  function tryRegister()
+  async function tryRegister()
   {
     if(!loading) {
       setLoading(true)
-      setRegisterState(verifyRegisterData())
+      setRegisterState(await verifyRegisterData())
       setLoading(false)
     }
   }
@@ -417,6 +426,8 @@ const styles = StyleSheet.create({
   errorText: {
     marginTop: 10,
     color: "red",
+    width: "70%",
+    textAlign: "center"
   },
 
   clickableText: {

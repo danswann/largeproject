@@ -174,22 +174,28 @@ export default function App() {
       ) => {
         // Object that specifies what we need for the request since it is a POST
         const hashedPassword = await getHashedPassword(password)
-        const requestOptions = {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: email,
-            username: username,
-            password: hashedPassword,
-          }),
-        };
-        fetch(`${API_URL}/api/user/register`, requestOptions)
-          .then((response) => response.text())
-          .then((response) => {
-            if(!response.ok)
-              console.log("Register Error: " + response)
-          }
-          );
+        const promise = new Promise((res, rej) => {
+          const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: email,
+              username: username,
+              password: hashedPassword,
+            }),
+          };
+          fetch(`${API_URL}/api/user/register`, requestOptions)
+            .then((response) => response.json())
+            .then((response) => {
+              if(!response.ok)
+                res(response.error)
+              else {
+                res("Registration Successful")
+              }
+            }
+            );
+          })
+        return promise
       },
       signOut: () => {
         deleteRefreshToken()
