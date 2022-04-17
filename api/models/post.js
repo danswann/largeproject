@@ -14,6 +14,7 @@ const PostSchema = new Schema({
     originalPost: {type:Schema.ObjectId, ref:'Post', default:undefined},
     playlistID: {type:String},
     caption: {type:String, maxlength:250},
+    numLikes: {type: Number, default: 0},
     likedBy: [{type:Schema.ObjectId, ref:'User'}],
     comments: [{type:CommentSchema, required:true, default:()=>({})}],
     author: {type:Schema.ObjectId, ref:'User', required:true},
