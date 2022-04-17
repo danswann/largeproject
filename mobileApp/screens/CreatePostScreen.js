@@ -211,6 +211,7 @@ export default function PostScreen({ route, navigation }) {
               </View>
             ) : (
               <View style={{ alignItems: "center", marginVertical: 50 }}>
+
                 {dropped ? (
                   <View onStartShouldSetResponder={() => true}
                   style={{ width: "90%", height: "80%" }}>
@@ -246,6 +247,7 @@ export default function PostScreen({ route, navigation }) {
                     >
                       <Text style={styles.btnText}>Pick your playlist!</Text>
                     </TouchableOpacity>
+                    <Text style={[styles.btnText, {marginTop: 15, textAlign:"center"}]}>Make sure you playlist is public, or it will not be available to post.</Text>
                   </View>
                 ) : (
                   <View style={{ width: "90%" }}>

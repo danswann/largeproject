@@ -281,47 +281,57 @@ export default function ProfileScreen({ route, navigation }) {
           </View>
           {/* Grid container */}
           <View style={{ width: "100%", alignItems: "center" }}>
-            {isLoading ? (
-              <View style={{ justifyContent: "center", marginTop: 60 }}>
-                <ActivityIndicator size="large" color="#573C6B" />
-              </View>
-            ) : (
-              <View>
-                {postsOrLikes === "posts" ? (
-                  // Posts container
-                  <View style={styles.GridColumnContainer}>
-                    {postCount == 0 ? (
-                      <Text style={{ color: "white", alignSelf: "center" }}>
-                        This user has no posts
-                      </Text>
-                    ) : (
+            <View>
+              {postsOrLikes === "posts" ? (
+                // Posts container
+                <View style={styles.GridColumnContainer}>
+                  {postCount == 0 ? (
+                    <Text style={{ color: "white", alignSelf: "center" }}>
+                      This user has no posts
+                    </Text>
+                  ) : (
+                    <View>
+                      {isLoading ? (
+                        <View style={{ justifyContent: "center", marginTop: 60 }}>
+                          <ActivityIndicator size="large" color="#573C6B" />
+                        </View>
+                      ) : (
                       <FlatList
                         data={postGridComplete}
                         renderItem={({ item }) => (
                           <RowBox row={item.row} openPost={openPost} />
                         )}
                       />
-                    )}
-                  </View>
-                ) : (
-                  // Likes container
-                  <View style={styles.GridColumnContainer}>
-                    {likedPostCount == 0 ? (
-                      <Text style={{ color: "white", alignSelf: "center" }}>
-                        This user has no liked posts
-                      </Text>
-                    ) : (
+                      )}
+                    </View>
+                  )}
+                </View>
+              ) : (
+                // Likes container
+                <View style={styles.GridColumnContainer}>
+                  {likedPostCount == 0 ? (
+                    <Text style={{ color: "white", alignSelf: "center" }}>
+                      This user has no liked posts
+                    </Text>
+                  ) : (
+                    <View>
+                      {isLoading ? (
+                        <View style={{ justifyContent: "center", marginTop: 60 }}>
+                          <ActivityIndicator size="large" color="#573C6B" />
+                        </View>
+                      ) : (
                       <FlatList
                         data={likedPostGridComplete}
                         renderItem={({ item }) => (
                           <RowBox row={item.row} openPost={openPost} />
                         )}
                       />
-                    )}
-                  </View>
-                )}
-              </View>
-            )}
+                      )}
+                    </View>
+                  )}
+                </View>
+              )}
+            </View>
           </View>
         </View>
       )}

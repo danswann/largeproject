@@ -73,7 +73,7 @@ export default function SearchScreen({ route, navigation }) {
     // Main container
     <View style={styles.container}>
       {/* Search field */}
-      <View style={!searching ? styles.inputView : styles.inputViewSearching}>
+      <View style={!searching || results.length == 0 ? styles.inputView : styles.inputViewSearching}>
         <TextInput
           style={styles.textInput}
           placeholder="Search users"
