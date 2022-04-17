@@ -24,13 +24,7 @@ import { AuthContext } from "../Context";
 
 // COMPONENT BODY
 export default function PostBox(props) {
-  /*
-    postID={item._id} 
-    isReposted={item.isReposted}
-    originalPostID={item.likedBy}
-  */
   const comments = useRef(props.comments)
-  const commentCount = useRef(props.comments.length)
 
   const liked = useRef(props.likedBy.find((user) => user === props.myUserID))
   const likeCount = useRef(props.likedBy.length)
@@ -44,6 +38,7 @@ export default function PostBox(props) {
 
   const [songsExpanded, setSongsExpanded] = useState(false);
   const [commentsExpanded, setCommentsExpanded] = useState(false);
+  const [repostExpanded, setRepostExpanded] = useState(false);
 
   const isFocused = useIsFocused();
 
@@ -55,7 +50,7 @@ export default function PostBox(props) {
   const songCount = useRef(0)
 
   useEffect(() => {
-    getPlaylistDataFromID();
+      getPlaylistDataFromID();
   }, []);
 
   const { refresh } = React.useContext(AuthContext);
@@ -74,15 +69,15 @@ export default function PostBox(props) {
       .then((response) => {
         if (!response.ok) {
           console.log(response.error);
-          return;
         }
-        playlistName.current = response.playlist.name
-        playlistCover.current = response.playlist.image
-        playlistIsPublic.current = response.playlist.public
-        playlistTracks.current = response.playlist.tracks
-        playlistTracksLazy.current = response.playlist.tracks.slice(0, 4)
-        songCount.current = response.playlist.tracks.length
-        console.log("Rendering Post:" + playlistName.current)
+        else {
+          playlistName.current = response.playlist.name
+          playlistCover.current = response.playlist.image
+          playlistIsPublic.current = response.playlist.public
+          playlistTracks.current = response.playlist.tracks
+          playlistTracksLazy.current = response.playlist.tracks.slice(0, 4)
+          songCount.current = response.playlist.tracks.length
+        }
         setLoading(false);
       });
   }
@@ -174,7 +169,6 @@ export default function PostBox(props) {
           return;
         } else {
           comments.current = response.post.comments
-          commentCount.current = response.post.comments.length
           setCommentInput("");
           scrollRef.current.scrollToEnd()
           setCommentLoading(false);
@@ -185,7 +179,6 @@ export default function PostBox(props) {
   const updatePostComments = (commentsUpdate) => {
     setCommentLoading(true)
     comments.current = commentsUpdate
-    commentCount.current = commentsUpdate.length
     setCommentLoading(false)
   };
 
@@ -193,7 +186,6 @@ export default function PostBox(props) {
   const OpenURLButton = ({ children }) => {
     const handlePress = useCallback(async () => {
       const url = "spotify:playlist:" + props.playlistID + ":play"
-      console.log(url)
       await Linking.openURL(url);
     });
     return (
@@ -213,6 +205,30 @@ export default function PostBox(props) {
       </TouchableOpacity>
     );
   };
+
+  const repost = (postID) => {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        postID: postID,
+        userID: props.myUserID,
+        accessToken: props.accessToken,
+      }),
+    };
+    fetch(`${API_URL}/api/post/repost`, requestOptions)
+      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          console.log(response.error);
+        }
+        else {
+          props.navigation.navigate({name: "Home",
+          params: {reload: true},
+          });
+        }
+      });
+  }
 
   return (
     <View style={styles.PostContainer}>
@@ -564,13 +580,30 @@ export default function PostBox(props) {
                   size={25}
                 />
               </TouchableOpacity>
-              <TouchableOpacity>
+              {(repostExpanded ?
+              <View style={{flexDirection:"row"}}>
+                <Text style={[styles.MainText, {textAlignVertical:"center", marginRight:10, fontSize: 13}]}>Repost?</Text>
+                <TouchableOpacity style={{backgroundColor:"#573C6B", padding: 4, borderRadius:20, marginHorizontal: 5}}
+                onPress={() => {
+                  repost(props.postID)
+                  setRepostExpanded(false)
+                }}>
+                  <Ionicons name="checkmark" color="white" size={15}/>
+                </TouchableOpacity>
+                <TouchableOpacity style={{backgroundColor:"#573C6B", padding: 4, borderRadius:20, marginHorizontal: 5}}
+                onPress={() => setRepostExpanded(false)}>
+                  <Ionicons name="close" color="white" size={15}/>
+                </TouchableOpacity>
+              </View>
+              :
+              <TouchableOpacity onPress={() => setRepostExpanded(true)}>
                 <Ionicons
                   style={{ color: "white", marginRight: 20 }}
                   name="repeat"
                   size={25}
                 />
               </TouchableOpacity>
+              )}
             </View>
             {/* Post Info */}
             <View
@@ -610,7 +643,7 @@ export default function PostBox(props) {
                       fontSize: 9,
                     }}
                   >
-                    {commentCount.current}
+                    {comments.current.length}
                   </Text>
                   <Text
                     style={{ color: "white", textAlign: "right", fontSize: 9 }}

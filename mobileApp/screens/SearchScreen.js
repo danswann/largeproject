@@ -110,8 +110,8 @@ export default function SearchScreen({ route, navigation }) {
           keyExtractor={(item, index) => index.toString()}
         />
       </View>
-      {!searching && (
-        <View style={{ width: "100%", top: "5%" }}>
+      {(!searching ? (
+        <View style={{ width: "100%"}}>
           <FlatList
             data={topUsers}
             initialScrollIndex={0}
@@ -121,6 +121,8 @@ export default function SearchScreen({ route, navigation }) {
                 <TopUsersBox
                   username={item.username}
                   userID={item._id}
+                  myUserID={userID}
+                  accessToken={accessToken}
                   // isFollowed={item.currentUserFollows}
                   followerCount={item.followers.length}
                   postID1={item.posts.length > 0 ? item.posts[0]._id : null}
@@ -143,7 +145,9 @@ export default function SearchScreen({ route, navigation }) {
             }}
             keyExtractor={(item, index) => index.toString()}
           />
-        </View>
+        </View>)
+        :
+        <></>
       )}
     </View>
   );
