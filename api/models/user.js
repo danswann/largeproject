@@ -19,6 +19,7 @@ const UserSchema = new Schema({
     profileImageUrl: {type:String},
     biography: {type:String},
     dateJoined: {type:Date, default:Date.now},
+    numFollowers: {type:Number, default: 0},
     followers: [{type:Schema.ObjectId, ref:'User'}],
     following: [{type:Schema.ObjectId, ref:'User'}],
     settings: {type:UserSettingsSchema, required:true, default:()=>({})},

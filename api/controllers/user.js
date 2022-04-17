@@ -347,7 +347,7 @@ exports.followUser = async function(req, res, next) {
     {
         // Find following by followingID and add user to follower array if doesn't exist already
         const filterFollowing = {_id: followingID};
-        const updateFollowing = {$addToSet: {followers: userID}};
+        const updateFollowing = {$addToSet: {followers: userID}, $inc: {numFollowers: 1}};
         const optionsFollowing = {new: true};
         const user2 = await User.findOneAndUpdate(filterFollowing, updateFollowing, optionsFollowing);
 
@@ -381,7 +381,7 @@ exports.followUser = async function(req, res, next) {
         {
             // Find user by userID and remove following as following user was not found
             const filterUser = {_id: userID};
-            const updateUser = {$pull: {following: followingID}};
+            const updateUser = {$pull: {following: followingID}, $inc: {numFollowers: -1}};
             const optionsUser = {new: true};
             const user = await User.findOneAndUpdate(filterUser, updateUser, optionsUser);
 
@@ -433,7 +433,7 @@ exports.unfollowUser = async function(req, res, next) {
     {
         // Find following by followingID and remove user from follower array
         const filterFollowing = {_id: followingID};
-        const updateFollowing = {$pull: {followers: userID}};
+        const updateFollowing = {$pull: {followers: userID}, $inc: {numFollowers: -1}};
         const optionsFollowing = {new: true};
         const user2 = await User.findOneAndUpdate(filterFollowing, updateFollowing, optionsFollowing);
         const notification = await Notification.deleteOne({sender:userID, user:followingID, notificationType: 0});
@@ -904,10 +904,10 @@ exports.topUsers = async function(req, res, next) {
 
     // .lean breaks .includes
     // Get top 10 users sorted by number of likes
-    const userProjection = {_id: 1, username: 1, profileImageUrl: 1, followers: 1};
-    var listUsers = await User.find({}, userProjection).sort({followers: -1});
+    const userProjection = {_id: 1, username: 1, profileImageUrl: 1, numFollowers: 1, followers: 1};
+    var listUsers = await User.find({}, userProjection).sort({numFollowers: 'desc'}).limit(10);
+
     listUsers = JSON.parse(JSON.stringify(listUsers));
-    listUsers = listUsers.splice(0, 10);
 
     // If userID follows topUser then return currentUserFollows true and vice versa
     for (var i = 0; i < listUsers.length; i++)
@@ -920,14 +920,15 @@ exports.topUsers = async function(req, res, next) {
         {
             listUsers[i].currentUserFollows = false;
         }
+        listUsers[i].numFollowers = undefined;
     }
 
     // For each top user get 3 top liked posts (no reposts) and populate post object with playlist name and image
     for (var i = 0; i < listUsers.length; i++)
     {
         const postFilter = {author: listUsers[i]._id};
-        const postProjection = {_id: 1, author: 1, playlistID: 1, likedBy: 1, isReposted: 1};
-        var listPosts = await Post.find(postFilter, postProjection).sort({likedBy: -1}).lean();
+        const postProjection = {_id: 1, author: 1, playlistID: 1, numLikes: 1, likedBy: 1, isReposted: 1, timeStamp: 1};
+        var listPosts = await Post.find(postFilter, postProjection).sort({numLikes: 'desc', timeStamp: 'desc'}).lean();
 
         for (var j = 0; j < listPosts.length; j++)
         {
@@ -946,6 +947,8 @@ exports.topUsers = async function(req, res, next) {
                 {
                     var data = await Spotify.getPlaylistNameandImage(listPosts[j].author, listPosts[j].playlistID);
                     listPosts[j].isReposted = undefined;
+                    listPosts[j].numLikes = undefined;
+                    listPosts[j].timeStamp = undefined;
                     listPosts[j].name = data.name;
                     listPosts[j].image = data.image;
                 }

@@ -90,7 +90,7 @@ exports.likePost = async function(req, res, next) {
     {
         // Deleting the like
         const filter = {_id:postID};
-        const update = {$pull:{likedBy:userID}};
+        const update = {$pull:{likedBy:userID}, $inc: {numLikes: -1}};
         const projection = {likedBy: 1};
         const options = {projection: projection, new: true};
         const post = await Post.findOneAndUpdate(filter, update, options);
@@ -119,7 +119,7 @@ exports.likePost = async function(req, res, next) {
     {
         // Add the like; adds userID to likedBy array
         const filter = {_id:postID};
-        const update = {$push:{likedBy:userID}};
+        const update = {$push:{likedBy:userID}, $inc: {numLikes: 1}};
         const projection = {author: 1, likedBy: 1};
         const options = {projection: projection, new: true};
         const post = await Post.findOneAndUpdate(filter, update, options);
