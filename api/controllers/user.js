@@ -924,17 +924,26 @@ exports.topUsers = async function(req, res, next) {
     {
         const postFilter = {author: listUsers[i]._id};
         const postProjection = {_id: 1, author: 1, playlistID: 1, likedBy: 1};
-        var listPosts = await Post.find(postFilter, postProjection).sort({likedBy: -1}).lean();
+        var listPosts = await Post.find(postFilter, postProjection).populate('originalPost', '_id author playlistID').sort({likedBy: -1}).lean();
         listPosts = listPosts.splice(0, 3);
 
-        for (var j = 0; j < 3; j++) {
-            try {
-                var data = await Spotify.getPlaylistNameandImage(listPosts[j].author, listPosts[j].playlistID);
+        var length = 3;
+
+        if (listPosts.length < 3)
+            length = listPosts.length;
+
+        for (var j = 0; j < length; j++) {
+            if (listPosts[j].isReposted == true)
+            {
+                var data = await Spotify.getPlaylistNameandImage(listPosts[j].originalPost.author, listPosts[j].originalPost.playlistID);
                 listPosts[j].name = data.name;
                 listPosts[j].image = data.image;
             }
-            catch(err) {
-                listPosts.splice(i, 1);
+            else
+            {
+                var data = await Spotify.getPlaylistNameandImage(listPosts[j].author, listPosts[j].playlistID);
+                listPosts[j].name = data.name;
+                listPosts[j].image = data.image;
             }
         };
         listUsers[i].posts = listPosts;
