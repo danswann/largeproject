@@ -41,6 +41,7 @@ export default function ChatScreen({ route, navigation }) {
 
   useEffect(() => {
     setChatLoading(true)
+    chatIDRef.current = chatID
     if(newChat)
       createChat()
     else
@@ -80,6 +81,7 @@ export default function ChatScreen({ route, navigation }) {
           messageArray.current = response.dm.chat
           ws.current = new WebSocket(`${SOCKET_URL}/api/socket/chat?userID=${myUserID}&chatID=${chatIDRef.current}`, 'chat');
           ws.current.onmessage = function(event) {
+            console.log(JSON.parse(event.data))
             setMessageLoading(true);
             messageArray.current.push(JSON.parse(event.data));
             setMessageLoading(false);
