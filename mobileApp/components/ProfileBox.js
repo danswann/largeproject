@@ -6,8 +6,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
 
 export default function ProfileBox(props) {
+  const isFocused = useIsFocused();
   // Track whether or not you follow this user
-  const [isFollowed, setIsFollowed] = useState(props.isFollowed);
+  console.log("props.isFollowed ", props.isFollowed);
+  const [isFollowed, setIsFollowed] = useState(false);
+  useEffect(() => {
+    setIsFollowed(props.isFollowed);
+  }, [isFocused]);
+  console.log("isFollowed ", isFollowed);
 
   // Follow a user
   async function followUser() {
