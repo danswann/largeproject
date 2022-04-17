@@ -674,7 +674,7 @@ const styles = StyleSheet.create({
     minHeight: 330,
     minWidth: "99%",
     borderRadius: 23,
-    marginVertical: 2,
+    marginTop: 15,
     marginHorizontal: 2,
   },
 
