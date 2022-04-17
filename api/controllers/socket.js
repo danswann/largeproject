@@ -7,9 +7,9 @@ exports.chat = async function(ws, req) {
     // Whenever a chat is received
     ws.on('message', function(msg) {
         // Broadcast it to all other relevant clients
+        console.log('Received: ' + msg);
         msg = JSON.parse(msg);
         var clients = Array.from(req.app.wsInstance.getWss().clients);
-        console.log(clients);
         clients = clients.filter(c => c.protocol == 'chat' && c.chatID == ws.chatID/* && c.userID != ws.userID*/);
         for(c of clients) {
             c.send(JSON.stringify({author:ws.userID, text:msg.text, timestamp:Date.now()}));
