@@ -118,7 +118,7 @@ exports.getMyPlaylists = async function(req, res, next) {
     } while(total > offset);
 
     // Filter to only playlist's owned by the current user
-    response.playlists = response.playlists.filter(x => x.owner == currentUser.spotify.id);
+    response.playlists = response.playlists.filter(x => x.owner == currentUser.spotify.id && x.public);
     // Remove extra fields
     response.playlists = response.playlists.map(({owner, ...rest}) => {return rest});
 

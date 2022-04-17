@@ -3,11 +3,13 @@ import React from "react";
 import PostBox from "./PostBox";
 import RepostBox from "./RepostBox";
 import { useState } from "react";
+import { API_URL } from "../constants/Info";
 
 export default function TopUsersBox(props) {
   // Stuff to show the post
   const [postBox, setPostBox] = useState(<></>);
   const [postVisible, setPostVisible] = useState(false);
+
   const openPost = async (postID) => {
     setPostBox(await getPostBoxFromID(postID));
     setPostVisible(true);
@@ -28,34 +30,34 @@ export default function TopUsersBox(props) {
             res(<></>);
           }
           res(
-            (response.post.isReposted ?
+            response.post.isReposted ? (
               <RepostBox
                 navigation={props.navigation}
                 repostID={response.post._id}
                 author={response.post.author}
                 originalPost={response.post.originalPost}
                 timeStamp={response.post.timeStamp}
-                myUserID={props.myUserID} 
-                accessToken={props.accessToken} 
+                myUserID={props.myUserID}
+                accessToken={props.accessToken}
               />
-              :
-              <PostBox 
+            ) : (
+              <PostBox
                 navigation={props.navigation}
-                postID={response.post._id} 
-                author={response.post.author} 
+                postID={response.post._id}
+                author={response.post.author}
                 caption={response.post.caption}
                 comments={response.post.comments}
                 likedBy={response.post.likedBy}
-                playlistID={response.post.playlistID} 
+                playlistID={response.post.playlistID}
                 timeStamp={response.post.timeStamp}
-                myUserID={props.myUserID} 
-                accessToken={props.accessToken} 
-              />)
+                myUserID={props.myUserID}
+                accessToken={props.accessToken}
+              />
+            )
           );
         });
     });
   }
-  console.log("PROPS: ", props);
   return (
     <View
       style={{
@@ -65,107 +67,145 @@ export default function TopUsersBox(props) {
         borderBottomColor: "gray",
       }}
     >
-      {props.rank === 0 && <Text style={styles.topUsersText}>Top Users</Text>}
-      <View
-        style={{
-          marginTop: 30,
-          flexDirection: "row",
-          // backgroundColor: "yellow",
-          width: "100%",
-          justifyContent: "space-around",
-        }}
-      >
-        {/* Rank */}
-        <View
-          style={{
-            width: "10%",
-            // backgroundColor: "blue",
-            alignItems: "center",
-          }}
-        >
-          <Text style={{ color: "white", fontWeight: "bold", fontSize: 16 }}>
-            #{props.rank + 1}
-          </Text>
+      {postVisible ? (
+        <View style={styles.PostContainer}>
+          {/* Opened post */}
+          {postBox}
+          {/* Close button */}
+          <TouchableOpacity
+            style={styles.closeBtn}
+            onPress={() => setPostVisible(false)}
+          >
+            <Text style={styles.btnText}>Back</Text>
+          </TouchableOpacity>
         </View>
-        {/* Profile pic and username */}
-        <TouchableOpacity
-          style={{
-            flexDirection: "row",
-            width: "55%",
-            left: "-5%",
-            justifyContent: "space-around",
-          }}
-          hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
-          onPress={() => {
-            props.navigation.navigate({
-              name: "OtherProfile",
-              params: { userID: props.userID, isFollowed: props.isFollowed },
-            });
-          }}
-        >
-          <View style={{ width: "10%" }}>
-            <Image
-              style={styles.profilePic}
-              source={
-                props.profilePic
-                  ? { uri: props.profilePic }
-                  : require("../assets/images/defaultSmile.png")
-              }
-            />
+      ) : (
+        <View>
+          {props.rank === 0 && (
+            <Text style={styles.topUsersText}>Top Users</Text>
+          )}
+          <View
+            style={{
+              marginTop: 30,
+              flexDirection: "row",
+              // backgroundColor: "yellow",
+              width: "100%",
+              justifyContent: "space-around",
+            }}
+          >
+            {/* Rank */}
+            <View
+              style={{
+                width: "10%",
+                // backgroundColor: "blue",
+                alignItems: "center",
+              }}
+            >
+              <Text
+                style={{ color: "white", fontWeight: "bold", fontSize: 16 }}
+              >
+                #{props.rank + 1}
+              </Text>
+            </View>
+            {/* Profile pic and username */}
+            <TouchableOpacity
+              style={{
+                flexDirection: "row",
+                width: "55%",
+                left: "-5%",
+                justifyContent: "space-around",
+              }}
+              hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
+              onPress={() => {
+                props.navigation.navigate({
+                  name: "OtherProfile",
+                  params: {
+                    userID: props.userID,
+                    isFollowed: props.isFollowed,
+                  },
+                });
+              }}
+            >
+              <View style={{ width: "10%" }}>
+                <Image
+                  style={styles.profilePic}
+                  source={
+                    props.profilePic
+                      ? { uri: props.profilePic }
+                      : require("../assets/images/defaultSmile.png")
+                  }
+                />
+              </View>
+              <View style={{ width: "60%", left: "5%" }}>
+                <Text
+                  style={styles.usernameText}
+                  adjustsFontSizeToFit={true}
+                  numberOfLines={1}
+                >
+                  {props.username}
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <View style={{ width: "25%", right: "90%" }}>
+              <Text style={{ color: "white", textAlign: "right" }}>
+                {props.followerCount} Followers
+              </Text>
+            </View>
           </View>
-          <View style={{ width: "60%", left: "5%" }}>
-            <Text style={styles.usernameText}>{props.username}</Text>
+          <View style={{ position: "relative", height: 150 }}>
+            <View
+              style={{
+                flexDirection: "row",
+                position: "absolute",
+                left: "15%",
+                marginTop: 20,
+                width: "68%",
+                //   backgroundColor: "green",
+              }}
+            >
+              <TouchableOpacity
+                style={{ width: "33%" }}
+                onPress={() => {
+                  if (props.postID1) {
+                    openPost(props.postID1);
+                  }
+                }}
+              >
+                <Image
+                  style={styles.postImages}
+                  source={{ uri: props.postImage1 }}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{ width: "33%", marginLeft: 10 }}
+                onPress={() => {
+                  if (props.postID2) {
+                    openPost(props.postID2);
+                  }
+                }}
+              >
+                <Image
+                  style={styles.postImages}
+                  source={{ uri: props.postImage2 }}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{ width: "33%", marginLeft: 10 }}
+                onPress={() => {
+                  if (props.postID3) {
+                    openPost(props.postID3);
+                  }
+                }}
+              >
+                <Image
+                  style={styles.postImages}
+                  source={{ uri: props.postImage3 }}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
-        </TouchableOpacity>
-        <View style={{ width: "25%", right: "30%" }}>
-          <Text style={{ color: "white" }}>
-            {props.followerCount} Followers
-          </Text>
         </View>
-      </View>
-      <View style={{ position: "relative", height: 150 }}>
-        <View
-          style={{
-            flexDirection: "row",
-            position: "absolute",
-            left: "15%",
-            marginTop: 20,
-            width: "68%",
-            //   backgroundColor: "green",
-          }}
-        >
-          <TouchableOpacity
-            onPress={() => {
-              openPost(props.postID1);
-            }}
-          >
-            <Image
-              style={styles.postImages}
-              source={{ uri: props.postImage1 }}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              openPost(props.PostID2);
-            }}
-          >
-            <Image
-              style={styles.postImages}
-              source={{ uri: props.postImage2 }}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              openPost(props.postID3);
-            }}
-          >
-            <Image
-              style={styles.postImages}
-              source={{ uri: props.postImage3 }}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
+      )}
     </View>
   );
 }
@@ -178,9 +218,10 @@ const styles = StyleSheet.create({
   },
   postImages: {
     aspectRatio: 1,
-    width: "33%",
+    width: "100%",
     marginRight: 10,
   },
+
   topUsersText: {
     color: "white",
     fontSize: 20,
@@ -192,5 +233,28 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
     textDecorationLine: "underline",
+  },
+  closeBtn: {
+    width: "80%",
+    borderRadius: 25,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 20,
+    backgroundColor: "#573C6B",
+  },
+  btnText: {
+    fontSize: 15,
+    marginHorizontal: 10,
+    color: "white",
+  },
+  PostContainer: {
+    flex: 1,
+    flexDirection: "column",
+    width: "100%",
+    height: "60%",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    backgroundColor: "#23192B",
   },
 });

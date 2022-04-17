@@ -1,11 +1,18 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+// import { Outlet } from 'react-router-dom';
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Nav } from './nav';
+import { Main } from './routes';
+import NavProvider from './context/NavContext';
 
 function App() {
   return (
-    <div>
-      <Outlet />
+    <div>      
+			<NavProvider>
+        {/* <Outlet /> */}
+				<Nav />
+				<Main />
+			</NavProvider>
     </div>
   );
 }

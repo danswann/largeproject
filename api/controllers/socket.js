@@ -4,6 +4,7 @@ exports.chat = async function(ws, req) {
     // Runs once on connection, setting userID and chatID of this connection
     ws.userID = req.query.userID;
     ws.chatID = req.query.chatID;
+    console.log('New connection from: User: ' + ws.userID + 'and Chat:' + ws.chatID);
     // Whenever a chat is received
     ws.on('message', function(msg) {
         // Broadcast it to all other relevant clients

@@ -26,13 +26,12 @@ export default function SearchScreen({ route, navigation }) {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({}),
+      body: JSON.stringify({ userID: route.params.userID }),
     };
     fetch(`${API_URL}/api/user/topUsers`, requestOptions)
       .then((response) => response.json())
       .then((response) => {
         if (response.ok) {
-          console.log("TOP USERS", response);
           setTopUsers(response.users);
         } else {
         }
@@ -110,13 +109,12 @@ export default function SearchScreen({ route, navigation }) {
           keyExtractor={(item, index) => index.toString()}
         />
       </View>
-      {(!searching ? (
-        <View style={{ width: "100%"}}>
+      {!searching ? (
+        <View style={{ width: "100%", marginTop: 20 }}>
           <FlatList
             data={topUsers}
             initialScrollIndex={0}
             renderItem={({ item, index }) => {
-              console.log("ITEM", item);
               return (
                 <TopUsersBox
                   username={item.username}
@@ -125,6 +123,7 @@ export default function SearchScreen({ route, navigation }) {
                   accessToken={accessToken}
                   // isFollowed={item.currentUserFollows}
                   followerCount={item.followers.length}
+                  isFollowed={item.currentUserFollows}
                   postID1={item.posts.length > 0 ? item.posts[0]._id : null}
                   postID2={item.posts.length > 0 ? item.posts[1]._id : null}
                   postID3={item.posts.length > 0 ? item.posts[2]._id : null}
@@ -145,8 +144,8 @@ export default function SearchScreen({ route, navigation }) {
             }}
             keyExtractor={(item, index) => index.toString()}
           />
-        </View>)
-        :
+        </View>
+      ) : (
         <></>
       )}
     </View>
