@@ -903,11 +903,13 @@ exports.topUsers = async function(req, res, next) {
     }
 
     // .lean breaks .includes
+    // Get top 10 users sorted by number of likes
     const userProjection = {_id: 1, username: 1, profileImageUrl: 1, followers: 1};
     var listUsers = await User.find({}, userProjection).sort({followers: -1});
     listUsers = JSON.parse(JSON.stringify(listUsers));
     listUsers = listUsers.splice(0, 10);
 
+    // If userID follows topUser then return currentUserFollows true and vice versa
     for (var i = 0; i < listUsers.length; i++)
     {
         if (listUsers[i].followers.includes(userID))
@@ -920,32 +922,37 @@ exports.topUsers = async function(req, res, next) {
         }
     }
 
+    // For each top user get 3 top liked posts (no reposts) and populate post object with playlist name and image
     for (var i = 0; i < listUsers.length; i++)
     {
         const postFilter = {author: listUsers[i]._id};
-        const postProjection = {_id: 1, author: 1, playlistID: 1, likedBy: 1};
-        var listPosts = await Post.find(postFilter, postProjection).populate('originalPost', '_id author playlistID').sort({likedBy: -1}).lean();
-        listPosts = listPosts.splice(0, 3);
+        const postProjection = {_id: 1, author: 1, playlistID: 1, likedBy: 1, isReposted: 1};
+        var listPosts = await Post.find(postFilter, postProjection).sort({likedBy: -1}).lean();
 
-        var length = 3;
-
-        if (listPosts.length < 3)
-            length = listPosts.length;
-
-        for (var j = 0; j < length; j++) {
-            if (listPosts[j].isReposted == true)
+        for (var j = 0; j < listPosts.length; j++)
+        {
+            if (j >= 3)
             {
-                var data = await Spotify.getPlaylistNameandImage(listPosts[j].originalPost.author, listPosts[j].originalPost.playlistID);
-                listPosts[j].name = data.name;
-                listPosts[j].image = data.image;
+                break;
             }
             else
             {
-                var data = await Spotify.getPlaylistNameandImage(listPosts[j].author, listPosts[j].playlistID);
-                listPosts[j].name = data.name;
-                listPosts[j].image = data.image;
+                if (listPosts[j].isReposted == true)
+                {
+                    listPosts.splice(j, 1);
+                    j--;
+                }
+                else
+                {
+                    var data = await Spotify.getPlaylistNameandImage(listPosts[j].author, listPosts[j].playlistID);
+                    listPosts[j].isReposted = undefined;
+                    listPosts[j].name = data.name;
+                    listPosts[j].image = data.image;
+                }
             }
-        };
+        }
+        
+        listPosts = listPosts.splice(0, 3);
         listUsers[i].posts = listPosts;
     }
 
@@ -978,60 +985,3 @@ exports.changeBio = async function(req, res, next) {
         res.status(200).json(response);
     }
 }
-
-// exports.topUsers = async function(req, res, next) {
-//     // Default response object
-//     var response = {ok:true}
-//
-//     const userProjection = {_id: 1, username: 1, profileImageUrl: 1, followers: 1};
-//     var listOfUsers = await User.find({}, userProjection).sort({followers: -1}).lean();
-//     listOfUsers = listOfUsers.splice(0, 10);
-//
-//     var userIDs = [];
-//
-//     for (var i = 0; i < listOfUsers.length; i++)
-//         userIDs.push(listOfUsers[i]._id);
-//
-//     const postFilter = {author: userIDs};
-//     const postProjection = {_id: 1, author: 1, playlistID: 1, likedBy: 1};
-//     var listOfPosts = await Post.find(postFilter, postProjection).sort({author: 1, likedBy: -1}).lean();
-//
-//     for (var i = 0; i < listOfUsers.length; i++)
-//     {
-//         var userPosts = [];
-//         var count = 0;
-//         var curIndex = 0;
-//         for (var j = 0; j < listOfPosts.length; j++)
-//         {
-//             if (listOfPosts[j].author.toString() == listOfUsers[0]._id.toString())
-//             {
-//                 curIndex = j;
-//                 if (count < 3)
-//                 {
-//                     try {
-//                         var data = await Spotify.getPlaylistNameandImage(listOfPosts[curIndex].author, listOfPosts[curIndex].playlistID);
-//                         userPosts.push({
-//                             _id: listOfPosts[curIndex]._id,
-//                             name: data.name,
-//                             image: data.image
-//                         });
-//                         count = count + 1;
-//                     }
-//                     catch(err) {
-//                         listOfPosts.splice(0, 1);
-//                     }
-//                 }
-//                 listOfPosts.splice(curIndex, 1);
-//                 j--;
-//             }
-//             else
-//             {
-//                 continue;
-//             }
-//         }
-//         listOfUsers[i].posts = userPosts;
-//     }
-//
-//     response.users = listOfUsers;
-//     res.status(200).json(response);
-// }
