@@ -12,6 +12,7 @@ import {
 import ProfileBox from "../components/ProfileBox";
 import RowBox from "../components/RowBox";
 import PostBox from "../components/PostBox";
+import RepostBox from "../components/RepostBox";
 import { API_URL } from "../constants/Info";
 import { useIsFocused } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -193,21 +194,30 @@ export default function ProfileScreen({ route, navigation }) {
 					res(<></>)
 				}
         res(
-          <PostBox 
-            navigation={navigation} 
-            postID={response.post._id} 
-            author={response.post.author} 
-            caption={response.post.caption}
-            comments={response.post.comments}
-            isReposted={response.post.isReposted}
-            likedBy={response.post.likedBy}
-            originalPostID={response.post.originalPostID}
-            playlistID={response.post.playlistID} 
-            timeStamp={response.post.timeStamp}
-            myUserID={userID} 
-            accessToken={accessToken} 
-          />
-        )
+          (response.post.isReposted ?
+            <RepostBox
+              navigation={navigation}
+              repostID={response.post._id}
+              author={response.post.author}
+              originalPost={response.post.originalPost}
+              timeStamp={response.post.timeStamp}
+              myUserID={userID} 
+              accessToken={accessToken} 
+            />
+            :
+            <PostBox 
+              navigation={navigation}
+              postID={response.post._id} 
+              author={response.post.author} 
+              caption={response.post.caption}
+              comments={response.post.comments}
+              likedBy={response.post.likedBy}
+              playlistID={response.post.playlistID} 
+              timeStamp={response.post.timeStamp}
+              myUserID={userID} 
+              accessToken={accessToken} 
+            />)
+          )
 			})
     })
 	}

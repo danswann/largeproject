@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import React from "react";
 import PostBox from "./PostBox";
+import RepostBox from "./RepostBox";
 import { useState } from "react";
 
 export default function TopUsersBox(props) {
@@ -27,20 +28,29 @@ export default function TopUsersBox(props) {
             res(<></>);
           }
           res(
-            <PostBox
-              navigation={navigation}
-              postID={response.post._id}
-              author={response.post.author}
-              caption={response.post.caption}
-              comments={response.post.comments}
-              isReposted={response.post.isReposted}
-              likedBy={response.post.likedBy}
-              originalPostID={response.post.originalPostID}
-              playlistID={response.post.playlistID}
-              timeStamp={response.post.timeStamp}
-              myUserID={userID}
-              accessToken={accessToken}
-            />
+            (response.post.isReposted ?
+              <RepostBox
+                navigation={props.navigation}
+                repostID={response.post._id}
+                author={response.post.author}
+                originalPost={response.post.originalPost}
+                timeStamp={response.post.timeStamp}
+                myUserID={props.myUserID} 
+                accessToken={props.accessToken} 
+              />
+              :
+              <PostBox 
+                navigation={props.navigation}
+                postID={response.post._id} 
+                author={response.post.author} 
+                caption={response.post.caption}
+                comments={response.post.comments}
+                likedBy={response.post.likedBy}
+                playlistID={response.post.playlistID} 
+                timeStamp={response.post.timeStamp}
+                myUserID={props.myUserID} 
+                accessToken={props.accessToken} 
+              />)
           );
         });
     });

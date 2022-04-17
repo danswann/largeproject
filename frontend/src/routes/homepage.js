@@ -2,23 +2,13 @@ import '../App.css'
 // import Container from 'react-bootstrap/Container'
 // import Navbar from 'react-bootstrap/Navbar';
 // import Nav from 'react-bootstrap/Nav';
-import { Container, Nav, Navbar, NavLink } from 'react-bootstrap';
+import { Container, Navbar, NavLink, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function HomePage() {
     return (
-        <main>            
-            {/* <Navbar class="navbar navbar-expand-lg navbar-light bg-light fixed-top" >
-                <Container>
-                    <Navbar.Brand class="navbar-brand" href="#"><img src="/assets/soundlinklogo.png" alt="" style={styles.logo}/></Navbar.Brand>
-                    <Nav className="description">                    
-                        <Nav.Link href="#home" className="description">home</Nav.Link>
-                        <Nav.Link href="#aboutus">about us</Nav.Link>
-                        <Nav.Link href="#contact">contact</Nav.Link>
-                        <Nav.Link class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">download</Nav.Link>
-                    </Nav>
-                </Container>
-            </Navbar> */}
+        <main>
+            {/* navbar */}
             <Navbar class="navbar navbar-expand-lg navbar-dark" variant="dark">
                 <Container>
                     <NavLink class="navbar-brand" href="#"><img src="/assets/soundlinklogo.png" width="50%" alt=""/></NavLink>
@@ -43,16 +33,34 @@ function HomePage() {
                     </Container>         
                 </Container>
             </Navbar>
-            <h3 className="description">discover new sounds</h3>              
+            {/* description */}
+            <Container style={{justifyContent:'center', display:'flex'}}>
+                <Row className="container mt-5">
+                    {/* body text */}
+                    <Col>
+                        <h2 className="description text-left text-bold">discover new sounds</h2>        
+                        <h5 className="description mt-4">
+                        share your playlists with the world
+                        <br></br><br></br>                                                
+                        join soundlink today.
+                        </h5>
+                    </Col>
+                    {/* phone screen image */}
+                    <Col>
+                        <img
+                        src="/assets/iphoneScreenDummy.jpg"
+                        width="75%"
+                        alt=""/>
+                    </Col>
+                </Row>
+            </Container>
+
+            <Container>
+                <h1></h1>
+            </Container>
         </main>        
     )    
 }
-
-// const styles = StyleSheet.create({
-//     logo: {
-//         width: "65%",
-//     },
-// })
 
 export default HomePage;
 

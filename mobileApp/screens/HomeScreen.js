@@ -2,6 +2,7 @@ import React, { useState, useEffect} from "react";
 import { Text, View, StyleSheet, FlatList, Image, ActivityIndicator } from "react-native";
 import { API_URL } from "../constants/Info";
 import PostBox from "../components/PostBox";
+import RepostBox from "../components/RepostBox";
 import { useIsFocused } from "@react-navigation/native";
 import { AuthContext } from "../Context";
 
@@ -21,7 +22,7 @@ export default function HomeScreen({ route, navigation }) {
   const { refresh } = React.useContext(AuthContext);
 
   const isFocused = useIsFocused();
-  useEffect(() => {
+  useEffect(async () => {
     setLoading(true), 
     getFeed(0), 
     setCurrentIndex(0)
@@ -77,6 +78,9 @@ export default function HomeScreen({ route, navigation }) {
         }
       })
   }
+
+
+
   return (
     <View style={styles.mainContainer}>
       {(!loading ? 
@@ -106,21 +110,32 @@ export default function HomeScreen({ route, navigation }) {
             )}
           </View>
         }
-        renderItem={({item}) => <PostBox 
-          navigation={navigation} 
-          postID={item._id} 
-          author={item.author} 
-          caption={item.caption}
-          comments={item.comments}
-          isReposted={item.isReposted}
-          likedBy={item.likedBy}
-          originalPostID={item.originalPostID}
-          playlistID={item.playlistID} 
-          timeStamp={item.timeStamp}
-          myUserID={userID} 
-          accessToken={accessToken} 
-          refreshToken={refreshToken}
-        />}
+        renderItem={({item}) => 
+          (item.isReposted ?
+          <RepostBox
+            navigation={navigation}
+            repostID={item._id}
+            author={item.author}
+            originalPost={item.originalPost}
+            timeStamp={item.timeStamp}
+            myUserID={userID} 
+            accessToken={accessToken} 
+            refreshToken={refreshToken}
+          />
+            :
+          <PostBox 
+            navigation={navigation}
+            postID={item._id} 
+            author={item.author} 
+            caption={item.caption}
+            comments={item.comments}
+            likedBy={item.likedBy}
+            playlistID={item.playlistID} 
+            timeStamp={item.timeStamp}
+            myUserID={userID} 
+            accessToken={accessToken} 
+            refreshToken={refreshToken}
+          />)}
         listKey={(item, index) => `_key${index.toString()}`}
         keyExtractor={(item, index) => `_key${index.toString()}`}
       />))
