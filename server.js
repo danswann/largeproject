@@ -1,4 +1,5 @@
 // Perform imports
+const WebSocketServer = require('ws').WebSocketServer;
 const app = require('./app');
 const C = require('./constants.js');
 const Spotify = require('./api/spotify/main');
@@ -15,7 +16,7 @@ Spotify.runUpdateLoop();
 setInterval(Spotify.runUpdateLoop, 60 * 60 * 1000); // 1 hour
 
 // Begin listening on relevant port
-app.listen(C.PORT, () =>
+const server = app.listen(C.PORT, () =>
 {
     console.log('Server listening on port ' + C.PORT);
 });

@@ -19,51 +19,56 @@ import {
 
 import ChatBox from "../components/ChatBox";
 import { API_URL } from "../constants/Info";
+import { SOCKET_URL } from "../constants/Info";
 import { NavigationContainer, NavigationHelpersContext } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { Ionicons } from "@expo/vector-icons";
-
+import { withSafeAreaInsets } from "react-native-safe-area-context";
 
 const Tab = createMaterialTopTabNavigator();
 
 export default function ChatScreen({ route, navigation }) {
   const { myUserID, chatID, otherUserID, newChat, name, messages, accessToken} = route.params;
+  const chatIDRef = useRef(chatID)
   const [chatLoading, setChatLoading] = useState();
   const messageInput = useRef("");
   const messageInputRef = useRef();
   const [messageLoading, setMessageLoading] = useState(false);
   const messageArray = useRef(messages)
   const flatListRef = useRef()
-  console.log(chatID)
+  const ws = useRef()
 
   useEffect(() => {
     setChatLoading(true)
+    chatIDRef.current = chatID
     if(newChat)
       createChat()
     else
-      getChat(chatID)
+      getChat()
   }, [chatID])
 
-
   useEffect(() => {
+    //Creates a listener for keyboard opening
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       () => {
         flatListRef.current.scrollToEnd()
       }
     );
+
     return () => {
+      ws.current.close()
       keyboardDidShowListener.remove();
     };
   }, []);
 
-  function getChat(chatID)
+  function getChat()
   {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({userID: myUserID, chatID: chatID, accessToken: accessToken})
+      body: JSON.stringify({userID: myUserID, chatID: chatIDRef.current, accessToken: accessToken})
     };
     fetch(`${API_URL}/api/directMessage/getChat`, requestOptions)
       .then((response) => response.json())
@@ -74,6 +79,13 @@ export default function ChatScreen({ route, navigation }) {
         }
         else{
           messageArray.current = response.dm.chat
+          ws.current = new WebSocket(`${SOCKET_URL}/api/socket/chat?userID=${myUserID}&chatID=${chatIDRef.current}`, 'chat');
+          ws.current.onmessage = function(event) {
+            console.log(JSON.parse(event.data))
+            setMessageLoading(true);
+            messageArray.current.push(JSON.parse(event.data));
+            setMessageLoading(false);
+          }
           setChatLoading(false)
         }
       })
@@ -91,10 +103,13 @@ export default function ChatScreen({ route, navigation }) {
       .then((response) => {
         if(!response.ok)
         {
-        console.log(response.error)
+          console.log(response.error)
         }
         else
-          getChat(response.dm)
+        {
+          chatIDRef.current = response.dm
+          getChat()
+        }
       })
   }
 
@@ -127,11 +142,21 @@ export default function ChatScreen({ route, navigation }) {
       {
           messageInput.current = ""
           messageInputRef.current.clear()
-          messageArray.current = response.dm.chat
+          //messageArray.current = response.dm.chat
           flatListRef.current.scrollToEnd()
           setMessageLoading(false)
       }
     })
+  }
+
+  function sendLiveMessage()
+  {
+    setMessageLoading(true)    
+    ws.current.send(JSON.stringify({text: messageInput.current}))
+    messageInput.current = ""
+    messageInputRef.current.clear()
+    flatListRef.current.scrollToEnd()
+    setMessageLoading(false)
   }
 
   return (
@@ -179,7 +204,7 @@ export default function ChatScreen({ route, navigation }) {
                 clearButtonMode="while-editing"
                 selectionColor={"#573C6B"}
               />
-              <TouchableOpacity style={{alignSelf:"center"}}onPress={() => {sendMessage()}}>
+              <TouchableOpacity style={{alignSelf:"center"}}onPress={() => {sendLiveMessage()}}>
                 <View style={{marginHorizontal: 10}}>
                 {(messageLoading ?  <ActivityIndicator size={25} color="#573C6B"/> : <Ionicons name="arrow-forward-outline" size={25} color={"#573C6B"}/>)}  
                 </View>
