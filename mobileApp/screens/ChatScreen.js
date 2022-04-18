@@ -53,7 +53,7 @@ export default function ChatScreen({ route, navigation }) {
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       () => {
-        flatListRef.current.scrollToEnd()
+        flatListRef.current?.scrollToEnd()
       }
     );
 
@@ -143,7 +143,7 @@ export default function ChatScreen({ route, navigation }) {
           messageInput.current = ""
           messageInputRef.current.clear()
           //messageArray.current = response.dm.chat
-          flatListRef.current.scrollToEnd()
+          flatListRef.current?.scrollToEnd()
           setMessageLoading(false)
       }
     })
@@ -155,7 +155,7 @@ export default function ChatScreen({ route, navigation }) {
     ws.current.send(JSON.stringify({text: messageInput.current}))
     messageInput.current = ""
     messageInputRef.current.clear()
-    flatListRef.current.scrollToEnd()
+    flatListRef.current?.scrollToEnd()
     setMessageLoading(false)
   }
 
