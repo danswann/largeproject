@@ -150,13 +150,13 @@ export default function PostScreen({ route, navigation }) {
 
   function clearScreen() {
     setDropped(false);
-    setCaption("")
+    setCaption("");
     setPlaylistIsPublic(false);
     setPlaylistID(0);
     setPlaylistSongs([]);
     setPlaylistTitle("");
     setPlaylistImage("uri");
-  };
+  }
 
   function createPost() {
     const requestOptions = {
@@ -176,10 +176,8 @@ export default function PostScreen({ route, navigation }) {
           console.log(response.error);
           return;
         }
-        clearScreen()
-        navigation.navigate({name: "Home",
-        params: {reload: true},
-        });
+        clearScreen();
+        navigation.navigate({ name: "Home", params: { reload: true } });
       });
   }
 
@@ -198,29 +196,30 @@ export default function PostScreen({ route, navigation }) {
           </View>
         ) : (
           <View>
-            {playlistTitle == "" && !dropped ?
-            <View style={{ alignItems: "center", marginTop: 100 }}>
-              {/* <Image
+            {playlistTitle == "" && !dropped ? (
+              <View style={{ alignItems: "center", marginTop: 100 }}>
+                {/* <Image
                 source={require("../assets/images/defaultSmile.png")} //make this something more relevant
                 style={{ height: 100, width: 100 }}
               /> */}
-              <Text style={styles.mainText}>
-                What've you been listening to?
-              </Text>
-            </View>
-            :
-            <></>
-            }
+                <Text style={styles.mainText}>
+                  What've you been listening to?
+                </Text>
+              </View>
+            ) : (
+              <></>
+            )}
             {!connected ? (
-              <View style={{ alignItems: "center"}}>
+              <View style={{ alignItems: "center" }}>
                 <OpenURLButton>Connect your Spotify!</OpenURLButton>
               </View>
             ) : (
-              <View style={{ alignItems: "center", marginTop: 10}}>
-
+              <View style={{ alignItems: "center", marginTop: 10 }}>
                 {dropped ? (
-                  <View onStartShouldSetResponder={() => true}
-                  style={{ width: "90%", height: "80%", marginTop: 10 }}>
+                  <View
+                    onStartShouldSetResponder={() => true}
+                    style={{ width: "90%", height: "80%", marginTop: 10 }}
+                  >
                     <TouchableOpacity
                       style={styles.playlistsBtn}
                       onPress={() => {
@@ -253,7 +252,15 @@ export default function PostScreen({ route, navigation }) {
                     >
                       <Text style={styles.btnText}>Pick your playlist!</Text>
                     </TouchableOpacity>
-                    <Text style={[styles.btnText, {marginTop: 15, textAlign:"center"}]}>Make sure you playlist is public, or it will not be available to post.</Text>
+                    <Text
+                      style={[
+                        styles.btnText,
+                        { marginTop: 15, textAlign: "center" },
+                      ]}
+                    >
+                      Make sure you playlist is public, or it will not be
+                      available to post.
+                    </Text>
                   </View>
                 ) : (
                   <View style={{ width: "90%" }}>
@@ -298,7 +305,7 @@ export default function PostScreen({ route, navigation }) {
                     </TouchableOpacity>
                   </View>
                 )}
-                {(playlistTitle == "" || dropped) ? (
+                {playlistTitle == "" || dropped ? (
                   <></>
                 ) : (
                   <View style={{ width: "100%", alignItems: "center" }}>
@@ -307,7 +314,6 @@ export default function PostScreen({ route, navigation }) {
                         style={styles.TextInput}
                         placeholder="Enter a caption for this post..."
                         placeholderTextColor="white"
-                        clearButtonMode="while-editing"
                         selectionColor={"#573C6B"}
                         multiline={true}
                         value={caption}
@@ -386,7 +392,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginVertical: 20,
     backgroundColor: "#573C6B",
-    paddingHorizontal: 5
+    paddingHorizontal: 5,
   },
 
   playlistsBtn: {
@@ -434,7 +440,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     color: "white",
     justifyContent: "center",
-    textAlignVertical:"auto",
+    textAlignVertical: "auto",
   },
 
   inputView: {

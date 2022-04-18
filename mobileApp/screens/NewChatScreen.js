@@ -83,17 +83,30 @@ export default function NewChatScreen({ route, navigation }) {
   return (
     // Main container
     <View style={styles.container}>
-      <View style={{backgroundColor: "#12081A", width:"100%", flexDirection: "row", justifyContent:"space-between"}}>
+      <View
+        style={{
+          backgroundColor: "#12081A",
+          width: "100%",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
         {/* back button */}
         <TouchableOpacity onPress={() => navigation.navigate("Notification")}>
-          <View style={{margin: 15, width: 25, height: 25}}>
-            <Ionicons style={{ color: "white", marginRight: 5 }} name="chevron-back-outline" size={25} />
-          </View>            
+          <View style={{ margin: 15, width: 25, height: 25 }}>
+            <Ionicons
+              style={{ color: "white", marginRight: 5 }}
+              name="chevron-back-outline"
+              size={25}
+            />
+          </View>
         </TouchableOpacity>
         {/* name on top */}
-        <Text style={{color: "white", alignSelf: "center", fontSize:15}}>NEW CHAT</Text>  
+        <Text style={{ color: "white", alignSelf: "center", fontSize: 15 }}>
+          NEW CHAT
+        </Text>
         {/*Spacer*/}
-        <View style={{margin: 15, width: 25, height: 25}}/>
+        <View style={{ margin: 15, width: 25, height: 25 }} />
       </View>
 
       {/* Search field */}
@@ -101,7 +114,9 @@ export default function NewChatScreen({ route, navigation }) {
         <TextInput
           style={styles.textInput}
           placeholder="Search users"
-          placeholderTextColor="#573C6B"
+          placeholderTextColor="white"
+          clearButtonMode="while-editing"
+          selectionColor={"#573C6B"}
           onChangeText={(text) => getResults(text)}
         />
         {loading ? (
@@ -132,26 +147,37 @@ export default function NewChatScreen({ route, navigation }) {
         />
       </View>
       {/*List of following*/}
-      {(searching ? <></> :
-      <View  style={{marginTop:50}}>
-        <Text style={{color: "white", fontSize: 18, alignSelf: "center", marginBottom: 10}}>Users you've followed:</Text>
-        <FlatList
-          data={followings}
-          renderItem={({ item }) => (
-            <SearchResultBox
-              username={item.username}
-              image={item.profileImageUrl}
-              userID={item.userID}
-              myUserID={userID}
-              isFollowed={item.currentUserFollows}
-              accessToken={accessToken}
-              refreshToken={refreshToken}
-              navigation={navigation}
-            />
-          )}
-          keyExtractor={(item, index) => index.toString()}
-        />
-      </View>
+      {searching ? (
+        <></>
+      ) : (
+        <View style={{ marginTop: 50 }}>
+          <Text
+            style={{
+              color: "white",
+              fontSize: 18,
+              alignSelf: "center",
+              marginBottom: 10,
+            }}
+          >
+            Users you've followed:
+          </Text>
+          <FlatList
+            data={followings}
+            renderItem={({ item }) => (
+              <SearchResultBox
+                username={item.username}
+                image={item.profileImageUrl}
+                userID={item.userID}
+                myUserID={userID}
+                isFollowed={item.currentUserFollows}
+                accessToken={accessToken}
+                refreshToken={refreshToken}
+                navigation={navigation}
+              />
+            )}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </View>
       )}
     </View>
   );
@@ -179,7 +205,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 30,
     borderColor: "#573C6B",
-    backgroundColor: "white",
+    backgroundColor: "black",
     width: "85%",
     height: 45,
     marginTop: 40,
@@ -192,7 +218,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     borderTopLeftRadius: 30,
     borderColor: "#573C6B",
-    backgroundColor: "white",
+    backgroundColor: "black",
     width: "85%",
     height: 45,
     marginTop: 40,
@@ -204,6 +230,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     marginLeft: 20,
-    color: "black",
+    color: "white",
   },
 });

@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { API_URL } from "../constants/Info";
 import SearchResultBox from "../components/SearchResultBox";
@@ -71,84 +73,94 @@ export default function SearchScreen({ route, navigation }) {
   }
   return (
     // Main container
-    <View style={styles.container}>
-      {/* Search field */}
-      <View style={!searching || results.length == 0 ? styles.inputView : styles.inputViewSearching}>
-        <TextInput
-          style={styles.textInput}
-          placeholder="Search users"
-          placeholderTextColor="#573C6B"
-          onChangeText={(text) => getResults(text)}
-        />
-        {loading ? (
-          <ActivityIndicator
-            size="small"
-            color="#573C6B"
-            style={{ marginRight: 20 }}
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <View style={styles.container}>
+        {/* Search field */}
+        <View
+          style={
+            !searching || results.length == 0
+              ? styles.inputView
+              : styles.inputViewSearching
+          }
+        >
+          <TextInput
+            style={styles.textInput}
+            placeholder="Search users"
+            placeholderTextColor="white"
+            clearButtonMode="while-editing"
+            selectionColor={"#573C6B"}
+            onChangeText={(text) => getResults(text)}
           />
+          {loading ? (
+            <ActivityIndicator
+              size="small"
+              color="#573C6B"
+              style={{ marginRight: 20 }}
+            />
+          ) : (
+            <></>
+          )}
+        </View>
+        <View style={styles.searchResultsContainer}>
+          <FlatList
+            data={results}
+            renderItem={({ item }) => (
+              <SearchResultBox
+                username={item.username}
+                image={item.profileImageUrl}
+                isFollowed={item.currentUserFollows}
+                followers={item.followers}
+                userID={item._id}
+                myUserID={userID}
+                accessToken={accessToken}
+                refreshToken={refreshToken}
+                navigation={navigation}
+              />
+            )}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </View>
+        {!searching ? (
+          <View style={{ width: "100%", marginTop: 20 }}>
+            <FlatList
+              data={topUsers}
+              initialScrollIndex={0}
+              renderItem={({ item, index }) => {
+                return (
+                  <TopUsersBox
+                    username={item.username}
+                    userID={item._id}
+                    myUserID={userID}
+                    accessToken={accessToken}
+                    // isFollowed={item.currentUserFollows}
+                    followerCount={item.followers?.length}
+                    isFollowed={item.currentUserFollows}
+                    postID1={item.posts?.length > 0 ? item.posts[0]?._id : null}
+                    postID2={item.posts?.length > 0 ? item.posts[1]?._id : null}
+                    postID3={item.posts?.length > 0 ? item.posts[2]?._id : null}
+                    rank={index}
+                    profilePic={item.profileImageUrl}
+                    postImage1={
+                      item.posts?.length > 0 ? item.posts[0]?.image : null
+                    }
+                    postImage2={
+                      item.posts?.length > 1 ? item.posts[1]?.image : null
+                    }
+                    postImage3={
+                      item.posts?.length > 2 ? item.posts[2]?.image : null
+                    }
+                    navigation={navigation}
+                  />
+                );
+              }}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          </View>
         ) : (
           <></>
         )}
       </View>
-      <View style={styles.searchResultsContainer}>
-        <FlatList
-          data={results}
-          renderItem={({ item }) => (
-            <SearchResultBox
-              username={item.username}
-              image={item.profileImageUrl}
-              isFollowed={item.currentUserFollows}
-              followers={item.followers}
-              userID={item._id}
-              myUserID={userID}
-              accessToken={accessToken}
-              refreshToken={refreshToken}
-              navigation={navigation}
-            />
-          )}
-          keyExtractor={(item, index) => index.toString()}
-        />
-      </View>
-      {!searching ? (
-        <View style={{ width: "100%", marginTop: 20 }}>
-          <FlatList
-            data={topUsers}
-            initialScrollIndex={0}
-            renderItem={({ item, index }) => {
-              return (
-                <TopUsersBox
-                  username={item.username}
-                  userID={item._id}
-                  myUserID={userID}
-                  accessToken={accessToken}
-                  // isFollowed={item.currentUserFollows}
-                  followerCount={item.followers?.length}
-                  isFollowed={item.currentUserFollows}
-                  postID1={item.posts?.length > 0 ? item.posts[0]?._id : null}
-                  postID2={item.posts?.length > 0 ? item.posts[1]?._id : null}
-                  postID3={item.posts?.length > 0 ? item.posts[2]?._id : null}
-                  rank={index}
-                  profilePic={item.profileImageUrl}
-                  postImage1={
-                    item.posts?.length > 0 ? item.posts[0]?.image : null
-                  }
-                  postImage2={
-                    item.posts?.length > 1 ? item.posts[1]?.image : null
-                  }
-                  postImage3={
-                    item.posts?.length > 2 ? item.posts[2]?.image : null
-                  }
-                  navigation={navigation}
-                />
-              );
-            }}
-            keyExtractor={(item, index) => index.toString()}
-          />
-        </View>
-      ) : (
-        <></>
-      )}
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -174,7 +186,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 30,
     borderColor: "#573C6B",
-    backgroundColor: "white",
+    backgroundColor: "black",
     width: "85%",
     height: 45,
     marginTop: 40,
@@ -187,7 +199,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     borderTopLeftRadius: 30,
     borderColor: "#573C6B",
-    backgroundColor: "white",
+    backgroundColor: "black",
     width: "85%",
     height: 45,
     marginTop: 40,
@@ -199,6 +211,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     marginLeft: 20,
-    color: "black",
+    color: "white",
   },
 });
