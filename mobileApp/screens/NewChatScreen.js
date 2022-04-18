@@ -76,9 +76,6 @@ export default function NewChatScreen({ route, navigation }) {
       return;
     } else {
       let data = await response.json();
-      console.log("DATA FOLLOWING ", data.following);
-      // Set the following list of the user
-      console.log("DATA FOLLOWING LIST SCREEN", data);
       setFollowings(data.following);
     }
   }, [isFocused]);
@@ -86,7 +83,6 @@ export default function NewChatScreen({ route, navigation }) {
   return (
     // Main container
     <View style={styles.container}>
-
       <View style={{backgroundColor: "#12081A", width:"100%", flexDirection: "row", justifyContent:"space-between"}}>
         {/* back button */}
         <TouchableOpacity onPress={() => navigation.navigate("Notification")}>
@@ -146,7 +142,7 @@ export default function NewChatScreen({ route, navigation }) {
               username={item.username}
               image={item.profileImageUrl}
               userID={item.userID}
-              myUserID={route.params.myUserID}
+              myUserID={userID}
               isFollowed={item.currentUserFollows}
               accessToken={accessToken}
               refreshToken={refreshToken}

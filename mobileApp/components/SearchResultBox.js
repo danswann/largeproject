@@ -19,7 +19,6 @@ export default function SearchResultBox(props) {
     }, [props.isFollowed])
   );
 
-
   const { refresh } = React.useContext(AuthContext);
   async function followUser() {
     //const access = await refresh(props.myUserID, props.refreshToken)
