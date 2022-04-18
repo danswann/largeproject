@@ -6,7 +6,7 @@ import ContactPage from './contactpage';
 
 const Main = () => (
 	<main>
-		<HomePage />
+		<HomePage/>
 		<AboutPage />
 		<ContactPage />
 	</main>

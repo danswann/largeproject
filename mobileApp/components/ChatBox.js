@@ -40,7 +40,7 @@ export default function ChatBox(props) {
                 return "1 minute ago"
             return Math.floor(minutes) + " minutes ago"
         }
-        return "A few moments ago"
+        return "Moments ago"
     }
     
     return (
