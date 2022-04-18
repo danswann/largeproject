@@ -260,6 +260,6 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginHorizontal: 5,
     paddingVertical: 8,
-    paddingHorizontal: 8,
+    paddingHorizontal: 12,
   },
 });

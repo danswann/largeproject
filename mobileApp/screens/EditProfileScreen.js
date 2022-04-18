@@ -116,41 +116,17 @@ export default function EditProfileScreen({ route, navigation }) {
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.MainContainer}>
-        <View style={styles.Header}>
+        <View style={{backgroundColor: "#12081A", width:"100%", flexDirection: "row", justifyContent:"space-between"}}>
           {/* back button */}
-          <View style={styles.backButton}>
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              hitSlop={{ top: 100, bottom: 70, left: 20, right: 70 }}
-            >
-              <Ionicons
-                style={{ color: "white", marginRight: 5 }}
-                name="chevron-back-outline"
-                size={25}
-              />
-            </TouchableOpacity>
-          </View>
-
-          <View style={{ flexDirection: "row" }}>
-            {/* profile pic */}
-            <Image
-              source={require("../assets/images/defaultSmile.png")}
-              style={styles.ProfilePic}
-            />
-
-            {/* display username up top */}
-            <Text style={styles.nameText}>{username}</Text>
-          </View>
-
-          {/* done button */}
-          <View style={styles.backButton}>
-            <TouchableOpacity
-              onPress={() => submitInfo()}
-              hitSlop={{ top: 100, bottom: 100, left: 8, right: 5 }}
-            >
-              <Text style={styles.doneButton}>Done</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity onPress={() => navigation.navigate("Notification")}>
+            <View style={{margin: 15, width: 25, height: 25}}>
+              <Ionicons style={{ color: "white", marginRight: 5 }} name="chevron-back-outline" size={25} />
+            </View>            
+          </TouchableOpacity>
+          {/* name on top */}
+          <Text style={{color: "white", alignSelf: "center", fontSize:15}}>EDIT PROFILE</Text>  
+          {/*Spacer*/}
+          <View style={{margin: 15, width: 25, height: 25}}/>
         </View>
         <View
           style={{
@@ -160,59 +136,76 @@ export default function EditProfileScreen({ route, navigation }) {
             marginTop: 10,
           }}
         >
-          {/* edit bio field */}
-          <View style={styles.bioView}>
-            <TextInput
-              style={styles.TextInput}
-              value={biography}
-              placeholderTextColor="white"
-              selectionColor={"#573C6B"}
-              clearButtonMode="while-editing"
-              multiline={true}
-              onChangeText={(editBio) => setBiography(editBio)}
-            />
-          </View>
-
           {/* edit username field */}
-          <View style={styles.inputView}>
-            <TextInput
-              style={styles.TextInput}
-              value={username}
-              placeholderTextColor="white"
-              clearButtonMode="while-editing"
-              selectionColor={"#573C6B"}
-              maxLength={18}
-              onChangeText={(username) => setUsername(username)}
-            />
+          <View style={{width:"75%"}}>
+            <Text style={styles.mainText}>Username:</Text>
+            <View style={styles.inputView}>
+              <TextInput
+                style={styles.TextInput}
+                value={username}
+                placeholder="Enter a new Username..."
+                placeholderTextColor="white"
+                clearButtonMode="while-editing"
+                selectionColor={"#573C6B"}
+                maxLength={18}
+                onChangeText={(username) => setUsername(username)}
+              />
+            </View>
           </View>
 
-          {/* edit password field */}
-          <View style={styles.inputView}>
-            <TextInput
-              style={styles.TextInput}
-              placeholder="New Password"
-              placeholderTextColor="white"
-              clearButtonMode="while-editing"
-              selectionColor={"#573C6B"}
-              onChangeText={(password) => setPassword(password)}
-            />
+          {/* edit bio field */}
+          <View style={{width:"75%"}}>
+            <Text style={styles.mainText}>Profile Biography:</Text>
+            <View style={styles.bioView}>
+              <TextInput
+                style={[styles.TextInput, {textAlignVertical: "top"}]}
+                value={biography}
+                placeholder="Type your biography here..."
+                placeholderTextColor="white"
+                selectionColor={"#573C6B"}
+                clearButtonMode="while-editing"
+                multiline={true}
+                onChangeText={(editBio) => setBiography(editBio)}
+              />
+            </View>
           </View>
+          <View style={{width:"75%"}}>
+            <Text style={styles.mainText}>Change Password:</Text>
+            {/* edit password field */}
+            <View style={styles.inputView}>
+              <TextInput
+                style={styles.TextInput}
+                placeholder="New Password"
+                placeholderTextColor="white"
+                clearButtonMode="while-editing"
+                selectionColor={"#573C6B"}
+                onChangeText={(password) => setPassword(password)}
+              />
+            </View>
 
-          {/* confirm password field */}
-          <View style={styles.inputView}>
-            <TextInput
-              style={styles.TextInput}
-              placeholder="Confirm Password"
-              placeholderTextColor="white"
-              clearButtonMode="while-editing"
-              selectionColor={"#573C6B"}
-              secureTextEntry={true}
-              onChangeText={(confirmPassword) =>
-                setConfirmPassword(confirmPassword)
-              }
-            />
+            {/* confirm password field */}
+            <View style={styles.inputView}>
+              <TextInput
+                style={styles.TextInput}
+                placeholder="Confirm Password"
+                placeholderTextColor="white"
+                clearButtonMode="while-editing"
+                selectionColor={"#573C6B"}
+                secureTextEntry={true}
+                onChangeText={(confirmPassword) =>
+                  setConfirmPassword(confirmPassword)
+                }
+              />
+            </View>
           </View>
-
+          {/* done button */}
+            <TouchableOpacity
+              style = {styles.doneButton}
+              onPress={() => submitInfo()}
+              hitSlop={{ top: 100, bottom: 100, left: 8, right: 5 }}
+            >
+              <Text style={styles.doneText}>Apply changes</Text>
+            </TouchableOpacity>     
           <View>{errorMessage}</View>
         </View>
       </View>
@@ -242,6 +235,15 @@ const styles = StyleSheet.create({
     fontSize: 25,
   },
 
+  mainText: {
+    color: "white",
+    textAlign: "left",
+    alignSelf: "flex-start",
+    paddingTop: 12,
+    paddingBottom: 10,
+    fontSize: 13,
+  },
+
   TextInput: {
     height: 50,
     flex: 1,
@@ -256,7 +258,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 30,
     borderColor: "#573C6B",
-    width: "75%",
+    width: "100%",
     height: 45,
     marginBottom: 20,
   },
@@ -266,7 +268,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 30,
     borderColor: "#573C6B",
-    width: "75%",
+    width: "100%",
     height: 100,
     marginBottom: 20,
   },
@@ -285,9 +287,18 @@ const styles = StyleSheet.create({
   },
 
   doneButton: {
-    textDecorationLine: "underline",
+    borderRadius: 25,
+    backgroundColor: "#573C6B",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    marginVertical: 10
+  },
+
+  doneText: {
     color: "white",
-    fontSize: 20,
-    marginRight: 10,
+    textAlign: "center",
+    fontSize: 18,
   },
 });
