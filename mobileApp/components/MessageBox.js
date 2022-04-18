@@ -12,6 +12,7 @@ export default function MessageBox(props) {
 
     const isFocused = useIsFocused();
     useEffect(() => {
+        setImage("uri")
         getOtherUsernameAndImage(props.users)
     }, [isFocused]);
     

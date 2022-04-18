@@ -29,7 +29,6 @@ import { withSafeAreaInsets } from "react-native-safe-area-context";
 const Tab = createMaterialTopTabNavigator();
 
 export default function ChatScreen({ route, navigation }) {
-  console.log(route.params)
   const { myUserID, chatID, otherUserID, newChat, name, messages, accessToken} = route.params;
   const chatIDRef = useRef(chatID)
   const [chatLoading, setChatLoading] = useState();
@@ -47,6 +46,9 @@ export default function ChatScreen({ route, navigation }) {
       createChat()
     else
       getChat()
+    return () => {
+      ws.current.close()
+    }
   }, [chatID])
 
   useEffect(() => {
@@ -57,9 +59,7 @@ export default function ChatScreen({ route, navigation }) {
         flatListRef.current?.scrollToEnd()
       }
     );
-
     return () => {
-      ws.current.close()
       keyboardDidShowListener.remove();
     };
   }, []);
@@ -82,7 +82,6 @@ export default function ChatScreen({ route, navigation }) {
           messageArray.current = response.dm.chat
           ws.current = new WebSocket(`${SOCKET_URL}/api/socket/chat?userID=${myUserID}&chatID=${chatIDRef.current}`, 'chat');
           ws.current.onmessage = function(event) {
-            console.log(JSON.parse(event.data))
             setMessageLoading(true);
             messageArray.current.push(JSON.parse(event.data));
             setMessageLoading(false);
@@ -99,7 +98,6 @@ export default function ChatScreen({ route, navigation }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({users: [myUserID, otherUserID]})
     };
-    console.log()
     fetch(`${API_URL}/api/directMessage/newChat`, requestOptions)
       .then((response) => response.json())
       .then((response) => {

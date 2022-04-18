@@ -167,7 +167,6 @@ function NotificationTab({ route, navigation }) {
             </Text>
           ) : (
             <View>
-              {console.log("NOTIFICATIONS: ", notifications)}
               <FlatList
                 data={notifications}
                 style={{ minHeight: "92%" }}
