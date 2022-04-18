@@ -277,7 +277,7 @@ export default function App() {
   return (
     // Use authcontext provider to track the users authentication status across the whole app
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === "ios" ? "padding" : null}
       style={{ height: "100%", width: "100%", backgroundColor: "#23192B" }}
     >
       <AuthContext.Provider value={authContext}>
