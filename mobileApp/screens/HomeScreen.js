@@ -87,10 +87,10 @@ export default function HomeScreen({ route, navigation }) {
       ((feed.length == 0) ? 
       (<View style ={styles.emptyContainer}>
         {/*Feed is empty*/}
-        <Image
+        {/* <Image
           source={require('../assets/images/defaultSmile.png')} //make this something more relevant
           style={styles.emptyImage}
-        />
+        /> */}
         <Text style ={styles.emptyText}>{"There are no posts in your feed!"}</Text>
         <Text style ={styles.emptyText}>{"Try following users in the search tab."}</Text> 
       </View>) :
