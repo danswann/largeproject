@@ -159,8 +159,8 @@ function NotificationTab({ route, navigation }) {
               <NotificationBox 
                 myUserID={item.user}
                 senderID={item.sender._id}
-                postID={item.post._id}
-                postImage={item.post.image}
+                postID={item.post?._id}
+                postImage={item.post?.image}
                 openPost={openPost}
                 notificationType={item.notificationType} 
                 username={item.sender.username}
