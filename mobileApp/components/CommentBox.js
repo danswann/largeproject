@@ -35,6 +35,8 @@ export default function CommentBox(props) {
       else
       {
         props.update(response.post.comments)
+        setDeleteLoading(false)
+        setTapped(false)
       }
   })
   };

@@ -127,6 +127,16 @@ exports.likePost = async function(req, res, next) {
         // If the postID exists, return ok:true
         if(post)
         {
+            if (post.author == userID)
+            {
+                // Delete postID and author fields as it's unnecessary
+                var retPost = JSON.parse(JSON.stringify(post));
+                delete retPost._id;
+                delete retPost.author;
+
+                response.post = retPost;
+                return res.status(200).json(response);
+            }
             // Create a new instance of notification model
             var newNotification = new Notification({
                 notificationType: 1,
@@ -199,6 +209,16 @@ exports.commentOnPost = async function(req, res, next) {
     // If the postID exists, return ok:true
     if(post)
     {
+        if (post.author == userID)
+        {
+            // Delete postID and author fields as it's unnecessary
+            var retPost = JSON.parse(JSON.stringify(post));
+            delete retPost._id;
+            delete retPost.author;
+
+            response.post = retPost;
+            return res.status(200).json(response);
+        }
         // Create a new instance of notification model
         var newNotification = new Notification({
             notificationType: 3,
