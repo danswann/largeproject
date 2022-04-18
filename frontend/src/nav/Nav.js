@@ -9,7 +9,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 // marginTop: 8,
 const Nav = () => {
 	return (
-		<nav style={{width: "100%", backgroundColor: "#12081A", padding: 0, justifyContent: "space-between"}}>
+		<nav style={{
+			width: "100%", 
+			backgroundColor: "#12081A", 
+			padding: 0, 
+			justifyContent: "space-between",
+			marginLeft: -30
+			}}>
 			<Container style={{width:"70%", alignSelf:"flex-start"}}>			
 				<img 
 					src="/assets/soundlinklogo.png" 
