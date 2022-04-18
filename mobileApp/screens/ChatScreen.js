@@ -29,6 +29,7 @@ import { withSafeAreaInsets } from "react-native-safe-area-context";
 const Tab = createMaterialTopTabNavigator();
 
 export default function ChatScreen({ route, navigation }) {
+  console.log(route.params)
   const { myUserID, chatID, otherUserID, newChat, name, messages, accessToken} = route.params;
   const chatIDRef = useRef(chatID)
   const [chatLoading, setChatLoading] = useState();
@@ -90,6 +91,7 @@ export default function ChatScreen({ route, navigation }) {
         }
       })
   }
+  
   function createChat()
   {
     const requestOptions = {
@@ -119,38 +121,10 @@ export default function ChatScreen({ route, navigation }) {
     return false
   }  
 
-  function sendMessage() {
-    if (messageInput.current == "")
-        return
-    setMessageLoading(true)        
-    const requestOptions = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({userID: myUserID, chatID: chatID, text: messageInput.current, accessToken: accessToken})            
-    };
-    fetch(`${API_URL}/api/directMessage/sendMessage`, requestOptions)
-    .then((response) => response.json())
-    .then((response) => {
-      console.log(response)
-      if(!response.ok)
-      {
-          console.log(response.error)
-          setMessageLoading(false)
-          return
-      }
-      else
-      {
-          messageInput.current = ""
-          messageInputRef.current.clear()
-          //messageArray.current = response.dm.chat
-          flatListRef.current?.scrollToEnd()
-          setMessageLoading(false)
-      }
-    })
-  }
-
   function sendLiveMessage()
   {
+    if (messageInput.current == "")
+      return
     setMessageLoading(true)    
     ws.current.send(JSON.stringify({text: messageInput.current}))
     messageInput.current = ""

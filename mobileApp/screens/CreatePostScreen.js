@@ -200,10 +200,10 @@ export default function PostScreen({ route, navigation }) {
           <View>
             {playlistTitle == "" && !dropped ?
             <View style={{ alignItems: "center", marginTop: 100 }}>
-              <Image
+              {/* <Image
                 source={require("../assets/images/defaultSmile.png")} //make this something more relevant
                 style={{ height: 100, width: 100 }}
-              />
+              /> */}
               <Text style={styles.mainText}>
                 What've you been listening to?
               </Text>

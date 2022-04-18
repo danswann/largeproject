@@ -23,8 +23,8 @@ import PasswordChangeScreen from "./PasswordChangeScreen";
 // Login screen
 function LoginScreen({ navigation }) {
   // Keeps track of what the user has inputted
-  const [username, setUsername] = useState("MobileUser"); // should be "", fix later
-  const [password, setPassword] = useState("Pass1"); // should be "", fix later
+  const [username, setUsername] = useState(""); 
+  const [password, setPassword] = useState("");
   const [failedLogin, setFailedLogin] = useState(false);
   const [loading, setLoading] = useState(false);
 
