@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
@@ -23,7 +22,7 @@ import PasswordChangeScreen from "./PasswordChangeScreen";
 // Login screen
 function LoginScreen({ navigation }) {
   // Keeps track of what the user has inputted
-  const [username, setUsername] = useState(""); 
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [failedLogin, setFailedLogin] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -34,103 +33,112 @@ function LoginScreen({ navigation }) {
   //Clears error message when screen is reloaded
   const isFocused = useIsFocused();
   useEffect(() => {
-    setFailedLogin(false)
+    setFailedLogin(false);
   }, [isFocused]);
 
-  async function tryLogin()
-  {
-    if(!loading) {
-      setLoading(true)
-      setFailedLogin(await signIn(username, password))
-      setLoading(false)
+  async function tryLogin() {
+    if (!loading) {
+      setLoading(true);
+      setFailedLogin(await signIn(username, password));
+      setLoading(false);
     }
   }
 
   return (
     // Main container
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={styles.container}>
-        {/* Sets colors of status bar icons to white*/}
-        <StatusBar barStyle={'light-content'} backgroundColor={"#23192B"}/>
-        {/* Soundlink logo */}
-        <Image
-          style={styles.image}
-          resizeMethod="resize"
-          resizeMode="contain"
-          source={require("../assets/images/soundlinklogo.png")}
-        />
-
-        <StatusBar style="auto" />
-        {/* Username input field */}
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.TextInput}
-            placeholder="Username"
-            placeholderTextColor="white"
-            clearButtonMode="while-editing"
-            selectionColor={"#573C6B"}
-            showSoftInputOnFocus={true}
-            onChangeText={(username) => setUsername(username)}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : null}
+      style={{ height: "100%", width: "100%", backgroundColor: "#23192B" }}
+    >
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <View style={styles.container}>
+          {/* Sets colors of status bar icons to white*/}
+          <StatusBar barStyle={"light-content"} backgroundColor={"#23192B"} />
+          {/* Soundlink logo */}
+          <Image
+            style={styles.image}
+            resizeMethod="resize"
+            resizeMode="contain"
+            source={require("../assets/images/soundlinklogo.png")}
           />
-        </View>
 
-        {/* Password input field */}
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.TextInput}
-            placeholder="Password"
-            placeholderTextColor="white"
-            clearButtonMode="while-editing"
-            selectionColor={"#573C6B"}
-            secureTextEntry={true}
-            onChangeText={(password) => setPassword(password)}
-          />
-        </View>
-
-        {/* Forgot Password prompt text */}
-        <View style={styles.forgotView}>
-          <Text style={styles.forgotText}>
-            Forgot your password?{" "}
-            <Text
-              onPress={() => navigation.navigate("PasswordChange")}
-              style={styles.clickableText}
-            >
-              Click Here!
-            </Text>
-          </Text>
-        </View>
-
-        {/* Login button */}
-        <TouchableOpacity
-          style={styles.loginBtn}
-          onPress={() => tryLogin()}
-        >
-          <View style={{flexDirection:"row"}}>
-            {loading ? (<ActivityIndicator size="small" color="white" style={{marginRight:5}} />) : (<View></View>)}
-            <Text style={styles.loginText}>Login</Text>
+          <StatusBar style="auto" />
+          {/* Username input field */}
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.TextInput}
+              placeholder="Username"
+              placeholderTextColor="white"
+              clearButtonMode="while-editing"
+              selectionColor={"#573C6B"}
+              showSoftInputOnFocus={true}
+              onChangeText={(username) => setUsername(username)}
+            />
           </View>
-        </TouchableOpacity>
-        {/* Conditionally renders error message if user enteres invalid login credentials */}
-        {failedLogin ? (
-          <Text style={styles.errorText}>Invalid Username or Password</Text>
-        ) : (
-          <Text></Text>
-        )}
 
-        {/* Register prompt text */}
-        <View style={styles.signUpView}>
-          <Text style={styles.signUpText}>
-            Don't have an account?{" "}
-            <Text
-              onPress={() => navigation.navigate("Register")}
-              style={styles.clickableText}
-            >
-              Sign Up Here!
+          {/* Password input field */}
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.TextInput}
+              placeholder="Password"
+              placeholderTextColor="white"
+              clearButtonMode="while-editing"
+              selectionColor={"#573C6B"}
+              secureTextEntry={true}
+              onChangeText={(password) => setPassword(password)}
+            />
+          </View>
+
+          {/* Forgot Password prompt text */}
+          <View style={styles.forgotView}>
+            <Text style={styles.forgotText}>
+              Forgot your password?{" "}
+              <Text
+                onPress={() => navigation.navigate("PasswordChange")}
+                style={styles.clickableText}
+              >
+                Click Here!
+              </Text>
             </Text>
-          </Text>
+          </View>
+
+          {/* Login button */}
+          <TouchableOpacity style={styles.loginBtn} onPress={() => tryLogin()}>
+            <View style={{ flexDirection: "row" }}>
+              {loading ? (
+                <ActivityIndicator
+                  size="small"
+                  color="white"
+                  style={{ marginRight: 5 }}
+                />
+              ) : (
+                <View></View>
+              )}
+              <Text style={styles.loginText}>Login</Text>
+            </View>
+          </TouchableOpacity>
+          {/* Conditionally renders error message if user enteres invalid login credentials */}
+          {failedLogin ? (
+            <Text style={styles.errorText}>Invalid Username or Password</Text>
+          ) : (
+            <Text></Text>
+          )}
+
+          {/* Register prompt text */}
+          <View style={styles.signUpView}>
+            <Text style={styles.signUpText}>
+              Don't have an account?{" "}
+              <Text
+                onPress={() => navigation.navigate("Register")}
+                style={styles.clickableText}
+              >
+                Sign Up Here!
+              </Text>
+            </Text>
+          </View>
         </View>
-      </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -145,149 +153,157 @@ function RegisterScreen({ navigation }) {
   const { signUp } = React.useContext(AuthContext);
   const [loading, setLoading] = useState(false);
 
-  async function verifyRegisterData()
-  {
-    if (username === "")
-      return "Username field must be filled"
+  async function verifyRegisterData() {
+    if (username === "") return "Username field must be filled";
     else if (username.length < 6)
-      return "Username is too short (At least 6 characters)"
-    else if (email === "")
-      return "Email field must be filled"
-    else if (!verifyEmailFormat(email)) 
-      return "Email format is invalid"
-    else if (password === "")
-      return "Password field must be filled"
+      return "Username is too short (At least 6 characters)";
+    else if (email === "") return "Email field must be filled";
+    else if (!verifyEmailFormat(email)) return "Email format is invalid";
+    else if (password === "") return "Password field must be filled";
     else if (password.length < 6)
-      return "Password is too short (At least 6 characters)"
-    else if(password !== confirmPassword)
-      return "Passwords do not match"
+      return "Password is too short (At least 6 characters)";
+    else if (password !== confirmPassword) return "Passwords do not match";
     else {
-      const signUpResult = await signUp(email, username, password)
-      if(signUpResult == "Registration Successful")
-        navigation.navigate("EmailVerification", {username: username, password: password, email: email})
+      const signUpResult = await signUp(email, username, password);
+      if (signUpResult == "Registration Successful")
+        navigation.navigate("EmailVerification", {
+          username: username,
+          password: password,
+          email: email,
+        });
       else if (signUpResult == "username is taken")
-        return "This username has been taken by another account."
+        return "This username has been taken by another account.";
       else if (signUpResult == "email is taken")
-        return "This email address has been taken by another account."
-      else
-        return "An error occurred while completing your registration."
+        return "This email address has been taken by another account.";
+      else return "An error occurred while completing your registration.";
     }
-    return ""
+    return "";
   }
-  function verifyEmailFormat(email) //verifies format of string@string.string
-  {
+  function verifyEmailFormat(email) {
+    //verifies format of string@string.string
     var reg = /\S+@\S+\.\S+/;
     return reg.test(email);
   }
 
-  async function tryRegister()
-  {
-    if(!loading) {
-      setLoading(true)
-      setRegisterState(await verifyRegisterData())
-      setLoading(false)
+  async function tryRegister() {
+    if (!loading) {
+      setLoading(true);
+      setRegisterState(await verifyRegisterData());
+      setLoading(false);
     }
   }
 
   return (
     // Pushes content up when keyboard is blocking it
     // Main container
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      {/* // Main container */}
-      <View style={styles.container}>
-        {/* Soundlink logo */}
-        <Image
-          style={styles.image}
-          resizeMethod="resize"
-          resizeMode="contain"
-          source={require("../assets/images/soundlinklogo.png")}
-        />
-
-        <StatusBar style="auto" />
-        {/* Username input field */}
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.TextInput}
-            placeholder="Username"
-            placeholderTextColor="white"
-            clearButtonMode="while-editing"
-            selectionColor={"#573C6B"}
-            onChangeText={(username) => setUsername(username)}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : null}
+      style={{ height: "100%", width: "100%", backgroundColor: "#23192B" }}
+    >
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        {/* // Main container */}
+        <View style={styles.container}>
+          {/* Soundlink logo */}
+          <Image
+            style={styles.image}
+            resizeMethod="resize"
+            resizeMode="contain"
+            source={require("../assets/images/soundlinklogo.png")}
           />
-        </View>
-        {/* Email Address input field */}
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.TextInput}
-            placeholder="Email Address"
-            placeholderTextColor="white"
-            clearButtonMode="while-editing"
-            selectionColor={"#573C6B"}
-            keyboardType="email-address"
-            autoCompleteType="email"
-            onChangeText={(email) => setEmail(email)}
-          />
-        </View>
 
-        {/* Password input field */}
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.TextInput}
-            placeholder="Password"
-            placeholderTextColor="white"
-            clearButtonMode="while-editing"
-            selectionColor={"#573C6B"}
-            secureTextEntry={true}
-            onChangeText={(password) => setPassword(password)}
-          />
-        </View>
-
-        {/* Confirm Password input field */}
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.TextInput}
-            placeholder="Confirm Password"
-            placeholderTextColor="white"
-            clearButtonMode="while-editing"
-            selectionColor={"#573C6B"}
-            secureTextEntry={true}
-            onChangeText={(confirmPassword) =>
-              setConfirmPassword(confirmPassword)
-            }
-          />
-        </View>
-
-
-        {/* Register button */}
-        <TouchableOpacity
-          style={styles.loginBtn}
-          onPress={() => tryRegister()}
-        >
-          <View style={{flexDirection:"row"}}>
-            {loading ? (<ActivityIndicator size="small" color="white" style={{marginRight:5}} />) : (<View></View>)}
-            <Text style={styles.loginText}>Register</Text>
+          <StatusBar style="auto" />
+          {/* Username input field */}
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.TextInput}
+              placeholder="Username"
+              placeholderTextColor="white"
+              clearButtonMode="while-editing"
+              selectionColor={"#573C6B"}
+              onChangeText={(username) => setUsername(username)}
+            />
           </View>
-        </TouchableOpacity>
+          {/* Email Address input field */}
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.TextInput}
+              placeholder="Email Address"
+              placeholderTextColor="white"
+              clearButtonMode="while-editing"
+              selectionColor={"#573C6B"}
+              keyboardType="email-address"
+              autoCompleteType="email"
+              onChangeText={(email) => setEmail(email)}
+            />
+          </View>
 
-        {/* Conditionally renders error message if user enters invalid information */}
-        {registerState === "Verified" ? (
-        <Text></Text>
-        ) : (
-        <Text style={styles.errorText}>{registerState}</Text>
-        )}
+          {/* Password input field */}
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.TextInput}
+              placeholder="Password"
+              placeholderTextColor="white"
+              clearButtonMode="while-editing"
+              selectionColor={"#573C6B"}
+              secureTextEntry={true}
+              onChangeText={(password) => setPassword(password)}
+            />
+          </View>
 
-        {/* Back to login */}
-        <View style={styles.backToLoginView}>
-          <Text
-            onPress={() => navigation.navigate("Login")}
-            style={styles.signUpText}
+          {/* Confirm Password input field */}
+          <View style={styles.inputView}>
+            <TextInput
+              style={styles.TextInput}
+              placeholder="Confirm Password"
+              placeholderTextColor="white"
+              clearButtonMode="while-editing"
+              selectionColor={"#573C6B"}
+              secureTextEntry={true}
+              onChangeText={(confirmPassword) =>
+                setConfirmPassword(confirmPassword)
+              }
+            />
+          </View>
+
+          {/* Register button */}
+          <TouchableOpacity
+            style={styles.loginBtn}
+            onPress={() => tryRegister()}
           >
-            Already have an account?{" "}
-            <Text style={styles.clickableText}>Login</Text>
-          </Text>
+            <View style={{ flexDirection: "row" }}>
+              {loading ? (
+                <ActivityIndicator
+                  size="small"
+                  color="white"
+                  style={{ marginRight: 5 }}
+                />
+              ) : (
+                <View></View>
+              )}
+              <Text style={styles.loginText}>Register</Text>
+            </View>
+          </TouchableOpacity>
+
+          {/* Conditionally renders error message if user enters invalid information */}
+          {registerState === "Verified" ? (
+            <Text></Text>
+          ) : (
+            <Text style={styles.errorText}>{registerState}</Text>
+          )}
+
+          {/* Back to login */}
+          <View style={styles.backToLoginView}>
+            <Text
+              onPress={() => navigation.navigate("Login")}
+              style={styles.signUpText}
+            >
+              Already have an account?{" "}
+              <Text style={styles.clickableText}>Login</Text>
+            </Text>
+          </View>
         </View>
-      </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -298,13 +314,17 @@ function EmailVerificationScreen({ route, navigation }) {
   const { signIn } = React.useContext(AuthContext);
   const [loading, setLoading] = useState(false);
 
-  async function tryEmail()
-  {
-    if(!loading) {
-      setLoading(true)
-      if (await signIn(JSON.parse(JSON.stringify(username)), JSON.parse(JSON.stringify(password))))
+  async function tryEmail() {
+    if (!loading) {
+      setLoading(true);
+      if (
+        await signIn(
+          JSON.parse(JSON.stringify(username)),
+          JSON.parse(JSON.stringify(password))
+        )
+      )
         setFailedVerification(true);
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -317,22 +337,23 @@ function EmailVerificationScreen({ route, navigation }) {
         resizeMode="contain"
         source={require("../assets/images/soundlinklogo.png")}
       />
+      <Text style={styles.signUpText}>We've just sent an email to:</Text>
+      <Text style={styles.emailText}>{JSON.stringify(email)}</Text>
       <Text style={styles.signUpText}>
-          We've just sent an email to:
+        Please verify your email before continuing.
       </Text>
-      <Text style={styles.emailText}>
-        {JSON.stringify(email)}
-      </Text>
-      <Text style={styles.signUpText}>
-          Please verify your email before continuing.
-      </Text>
-      <TouchableOpacity
-          style={styles.loginBtn}
-          onPress={() => tryEmail()}
-      >
-        <View style={{flexDirection:"row"}}>
-            {loading ? (<ActivityIndicator size="small" color="white" style={{marginRight:5}} />) : (<View></View>)}
-            <Text style={styles.loginText}>Continue</Text>
+      <TouchableOpacity style={styles.loginBtn} onPress={() => tryEmail()}>
+        <View style={{ flexDirection: "row" }}>
+          {loading ? (
+            <ActivityIndicator
+              size="small"
+              color="white"
+              style={{ marginRight: 5 }}
+            />
+          ) : (
+            <View></View>
+          )}
+          <Text style={styles.loginText}>Continue</Text>
         </View>
       </TouchableOpacity>
       {/* Conditionally renders error message if user is unverified */}
@@ -342,7 +363,7 @@ function EmailVerificationScreen({ route, navigation }) {
         <Text></Text>
       )}
     </View>
-  )
+  );
 }
 
 // Navigation between login and register screens
@@ -355,8 +376,16 @@ function UnauthenticatedScreen() {
     >
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
-      <Stack.Screen name="EmailVerification" component={EmailVerificationScreen} initialParams={{ usernameParam: "", passwordParam: "", emailParam: "Test" }}/>
-      <Stack.Screen name="PasswordChange" component={PasswordChangeScreen}/>
+      <Stack.Screen
+        name="EmailVerification"
+        component={EmailVerificationScreen}
+        initialParams={{
+          usernameParam: "",
+          passwordParam: "",
+          emailParam: "Test",
+        }}
+      />
+      <Stack.Screen name="PasswordChange" component={PasswordChangeScreen} />
     </Stack.Navigator>
   );
 }
@@ -427,7 +456,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: "red",
     width: "70%",
-    textAlign: "center"
+    textAlign: "center",
   },
 
   clickableText: {
@@ -459,9 +488,8 @@ const styles = StyleSheet.create({
 
   emailText: {
     color: "white",
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 12,
     marginTop: 20,
   },
-
 });
