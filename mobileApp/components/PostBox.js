@@ -21,16 +21,15 @@ import { API_URL } from "../constants/Info";
 import CommentBox from "./CommentBox";
 import { AuthContext } from "../Context";
 
-
 // COMPONENT BODY
 export default function PostBox(props) {
-  const comments = useRef(props.comments)
+  const comments = useRef(props.comments);
 
-  const liked = useRef(props.likedBy.find((user) => user === props.myUserID))
-  const likeCount = useRef(props.likedBy.length)
+  const liked = useRef(props.likedBy.find((user) => user === props.myUserID));
+  const likeCount = useRef(props.likedBy.length);
 
   const [commentInput, setCommentInput] = useState("");
-  const scrollRef = useRef()
+  const scrollRef = useRef();
 
   const [loading, setLoading] = useState(true);
   const [commentLoading, setCommentLoading] = useState(false);
@@ -42,15 +41,17 @@ export default function PostBox(props) {
 
   const isFocused = useIsFocused();
 
-  const playlistName = useRef("")
-  const playlistCover = useRef("http://placehold.jp/3d4070/ffffff/100x100.png?text=No%0Art")
-  const playlistIsPublic = useRef(false)
-  const playlistTracks = useRef([])
-  const playlistTracksLazy = useRef([])
-  const songCount = useRef(0)
+  const playlistName = useRef("");
+  const playlistCover = useRef(
+    "http://placehold.jp/3d4070/ffffff/100x100.png?text=No%0Art"
+  );
+  const playlistIsPublic = useRef(false);
+  const playlistTracks = useRef([]);
+  const playlistTracksLazy = useRef([]);
+  const songCount = useRef(0);
 
   useEffect(() => {
-      getPlaylistDataFromID();
+    getPlaylistDataFromID();
   }, []);
 
   const { refresh } = React.useContext(AuthContext);
@@ -69,14 +70,13 @@ export default function PostBox(props) {
       .then((response) => {
         if (!response.ok) {
           console.log(response.error);
-        }
-        else {
-          playlistName.current = response.playlist.name
-          playlistCover.current = response.playlist.image
-          playlistIsPublic.current = response.playlist.public
-          playlistTracks.current = response.playlist.tracks
-          playlistTracksLazy.current = response.playlist.tracks.slice(0, 4)
-          songCount.current = response.playlist.tracks.length
+        } else {
+          playlistName.current = response.playlist.name;
+          playlistCover.current = response.playlist.image;
+          playlistIsPublic.current = response.playlist.public;
+          playlistTracks.current = response.playlist.tracks;
+          playlistTracksLazy.current = response.playlist.tracks.slice(0, 4);
+          songCount.current = response.playlist.tracks.length;
         }
         setLoading(false);
       });
@@ -105,7 +105,7 @@ export default function PostBox(props) {
 
   //expands songs
   function songsTapped() {
-    playlistTracksLazy.current = playlistTracks.current
+    playlistTracksLazy.current = playlistTracks.current;
     if (songsExpanded) setSongsExpanded(false);
     else setSongsExpanded(true);
   }
@@ -138,8 +138,10 @@ export default function PostBox(props) {
           return;
         }
         if (isFocused) {
-          likeCount.current = response.post.likedBy.length
-          liked.current = response.post.likedBy.find((user) => user === props.myUserID)
+          likeCount.current = response.post.likedBy.length;
+          liked.current = response.post.likedBy.find(
+            (user) => user === props.myUserID
+          );
           setLikeLoading(false);
         }
       });
@@ -168,28 +170,28 @@ export default function PostBox(props) {
           console.log(response.error);
           return;
         } else {
-          comments.current = response.post.comments
+          comments.current = response.post.comments;
           setCommentInput("");
-          scrollRef.current.scrollToEnd()
+          scrollRef.current.scrollToEnd();
           setCommentLoading(false);
         }
       });
   }
 
   const updatePostComments = (commentsUpdate) => {
-    setCommentLoading(true)
-    comments.current = commentsUpdate
-    setCommentLoading(false)
+    setCommentLoading(true);
+    comments.current = commentsUpdate;
+    setCommentLoading(false);
   };
 
   //Redirect to url button component
   const OpenURLButton = ({ children }) => {
     const handlePress = useCallback(async () => {
-      const url = "spotify:playlist:" + props.playlistID + ":play"
+      const url = "spotify:playlist:" + props.playlistID + ":play";
       await Linking.openURL(url);
     });
     return (
-      <TouchableOpacity 
+      <TouchableOpacity
         style={{
           width: 30,
           borderRadius: 15,
@@ -198,10 +200,15 @@ export default function PostBox(props) {
           justifyContent: "center",
           margin: 20,
           backgroundColor: "#573C6B",
-        }} 
+        }}
         onPress={handlePress}
       >
-        <Ionicons name="play" color="white" size={15} style={{marginLeft:3}}/>
+        <Ionicons
+          name="play"
+          color="white"
+          size={15}
+          style={{ marginLeft: 3 }}
+        />
       </TouchableOpacity>
     );
   };
@@ -221,14 +228,11 @@ export default function PostBox(props) {
       .then((response) => {
         if (!response.ok) {
           console.log(response.error);
-        }
-        else {
-          props.navigation.navigate({name: "Home",
-          params: {reload: true},
-          });
+        } else {
+          props.navigation.navigate({ name: "Home", params: { reload: true } });
         }
       });
-  }
+  };
 
   return (
     <View style={styles.PostContainer}>
@@ -240,19 +244,21 @@ export default function PostBox(props) {
         <View>
           {/* Post Message */}
           <View style={styles.MessageContainer}>
-            <View style={{ flexDirection: "row"  }}>
-              <TouchableOpacity style={{ flexDirection: "row", width: "75%" }}
-              onPress={() => {
-                props.navigation.navigate({
-                  name: "OtherProfile",
-                  params: { userID: props.author._id },
-                });
-              }}
+            <View style={{ flexDirection: "row" }}>
+              <TouchableOpacity
+                style={{ flexDirection: "row", width: "75%" }}
+                onPress={() => {
+                  props.navigation.navigate({
+                    name: "OtherProfile",
+                    params: { userID: props.author._id },
+                  });
+                }}
               >
                 {/* profile pic */}
+                {console.log("PROPS: ", props)}
                 <Image
                   source={
-                    (props.author.profileImageUrl != undefined)
+                    props.author?.profileImageUrl
                       ? { uri: props.author.profileImageUrl }
                       : require("../assets/images/defaultSmile.png")
                   } //default image
@@ -274,7 +280,7 @@ export default function PostBox(props) {
                       textDecorationLine: "underline",
                     }}
                   >
-                    {props.author.username}
+                    {props.author?.username}
                   </Text>
                   {/* Message */}
                   <View
@@ -290,7 +296,13 @@ export default function PostBox(props) {
                 </View>
               </TouchableOpacity>
             </View>
-            <View style={{flexDirection:"column", alignItems: "center", justifyContent:"space-between"}}>
+            <View
+              style={{
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
               {/* Timestamp */}
               <Text
                 style={{
@@ -311,7 +323,7 @@ export default function PostBox(props) {
             {/* When songs are tapped, song list expands and can be scrolled */}
             {songsExpanded ? (
               <View style={{ width: "100%", flexDirection: "row" }}>
-                <View style={{ flexDirection: "row", display: "none"}}>
+                <View style={{ flexDirection: "row", display: "none" }}>
                   <View
                     style={{
                       flexDirection: "column",
@@ -320,7 +332,7 @@ export default function PostBox(props) {
                       marginTop: 5,
                     }}
                   >
-                    <View style={{width: 150}}>
+                    <View style={{ width: 150 }}>
                       {/* Playlist Title */}
                       <Text
                         numberOfLines={1}
@@ -329,7 +341,6 @@ export default function PostBox(props) {
                           fontWeight: "bold",
                           fontSize: 18,
                           textDecorationLine: "underline",
-                          
                         }}
                       >
                         {playlistName.current}
@@ -355,75 +366,85 @@ export default function PostBox(props) {
                     No songs...
                   </Text>
                 ) : (
-                <ScrollView
-                  overScrollMode="never"
-                  style={{ maxHeight: 205, marginVertical: 10, marginHorizontal:10 }}
-                  scrollEnabled={true}
-                  nestedScrollEnabled={true}
-                >
-                  <TouchableOpacity
-                    activeOpacity={1}
-                    onPress={() => {
-                      songsTapped();
+                  <ScrollView
+                    overScrollMode="never"
+                    style={{
+                      maxHeight: 205,
+                      marginVertical: 10,
+                      marginHorizontal: 10,
                     }}
+                    scrollEnabled={true}
+                    nestedScrollEnabled={true}
                   >
-                    {playlistTracksLazy.current.map((item, index) => {
-                      return (
-                      <SongBox
-                        key={index.toString()}
-                        songCover={item.image}
-                        songName={item.name}
-                        songArtists={item.artists}
-                        songLength={item.duration}
-                      />
-                      )
-                    })}
-                  </TouchableOpacity>
-                </ScrollView>
+                    <TouchableOpacity
+                      activeOpacity={1}
+                      onPress={() => {
+                        songsTapped();
+                      }}
+                    >
+                      {playlistTracksLazy.current.map((item, index) => {
+                        return (
+                          <SongBox
+                            key={index.toString()}
+                            songCover={item.image}
+                            songName={item.name}
+                            songArtists={item.artists}
+                            songLength={item.duration}
+                          />
+                        );
+                      })}
+                    </TouchableOpacity>
+                  </ScrollView>
                 )}
               </View>
             ) : (
               <View style={{ width: "100%", flexDirection: "row" }}>
-                  <View
-                    style={{
-                      flexDirection: "column",
-                      marginStart: 15,
-                      justifyContent: "space-between",
-                      marginTop: 5,
-                    }}
-                  >
-                    <View style={{ flexDirection: "row"}}>
-                      <View style={{width: 110}}>
-                        {/* Playlist Title */}
-                        <Text
-                          numberOfLines={1}
-                          style={{
-                            color: "white",
-                            fontWeight: "bold",
-                            fontSize: 18,
-                            textDecorationLine: "underline",
-                          }}
-                        >
-                          {playlistName.current}
-                        </Text>
+                <View
+                  style={{
+                    flexDirection: "column",
+                    marginStart: 15,
+                    justifyContent: "space-between",
+                    marginTop: 5,
+                  }}
+                >
+                  <View style={{ flexDirection: "row" }}>
+                    <View style={{ width: 110 }}>
+                      {/* Playlist Title */}
+                      <Text
+                        numberOfLines={1}
+                        style={{
+                          color: "white",
+                          fontWeight: "bold",
+                          fontSize: 18,
+                          textDecorationLine: "underline",
+                        }}
+                      >
+                        {playlistName.current}
+                      </Text>
 
-                        {/* Song Count */}
-                        <Text style={{ color: "white", fontSize: 8 }}>
-                          {songCount.current} songs
-                        </Text>
-
-                      </View>
-                      <View style={{width:40, height: 40, justifyContent:"center", alignItems: "center"}}>
-                        {/* Listen button */}
-                        <OpenURLButton/>
-                      </View>
+                      {/* Song Count */}
+                      <Text style={{ color: "white", fontSize: 8 }}>
+                        {songCount.current} songs
+                      </Text>
                     </View>
-                    {/* Playlist Image */}
-                    <Image
-                      source={{ uri: playlistCover.current }}
-                      style={styles.PlaylistPic}
-                    />
+                    <View
+                      style={{
+                        width: 40,
+                        height: 40,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      {/* Listen button */}
+                      <OpenURLButton />
+                    </View>
                   </View>
+                  {/* Playlist Image */}
+                  <Image
+                    source={{ uri: playlistCover.current }}
+                    style={styles.PlaylistPic}
+                  />
+                </View>
                 {/* Playlist Songs */}
                 {songCount.current == 0 ? (
                   <Text
@@ -434,7 +455,11 @@ export default function PostBox(props) {
                 ) : (
                   <ScrollView
                     overScrollMode="never"
-                    style={{ maxHeight: 205, marginVertical: 10, marginHorizontal:10, }}
+                    style={{
+                      maxHeight: 205,
+                      marginVertical: 10,
+                      marginHorizontal: 10,
+                    }}
                     scrollEnabled={false}
                     nestedScrollEnabled={false}
                   >
@@ -446,14 +471,14 @@ export default function PostBox(props) {
                     >
                       {playlistTracksLazy.current.map((item, index) => {
                         return (
-                        <SongBox
-                          key={index.toString()}
-                          songCover={item.image}
-                          songName={item.name}
-                          songArtists={item.artists}
-                          songLength={item.duration}
-                        />
-                        )
+                          <SongBox
+                            key={index.toString()}
+                            songCover={item.image}
+                            songName={item.name}
+                            songArtists={item.artists}
+                            songLength={item.duration}
+                          />
+                        );
                       })}
                     </TouchableOpacity>
                   </ScrollView>
@@ -490,19 +515,19 @@ export default function PostBox(props) {
                   </Text>
                   {comments.current.map((item, index) => {
                     return (
-                    <CommentBox
-                      key={index.toString()}
-                      postID={props.postID}
-                      commentID={item._id}
-                      author={item.author}
-                      comment={item.comment}
-                      timeStamp={item.timeStamp}
-                      update={updatePostComments}
-                      myUserID={props.myUserID}
-                      accessToken={props.accessToken}
-                      refreshToken={props.refreshToken}
-                    />
-                    )
+                      <CommentBox
+                        key={index.toString()}
+                        postID={props.postID}
+                        commentID={item._id}
+                        author={item.author}
+                        comment={item.comment}
+                        timeStamp={item.timeStamp}
+                        update={updatePostComments}
+                        myUserID={props.myUserID}
+                        accessToken={props.accessToken}
+                        refreshToken={props.refreshToken}
+                      />
+                    );
                   })}
                 </ScrollView>
               )}
@@ -580,29 +605,54 @@ export default function PostBox(props) {
                   size={25}
                 />
               </TouchableOpacity>
-              {(repostExpanded ?
-              <View style={{flexDirection:"row"}}>
-                <Text style={[styles.MainText, {textAlignVertical:"center", marginRight:10, fontSize: 13}]}>Repost?</Text>
-                <TouchableOpacity style={{backgroundColor:"#573C6B", padding: 4, borderRadius:20, marginHorizontal: 5}}
-                onPress={() => {
-                  repost(props.postID)
-                  setRepostExpanded(false)
-                }}>
-                  <Ionicons name="checkmark" color="white" size={15}/>
+              {repostExpanded ? (
+                <View style={{ flexDirection: "row" }}>
+                  <Text
+                    style={[
+                      styles.MainText,
+                      {
+                        textAlignVertical: "center",
+                        marginRight: 10,
+                        fontSize: 13,
+                      },
+                    ]}
+                  >
+                    Repost?
+                  </Text>
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: "#573C6B",
+                      padding: 4,
+                      borderRadius: 20,
+                      marginHorizontal: 5,
+                    }}
+                    onPress={() => {
+                      repost(props.postID);
+                      setRepostExpanded(false);
+                    }}
+                  >
+                    <Ionicons name="checkmark" color="white" size={15} />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: "#573C6B",
+                      padding: 4,
+                      borderRadius: 20,
+                      marginHorizontal: 5,
+                    }}
+                    onPress={() => setRepostExpanded(false)}
+                  >
+                    <Ionicons name="close" color="white" size={15} />
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <TouchableOpacity onPress={() => setRepostExpanded(true)}>
+                  <Ionicons
+                    style={{ color: "white", marginRight: 20 }}
+                    name="repeat"
+                    size={25}
+                  />
                 </TouchableOpacity>
-                <TouchableOpacity style={{backgroundColor:"#573C6B", padding: 4, borderRadius:20, marginHorizontal: 5}}
-                onPress={() => setRepostExpanded(false)}>
-                  <Ionicons name="close" color="white" size={15}/>
-                </TouchableOpacity>
-              </View>
-              :
-              <TouchableOpacity onPress={() => setRepostExpanded(true)}>
-                <Ionicons
-                  style={{ color: "white", marginRight: 20 }}
-                  name="repeat"
-                  size={25}
-                />
-              </TouchableOpacity>
               )}
             </View>
             {/* Post Info */}
@@ -742,7 +792,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     color: "#12081A",
     alignSelf: "center",
-    textAlignVertical:"auto",
+    textAlignVertical: "auto",
   },
 
   MakeCommentContainer: {
