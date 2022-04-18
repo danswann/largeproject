@@ -19,15 +19,15 @@ export default function MessageBox(props) {
     function getOtherUsernameAndImage(users) {
         if (users[0]._id == props.myUserID)
         {
-            setUsername(users[1].username)
-            if(users[1].profileImageUrl != undefined)
-                setImage(users[1].profileImageUrl)
+            setUsername(users[1]?.username)
+            if(users[1]?.profileImageUrl != undefined)
+                setImage(users[1]?.profileImageUrl)
         }
         else
         {
-            setUsername(users[0].username)
-            if(users[0].profileImageUrl != undefined)
-                setImage(users[0].profileImageUrl)
+            setUsername(users[0]?.username)
+            if(users[0]?.profileImageUrl != undefined)
+                setImage(users[0]?.profileImageUrl)
         }
     }
     
