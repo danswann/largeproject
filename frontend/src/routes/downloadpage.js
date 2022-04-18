@@ -11,7 +11,12 @@ const DownloadPage = () => {
 			<Container style={{justifyContent:'center', display:'flex'}}>
 				<Row className="container mt-5">
 					{/* download buttons */}
-					<Col style={{justifyContent:'center', display:'flex', flexDirection:'column', alignItems:'center'}}>
+					<Col style={{
+							justifyContent:'center', 
+							display:'flex', 
+							flexDirection:'column', 
+							alignItems:'center'
+						}}>
 						<img
 							src='/assets/downloadAppStore.png'					
 							height="250px"

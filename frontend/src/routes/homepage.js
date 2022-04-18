@@ -7,7 +7,7 @@ import { BrowserView, MobileView } from 'react-device-detect';
 function HomePage() {
     const aboutRef = useNav('HomePage');
     return (
-        <main ref={aboutRef} id='homeContainer' style={{marginTop: 100, marginBottom: 300}}>
+        <main ref={aboutRef} id='homeContainer' style={{marginTop: 100, marginBottom: 300}}>               
             {/* description */}
             <BrowserView>
                 <Container style={{justifyContent:'center', display:'flex'}}>

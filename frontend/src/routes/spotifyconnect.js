@@ -1,13 +1,13 @@
 
 function ConnectionSuccess() {
     return (
-        <span style={{color:"green"}}>Spotify account succesfully connected!</span>
+        <h3 className="text-center" style={{color:"green"}}>Spotify account succesfully connected!</h3>
     )
 }
 
 function ConnectionFailure() {
     return (
-        <span style={{color:"red"}}>Spotify account connection failed!</span>
+        <h3 className="text-center" style={{color:"red"}}>Spotify account connection failed!</h3>
     )
 }
 
@@ -21,3 +21,4 @@ function SpotifyConnect(props) {
 }
 
 export default SpotifyConnect;
+
