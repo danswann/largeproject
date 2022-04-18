@@ -9,9 +9,6 @@ render (
   <BrowserRouter>
     <Routes>
       <Route path="/" element={<App />}>
-        {/* <Route index element={<HomePage />} />
-        <Route index element={<AboutPage />} />
-        <Route index element={<ContactPage />} /> */}
         <Route path="spotifyconnect">
           <Route path="success" element={<SpotifyConnect success={true} />} />
           <Route path="failure" element={<SpotifyConnect success={false} />} />

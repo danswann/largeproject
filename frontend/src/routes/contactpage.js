@@ -12,7 +12,7 @@ const ContactPage = () => {
                 {/* body text */}
                 <Col>				
                     <h1 className="description mt-4">contact</h1>
-                    <h5 style={{color: 'white'}}>This is the contact section</h5>
+                    <p style={{color: 'white'}}>This is the contact section</p>
                 </Col>
                 {/* Image */}
                 <Col>

@@ -3,12 +3,13 @@ nav {
 	position: sticky;
 	z-index: 10;
 	top: 0;
-	padding: 1.2em 0;
+	/* padding: 1.2em 0; */
 	color: white;
-	background-color: var(--darkAccent);
+	/* background-color: var(--darkAccent); */
 	max-height: 4em;
-	justify-content: flex-end;
+	/* justify-content: flex-end; */
 	display: flex;
+	
 }
 
 nav span {
@@ -16,7 +17,8 @@ nav span {
 	border-bottom: 1px solid transparent;
 	transition: border-bottom 0.3s ease;	
 	margin: 1em;
-	padding-bottom: 1.3em;
+	/* padding-bottom: 1.3em;	 */
+	margin-right: 12;
 	/* justify-content: end; */
 }
 

@@ -2,10 +2,11 @@ import '../App.css'
 import { Container, Row, Col } from 'react-bootstrap';
 import { useNav } from '../hooks/useNav';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { BrowserView, MobileView } from 'react-device-detect';
+
 
 function HomePage() {
     const aboutRef = useNav('HomePage');
-
     return (
         <main ref={aboutRef} id='homeContainer'>
             {/* navbar */}
@@ -34,24 +35,30 @@ function HomePage() {
                 </Container>
             </Navbar> */}
             {/* description */}
-            <Container style={{justifyContent:'center', display:'flex'}}>
-                <Row className="container mt-5">
-                    {/* body text */}
-                    <Col>
-                        <h1 className="description text-left text-bold">discover new sounds</h1>        
-                        <h5 className="mt-5" style={{color:'white'}}>share your playlists with the world</h5>                                                             
-                        <h5 className="mt-5" style={{color:'white'}}>join soundlink today</h5>
-                    </Col>
-                    {/* phone screen image */}
-                    <Col>
-                        <img
-                            src="/assets/iphoneScreenDummy.jpg"
-                            width="75%"
-                            alt=""                            
-                        />
-                    </Col>
-                </Row>
-            </Container>
+            <BrowserView>
+                <Container style={{justifyContent:'center', display:'flex'}}>
+                    <Row className="container mt-5">
+                        {/* body text */}
+                        <Col>
+                            <h1 className="description text-left text-bold">discover new sounds</h1>        
+                            <p className="mt-5" style={{color:'white'}}>share your playlists with the world</p>
+                            <p className="mt-5" style={{color:'white'}}>join soundlink today</p>
+                        </Col>
+                        {/* phone screen image */}
+                        <Col>
+                            <img
+                                src="/assets/mockup2.png"
+                                width="100%"
+                                alt=""                            
+                            />
+                        </Col>
+                    </Row>
+                </Container>
+            </BrowserView>
+            <MobileView>
+                <h1>This is rendered only on mobile</h1>
+            </MobileView>
+
         </main>        
     )    
 }

@@ -12,6 +12,7 @@ const NavLink = ({ navLinkId, scrollToId }) => {
 	return (
 		<span
 			id={navLinkId}
+			style={{backgroundColor:"transparent"}}
 			className={activeNavLinkId === navLinkId ? 'activeClass' : ''}
 			onClick={handleClick}
 		>
