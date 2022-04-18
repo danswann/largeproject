@@ -375,16 +375,18 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginHorizontal: 10,
     color: "white",
+    textAlign: "center",
   },
 
   spotifyBtn: {
-    width: "80%",
+    width: "90%",
     borderRadius: 25,
     height: 50,
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 20,
     backgroundColor: "#573C6B",
+    paddingHorizontal: 5
   },
 
   playlistsBtn: {
