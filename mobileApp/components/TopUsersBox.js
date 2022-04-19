@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
 import React, { useEffect } from "react";
 import PostBox from "./PostBox";
 import RepostBox from "./RepostBox";
@@ -20,10 +27,13 @@ export default function TopUsersBox(props) {
   const isFocused = useIsFocused();
 
   useEffect(() => {
+    setPostimage1(null);
+    setPostimage2(null);
+    setPostimage3(null);
     setPostimage1(props.postImage1);
     setPostimage2(props.postImage2);
     setPostimage3(props.postImage3);
-  }, [isFocused]);
+  }, [isFocused, props.username]);
 
   const openPost = async (postID) => {
     setPostBox(await getPostBoxFromID(postID));
@@ -192,47 +202,35 @@ export default function TopUsersBox(props) {
             </View>
           </View>
           <View style={{ position: "relative", height: 150 }}>
-            <View
+            {/* Rendering the users posts */}
+            <FlatList
               style={{
                 flexDirection: "row",
                 position: "absolute",
                 left: "15%",
                 marginTop: 20,
-                width: "68%",
-                //   backgroundColor: "green",
+                width: "72%",
+                height: "58%",
               }}
-            >
-              <TouchableOpacity
-                style={{ width: "33%" }}
-                onPress={() => {
-                  if (props.postID1) {
-                    openPost(props.postID1);
-                  }
-                }}
-              >
-                <Image style={styles.postImages} source={{ uri: postImage1 }} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{ width: "33%", marginLeft: 10 }}
-                onPress={() => {
-                  if (props.postID2) {
-                    openPost(props.postID2);
-                  }
-                }}
-              >
-                <Image style={styles.postImages} source={{ uri: postImage2 }} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{ width: "33%", marginLeft: 10 }}
-                onPress={() => {
-                  if (props.postID3) {
-                    openPost(props.postID3);
-                  }
-                }}
-              >
-                <Image style={styles.postImages} source={{ uri: postImage3 }} />
-              </TouchableOpacity>
-            </View>
+              data={props.posts}
+              renderItem={(item) => {
+                console.log("ITEM: ", item);
+                return (
+                  <TouchableOpacity
+                    style={{ width: "33%" }}
+                    onPress={() => {
+                      openPost(item.item._id);
+                    }}
+                  >
+                    <Image
+                      style={styles.postImages}
+                      source={{ uri: item.item.image }}
+                    />
+                  </TouchableOpacity>
+                );
+              }}
+              keyExtractor={(item, index) => item._id}
+            ></FlatList>
           </View>
         </View>
       )}
@@ -248,7 +246,7 @@ const styles = StyleSheet.create({
   },
   postImages: {
     aspectRatio: 1,
-    width: "100%",
+    height: "100%",
     marginRight: 10,
   },
   usernameText: {

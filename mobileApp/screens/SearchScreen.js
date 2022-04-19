@@ -134,20 +134,9 @@ export default function SearchScreen({ route, navigation }) {
                     // isFollowed={item.currentUserFollows}
                     followerCount={item.followers?.length}
                     isFollowed={item.currentUserFollows}
-                    postID1={item.posts?.length > 0 ? item.posts[0]?._id : null}
-                    postID2={item.posts?.length > 0 ? item.posts[1]?._id : null}
-                    postID3={item.posts?.length > 0 ? item.posts[2]?._id : null}
                     rank={index}
                     profilePic={item.profileImageUrl}
-                    postImage1={
-                      item.posts?.length > 0 ? item.posts[0]?.image : null
-                    }
-                    postImage2={
-                      item.posts?.length > 1 ? item.posts[1]?.image : null
-                    }
-                    postImage3={
-                      item.posts?.length > 2 ? item.posts[2]?.image : null
-                    }
+                    posts={item.posts}
                     navigation={navigation}
                   />
                 );
