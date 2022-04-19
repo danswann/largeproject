@@ -255,7 +255,6 @@ export default function PostBox(props) {
                 }}
               >
                 {/* profile pic */}
-                {console.log("PROPS: ", props)}
                 <Image
                   source={
                     props.author?.profileImageUrl
