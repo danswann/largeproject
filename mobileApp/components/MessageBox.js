@@ -17,7 +17,6 @@ export default function MessageBox(props) {
         image.current = "uri"
         username.current = ""
         getOtherUsernameAndImage(props.users)
-        console.log(username.current)
         setLoading(false)
     }, [isFocused, props.chatID]);
     

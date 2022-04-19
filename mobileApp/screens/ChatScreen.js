@@ -31,7 +31,7 @@ const Tab = createMaterialTopTabNavigator();
 export default function ChatScreen({ route, navigation }) {
   const { myUserID, chatID, otherUserID, newChat, name, messages, accessToken} = route.params;
   const chatIDRef = useRef(chatID)
-  const [chatLoading, setChatLoading] = useState();
+  const [chatLoading, setChatLoading] = useState(true);
   const messageInput = useRef("");
   const messageInputRef = useRef();
   const [messageLoading, setMessageLoading] = useState(false);
@@ -87,6 +87,7 @@ export default function ChatScreen({ route, navigation }) {
             setMessageLoading(false);
           }
           setChatLoading(false)
+          flatListRef.current?.scrollToEnd()
         }
       })
   }
@@ -119,15 +120,14 @@ export default function ChatScreen({ route, navigation }) {
     return false
   }  
 
-  function sendLiveMessage()
+  async function sendLiveMessage()
   {
     if (messageInput.current == "")
       return
     setMessageLoading(true)    
-    ws.current.send(JSON.stringify({text: messageInput.current}))
+    await ws.current.send(JSON.stringify({text: messageInput.current}))
     messageInput.current = ""
     messageInputRef.current.clear()
-    flatListRef.current?.scrollToEnd()
     setMessageLoading(false)
   }
 
@@ -155,6 +155,7 @@ export default function ChatScreen({ route, navigation }) {
         <FlatList
           ref={flatListRef}
           data= {messageArray.current}
+          onContentSizeChange={flatListRef.current?.scrollToEnd()}
           ListHeaderComponent={<View style={{flexDirection:"row", height:50, marginBottom: 10, width:"50%", alignSelf:"center"}}><Text style={[styles.textInput, {color: "#A57FC1", textAlign: "center", alignSelf: "flex-end", borderBottomColor: "#A57FC1", borderBottomWidth: 1}]}>Start of conversation</Text></View>}
           ListFooterComponent={<View style={{height:30}}/>}
           renderItem={({item}) => <ChatBox message={item.text} timeStamp={item.timeStamp} sentByMe={sentByMe(item.author)}/>}

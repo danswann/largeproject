@@ -209,7 +209,6 @@ function MessageTab({ route, navigation }) {
 
   const isFocused = useIsFocused();
   useEffect(() => {
-    console.log("\nUpdating Messages:\n")
     getdmList();
   }, [isFocused]);
 
