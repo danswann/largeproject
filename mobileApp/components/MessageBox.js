@@ -1,5 +1,5 @@
 import { NavigationContainer } from "@react-navigation/native";
-import {React, useState, useEffect} from "react";
+import {React, useState, useEffect, useRef} from "react";
 import { useIsFocused } from "@react-navigation/native";
 import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -7,36 +7,41 @@ import { API_URL } from "../constants/Info";
 
 // COMPONENT BODY
 export default function MessageBox(props) { 
-    const [username, setUsername] = useState("");
-    const [image, setImage] = useState("uri");
+    const username = useRef("");
+    const image = useRef("uri");
+    const [loading, setLoading] = useState(true)
 
     const isFocused = useIsFocused();
     useEffect(() => {
-        setImage("uri")
+        setLoading(true)
+        image.current = "uri"
+        username.current = ""
         getOtherUsernameAndImage(props.users)
-    }, [isFocused]);
+        console.log(username.current)
+        setLoading(false)
+    }, [isFocused, props.chatID]);
     
     // returns whoever isn't the current user
     function getOtherUsernameAndImage(users) {
         if (users[0]._id == props.myUserID)
         {
-            setUsername(users[1]?.username)
+            username.current = users[1]?.username
             if(users[1]?.profileImageUrl != undefined)
-                setImage(users[1]?.profileImageUrl)
+                image.current = users[1]?.profileImageUrl
         }
         else
         {
-            setUsername(users[0]?.username)
+            username.current = users[0]?.username
             if(users[0]?.profileImageUrl != undefined)
-                setImage(users[0]?.profileImageUrl)
+                image.current = users[0]?.profileImageUrl
         }
     }
     
     return (
     <TouchableOpacity 
-        style={{minWidth: "100%"}}
+        style={{minWidth: "100%", maxWidth:"100%"}}
         onPress={() => {
-            props.navigation.navigate('Chat', {myUserID: props.myUserID, chatID: props.chatID, name: username, newChat: false, accessToken: props.accessToken})
+            props.navigation.navigate('Chat', {myUserID: props.myUserID, chatID: props.chatID, name: username.current, newChat: false, accessToken: props.accessToken})
         }}>
         <View style={styles.MessageContainer}>        
             <View style={{flexDirection: 'row'}}>
@@ -44,8 +49,8 @@ export default function MessageBox(props) {
                 {/* profile pic */}
                 <Image
                     source={
-                        image != "uri"
-                            ? { uri: image }
+                        image.current != "uri"
+                            ? { uri: image.current }
                             : require("../assets/images/defaultSmile.png")
                     }
                     style={styles.ProfilePic}
@@ -61,7 +66,7 @@ export default function MessageBox(props) {
                         color: 'white', 
                         fontWeight: 'bold', 
                         textDecorationLine: "underline"}}>
-                        {username}
+                        {username.current}
                     </Text>
 
                     {/* Message */}
@@ -94,6 +99,8 @@ export default function MessageBox(props) {
 const styles = StyleSheet.create({
     MainText: {
         color: "white",
+        width:"85%",
+        marginBottom: 5,
     },
     
     MessageContainer: {

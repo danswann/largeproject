@@ -79,7 +79,6 @@ function NotificationTab({ route, navigation }) {
     fetch(`${API_URL}/api/notification/getAllNotifications`, requestOptions)
       .then((response) => response.json())
       .then((response) => {
-        console.log(response);
         if (!response.ok) {
           console.log(response.error);
         } else setNotifications(response.notifications);
@@ -210,6 +209,7 @@ function MessageTab({ route, navigation }) {
 
   const isFocused = useIsFocused();
   useEffect(() => {
+    console.log("\nUpdating Messages:\n")
     getdmList();
   }, [isFocused]);
 
@@ -268,7 +268,7 @@ function MessageTab({ route, navigation }) {
               navigation={navigation}
             />
           )}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={(item, index) => item._id} 
         />
       )}
       {/* create new message button */}
