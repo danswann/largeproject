@@ -8,12 +8,9 @@ const rootElement = document.getElementById('root');
 render (
   <BrowserRouter>
     <Routes>
-      <Route path="/" element={<App />}>
-        <Route path="spotifyconnect">
-          <Route path="success" element={<SpotifyConnect success={true} />} />
-          <Route path="failure" element={<SpotifyConnect success={false} />} />
-        </Route>
-      </Route>
+      <Route path="/" element={<App />} />
+      <Route path="/spotifyconnect/success" element={<SpotifyConnect success={true} />} />
+      <Route path="/spotifyconnect/failure" element={<SpotifyConnect success={false} />} />
     </Routes>
   </BrowserRouter>,
   rootElement
