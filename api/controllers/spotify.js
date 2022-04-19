@@ -60,7 +60,6 @@ exports.callback = async function(req, res, next) {
         currentUser.spotify.refreshToken = result.body['refresh_token'];
         currentUser.spotify.expiration = Date.now() + result.body['expires_in'] * 1000;
         currentUser.spotify.id = me.body['id'];
-        //currentUser.spotify.image = me.body['images'][0]?.url;
         currentUser.profileImageUrl = me.body['images'][0]?.url;
         await currentUser.save();
         // Redirect to a success message on the main website

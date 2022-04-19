@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 
 // Define chat subdocument schema
 const ChatSchema = new Schema({
-    isRead: {type:Boolean, default:false},
     timeStamp: {type:Date, default:Date.now},
     text: {type:String, maxlength:250},
     author: {type:Schema.ObjectId, ref:'User', required:true}
