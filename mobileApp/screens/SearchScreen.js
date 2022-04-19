@@ -91,15 +91,6 @@ export default function SearchScreen({ route, navigation }) {
             selectionColor={"#573C6B"}
             onChangeText={(text) => getResults(text)}
           />
-          {loading ? (
-            <ActivityIndicator
-              size="small"
-              color="#573C6B"
-              style={{ marginRight: 20 }}
-            />
-          ) : (
-            <></>
-          )}
         </View>
         <View style={styles.searchResultsContainer}>
           <FlatList
