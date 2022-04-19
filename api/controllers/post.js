@@ -502,25 +502,16 @@ exports.getAllUsersPost = async function(req, res, next) {
     }
 
     // Find liked posts by userID
-    const filter = {author:userID};
+    const filter = {author:userID, isReposted:false};
     const projection = {_id: 1, isReposted: 1, originalPost: 1, author: 1, playlistID: 1};
     const posts = await Post.find(filter, projection).sort({timeStamp: 'desc'}).populate('originalPost', 'author playlistID').skip(currentIndex).limit(numberOfPosts).lean();
 
     response.posts = posts;
     for (var i = 0; i < response.posts.length; i++) {
         try {
-            if (response.posts[i].isReposted == true)
-            {
-                var data = await Spotify.getPlaylistNameandImage(response.posts[i].originalPost.author, response.posts[i].originalPost.playlistID);
-                response.posts[i].name = data.name;
-                response.posts[i].image = data.image;
-            }
-            else
-            {
-                var data = await Spotify.getPlaylistNameandImage(response.posts[i].author, response.posts[i].playlistID);
-                response.posts[i].name = data.name;
-                response.posts[i].image = data.image;
-            }
+            var data = await Spotify.getPlaylistNameandImage(response.posts[i].author, response.posts[i].playlistID);
+            response.posts[i].name = data.name;
+            response.posts[i].image = data.image;
         }
         catch(err) {
             response.posts.splice(i, 1);
