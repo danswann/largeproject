@@ -51,7 +51,6 @@ export default function HomeScreen({ route, navigation }) {
       .then((response) => response.json())
       .then((response) => {
         if (response.ok) {
-          console.log("HOMEFEED RESPONSE: ", response);
           if (isFocused) {
             if (index != 0) {
               console.log("Loading more posts...");

@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, useRef } from "react";
 import {
   Text,
   View,
@@ -24,17 +24,18 @@ export default function ProfileScreen({ route, navigation }) {
   const userID = route.params.userID;
   const myUserID = route.params.myUserID;
   const accessToken = route.params.accessToken;
-  const isFollowed = route.params.isFollowed;
 
-  const [username, setUsername] = useState("");
-  const [bio, setBio] = useState("");
-  const [hasProfileImage, setHasProfileImage] = useState(false);
-  const [image, setImage] = useState("uri");
+  const isFollowed = useRef(route.params.isFollowed);
+  const username = useRef("");
+  const bio = useRef("");
+  const hasProfileImage = useRef(false);
+  const image = useRef("uri");
+  const [postCount, setPostCount] = useState(0);
+  const [likedPostCount, setLikedPostCount] = useState(0);
+  const followingCount = useRef(0);
+  const followerCount = useRef(0);
+  const [profileLoading, setProfileLoading] = useState(true);
 
-  const [postCount, setPostCount] = useState([0]);
-  const [likedPostCount, setLikedPostCount] = useState([0]);
-  const [followingCount, setFollowingCount] = useState([0]);
-  const [followerCount, setFollowerCount] = useState([0]);
   const [postGridComplete, setPostGridComplete] = useState([]);
   const [likedPostGridComplete, setLikedPostGridComplete] = useState([]);
   const [postsOrLikes, setPostsOrLikes] = useState("posts");
@@ -43,43 +44,51 @@ export default function ProfileScreen({ route, navigation }) {
   const [postBox, setPostBox] = useState(<></>);
 
   const isFocused = useIsFocused();
-  useEffect(() => {
-    getUserData();
+  useEffect(async () => {
+    setProfileLoading(true)
+    await getUserData();
+    setProfileLoading(false)
     getPosts();
     getLikedPosts();
   }, [isFocused]);
 
   //Gets user data from api
-  function getUserData() {
+  async function getUserData() {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userID: userID }),
     };
-    fetch(`${API_URL}/api/user/searchUser`, requestOptions)
+    await fetch(`${API_URL}/api/user/searchUser`, requestOptions)
       .then((response) => response.json())
       .then((response) => {
         if (!response.ok) {
           console.log(response.error);
           return;
         }
-        setUsername(response.user.username);
+        username.current = response.user.username;
 
         if (
           response.user.spotify.connected &&
           response.user.profileImageUrl != undefined
         ) {
-          setHasProfileImage(true);
-          setImage(response.user.profileImageUrl);
+          hasProfileImage.current = true;
+          image.current = response.user.profileImageUrl;
         } else {
-          setHasProfileImage(false);
+          hasProfileImage.current = false;
         }
-        setBio(response.user.biography);
+        bio.current = response.user.biography;
 
         if (response.user.followers != null)
-          setFollowerCount(response.user.followers.length);
+        {
+          followerCount.current = response.user.followers.length;
+          if(response.user.followers.find(user => user === myUserID))
+            isFollowed.current = true
+          else
+            isFollowed.current = false
+        }
         if (response.user.following != null)
-          setFollowingCount(response.user.following.length);
+          followingCount.current = response.user.following.length;
       });
   }
   //Gets user posts from api
@@ -188,7 +197,6 @@ export default function ProfileScreen({ route, navigation }) {
       fetch(`${API_URL}/api/post/getPost`, requestOptions)
         .then((response) => response.json())
         .then((response) => {
-          console.log(response);
           if (!response.ok) {
             console.log(response.error);
             res(<></>);
@@ -240,43 +248,54 @@ export default function ProfileScreen({ route, navigation }) {
           </TouchableOpacity>
         </View>
       ) : (
-        <View style={styles.MainContainer}>
+        <View style={[styles.MainContainer, {width: "100%"}]}>
+          {profileLoading 
+          ? 
+          <View style={{backgroundColor: "#12081A", width: "85%", marginTop: 20, borderRadius: 25}}>
+            <ActivityIndicator size="large" color="#573C6B" style={{marginVertical: 50}}/>
+          </View>
+          :
           <ProfileBox
-            username={username}
-            bio={bio}
-            image={image}
-            hasProfileImage={hasProfileImage}
+            username={username.current}
+            bio={bio.current}
+            image={image.current}
+            hasProfileImage={hasProfileImage.current}
             postCount={postCount}
-            followerCount={followerCount}
-            followingCount={followingCount}
+            followerCount={followerCount.current}
+            followingCount={followingCount.current}
             myUserID={myUserID}
             targetUserID={userID}
-            isFollowed={isFollowed}
+            isFollowed={isFollowed.current}
             accessToken={accessToken}
             navigation={navigation}
           />
+          }
           {/* Container for navigation between posts and likes */}
           <View style={styles.NavContainer}>
             {/* Posts and likes filter buttons */}
             <TouchableOpacity
-              hitSlop={{ top: 40, bottom: 40, left: 100, right: 100 }}
+              hitSlop={{ top: 40, bottom: 40, left: 90, right: 90 }}
               onPress={() => setPostsOrLikes("posts")}
             >
-              {postsOrLikes === "posts" ? (
-                <Ionicons name="grid" size={20} color="#573C6B" />
-              ) : (
-                <Ionicons name="grid" size={20} color="white" />
-              )}
+              <View style={{backgroundColor: "#12081A", paddingHorizontal: 30, paddingVertical: 5, borderRadius: 50}}>
+                {postsOrLikes === "posts" ? (
+                  <Ionicons name="grid" size={18} color="#573C6B" />
+                ) : (
+                  <Ionicons name="grid" size={18} color="white" />
+                )}
+              </View>
             </TouchableOpacity>
             <TouchableOpacity
-              hitSlop={{ top: 40, bottom: 40, left: 100, right: 100 }}
+              hitSlop={{ top: 40, bottom: 40, left: 90, right: 90 }}
               onPress={() => setPostsOrLikes("likes")}
             >
-              {postsOrLikes === "likes" ? (
-                <Ionicons name="heart" size={20} color="#573C6B" />
-              ) : (
-                <Ionicons name="heart" size={20} color="white" />
-              )}
+              <View style={{backgroundColor: "#12081A", paddingHorizontal: 30, paddingVertical: 5, borderRadius: 50}}>
+                {postsOrLikes === "likes" ? (
+                  <Ionicons name="heart" size={20} color="#573C6B" />
+                ) : (
+                  <Ionicons name="heart" size={20} color="white" />
+                )}
+              </View>
             </TouchableOpacity>
           </View>
           {/* Grid container */}
@@ -351,9 +370,9 @@ const styles = StyleSheet.create({
   NavContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-around",
-    alignSelf: "stretch",
-    marginTop: 10,
+    justifyContent: "space-evenly",
+    paddingVertical: 10,
+    width:"90%",
   },
   GridColumnContainer: {
     marginTop: 40,

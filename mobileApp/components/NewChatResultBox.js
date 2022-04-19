@@ -12,8 +12,14 @@ export default function NewChatResultBox(props) {
       style={styles.resultContainer}
       onPress={() => {
         props.navigation.navigate({
-          name: "OtherProfile",
-          params: { userID: props.userID, isFollowed: followed },
+          name: "Chat",
+          params: {
+            myUserID: props.myUserID,
+            otherUserID: props.userID,
+            name: props.username,
+            newChat: true,
+            accessToken: props.accessToken,
+          },
         });
       }}
     >

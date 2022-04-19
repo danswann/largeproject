@@ -187,7 +187,7 @@ function NotificationTab({ route, navigation }) {
                 )}
                 keyExtractor={(item, index) => index.toString()}
               />
-              <View style={{ top: -100, alignSelf: "center" }}>
+              <View style={{ top: "-12%", alignSelf: "center" }}>
                 {/* Clear button */}
                 <TouchableOpacity
                   style={[styles.closeBtn, { paddingHorizontal: 5 }]}
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
   newMessageButton: {
     alignSelf: "flex-end",
     marginEnd: 20,
-    top: -80,
+    top: "-12%",
   },
 
   PostContainer: {
