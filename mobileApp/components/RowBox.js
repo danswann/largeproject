@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
   GridRowContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     alignSelf: "flex-start",
     minWidth: "100%",
     marginVertical: 5,

@@ -8,7 +8,7 @@ import { useIsFocused } from "@react-navigation/native";
 export default function ProfileBox(props) {
   const isFocused = useIsFocused();
   // Track whether or not you follow this user
-  console.log("props.isFollowed ", props.isFollowed);
+
   const [isFollowed, setIsFollowed] = useState(false);
   useEffect(() => {
     setIsFollowed(props.isFollowed);
@@ -126,7 +126,7 @@ export default function ProfileBox(props) {
               )}
               {/* Direct Message button */}
               <TouchableOpacity
-                style={[styles.button, { backgroundColor: "gray" }]}
+                style={[styles.button, { backgroundColor: "gray", paddingVertical: 5 }]}
                 onPress={() => {
                   props.navigation.navigate({
                     name: "Chat",
@@ -195,13 +195,18 @@ const styles = StyleSheet.create({
   },
   MainContainer: {
     flexDirection: "column",
-    alignItems: "center",
+    backgroundColor: "#12081A",
+    justifyContent: "center",
+    borderRadius: 23,
+    marginVertical: 2,
+    marginHorizontal: 5,
+    marginTop: 25,
   },
   ProfileMainInfoContainer: {
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 25,
+    
     padding: 20,
     // backgroundColor: "blue",
     width: "100%",
@@ -259,6 +264,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 25,
     marginHorizontal: 5,
+    marginVertical: 3,
     paddingVertical: 8,
     paddingHorizontal: 12,
   },
