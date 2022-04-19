@@ -121,7 +121,15 @@ export default function SearchScreen({ route, navigation }) {
           />
         </View>
         {!searching ? (
-          <View style={{ width: "100%", marginTop: 20 }}>
+          <View
+            style={{
+              width: "100%",
+              marginTop: 20,
+              marginBottom: 130,
+            }}
+          >
+            <Text style={styles.topUsersText}>Top Users</Text>
+
             <FlatList
               data={topUsers}
               initialScrollIndex={0}
@@ -186,7 +194,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 30,
     borderColor: "#573C6B",
-    backgroundColor: "black",
+    backgroundColor: "#12081A",
     width: "85%",
     height: 45,
     marginTop: 40,
@@ -199,7 +207,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     borderTopLeftRadius: 30,
     borderColor: "#573C6B",
-    backgroundColor: "black",
+    backgroundColor: "#12081A",
     width: "85%",
     height: 45,
     marginTop: 40,
@@ -212,5 +220,12 @@ const styles = StyleSheet.create({
     padding: 10,
     marginLeft: 20,
     color: "white",
+  },
+  topUsersText: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "bold",
+    left: "6%",
+    marginBottom: 20,
   },
 });

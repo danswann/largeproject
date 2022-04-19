@@ -1,14 +1,29 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import PostBox from "./PostBox";
 import RepostBox from "./RepostBox";
 import { useState } from "react";
 import { API_URL } from "../constants/Info";
+import { Ionicons } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 
 export default function TopUsersBox(props) {
   // Stuff to show the post
   const [postBox, setPostBox] = useState(<></>);
   const [postVisible, setPostVisible] = useState(false);
+
+  // Keeping state of post images
+  const [postImage1, setPostimage1] = useState(props.postImage1);
+  const [postImage2, setPostimage2] = useState(props.postImage2);
+  const [postImage3, setPostimage3] = useState(props.postImage3);
+
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    setPostimage1(props.postImage1);
+    setPostimage2(props.postImage2);
+    setPostimage3(props.postImage3);
+  }, [isFocused]);
 
   const openPost = async (postID) => {
     setPostBox(await getPostBoxFromID(postID));
@@ -62,9 +77,13 @@ export default function TopUsersBox(props) {
     <View
       style={{
         flex: 1,
-        width: "100%",
-        borderBottomWidth: 1,
-        borderBottomColor: "gray",
+        width: "90%",
+        left: "5%",
+        borderWidth: 1,
+        borderColor: "#573C6B",
+        borderRadius: 10,
+        backgroundColor: "#12081A",
+        marginBottom: 20,
       }}
     >
       {postVisible ? (
@@ -81,14 +100,10 @@ export default function TopUsersBox(props) {
         </View>
       ) : (
         <View>
-          {props.rank === 0 && (
-            <Text style={styles.topUsersText}>Top Users</Text>
-          )}
           <View
             style={{
               marginTop: 30,
               flexDirection: "row",
-              // backgroundColor: "yellow",
               width: "100%",
               justifyContent: "space-around",
             }}
@@ -97,7 +112,6 @@ export default function TopUsersBox(props) {
             <View
               style={{
                 width: "10%",
-                // backgroundColor: "blue",
                 alignItems: "center",
               }}
             >
@@ -137,17 +151,42 @@ export default function TopUsersBox(props) {
                 />
               </View>
               <View style={{ width: "60%", left: "5%" }}>
-                <Text
-                  style={styles.usernameText}
-                  adjustsFontSizeToFit={true}
-                  numberOfLines={1}
-                >
-                  {props.username}
-                </Text>
+                <View style={{ flexDirection: "row" }}>
+                  <Text
+                    style={styles.usernameText}
+                    adjustsFontSizeToFit={true}
+                    numberOfLines={1}
+                  >
+                    {props.username}
+                  </Text>
+                  {props.rank <= 2 ? (
+                    <Ionicons
+                      name={"trophy"}
+                      size={16}
+                      color={
+                        props.rank === 0
+                          ? "gold"
+                          : props.rank === 1
+                          ? "silver"
+                          : "#CD7F32"
+                      }
+                      style={{ marginTop: 1.7, marginLeft: 3 }}
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </View>
               </View>
             </TouchableOpacity>
             <View style={{ width: "25%", right: "90%" }}>
-              <Text style={{ color: "white", textAlign: "right" }}>
+              <Text
+                style={{
+                  color: "white",
+                  textAlign: "right",
+                  fontWeight: "bold",
+                  fontSize: 12,
+                }}
+              >
                 {props.followerCount} Followers
               </Text>
             </View>
@@ -171,10 +210,7 @@ export default function TopUsersBox(props) {
                   }
                 }}
               >
-                <Image
-                  style={styles.postImages}
-                  source={{ uri: props.postImage1 }}
-                />
+                <Image style={styles.postImages} source={{ uri: postImage1 }} />
               </TouchableOpacity>
               <TouchableOpacity
                 style={{ width: "33%", marginLeft: 10 }}
@@ -184,10 +220,7 @@ export default function TopUsersBox(props) {
                   }
                 }}
               >
-                <Image
-                  style={styles.postImages}
-                  source={{ uri: props.postImage2 }}
-                />
+                <Image style={styles.postImages} source={{ uri: postImage2 }} />
               </TouchableOpacity>
               <TouchableOpacity
                 style={{ width: "33%", marginLeft: 10 }}
@@ -197,10 +230,7 @@ export default function TopUsersBox(props) {
                   }
                 }}
               >
-                <Image
-                  style={styles.postImages}
-                  source={{ uri: props.postImage3 }}
-                />
+                <Image style={styles.postImages} source={{ uri: postImage3 }} />
               </TouchableOpacity>
             </View>
           </View>
@@ -220,13 +250,6 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     width: "100%",
     marginRight: 10,
-  },
-
-  topUsersText: {
-    color: "white",
-    fontSize: 20,
-    fontWeight: "bold",
-    left: "3%",
   },
   usernameText: {
     color: "white",
