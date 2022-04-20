@@ -27,15 +27,15 @@ const DownloadPage = () => {
 						}}>
 						<img
 							src='/assets/downloadAppStore.png'					
-							height="55%"
-							width="55%"
+							height="50%"
+							width="45%"
 							alt=""
 							style={{paddingBottom: 10}}
 						/>						
 						<img
 							src='/assets/downloadGooglePlay.png'
-							height="55%"
-							width="55%"
+							height="50%"
+							width="45%"
 							alt=""
 							style={{paddingTop: 10}}
 						/>
