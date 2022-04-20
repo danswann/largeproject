@@ -5,7 +5,8 @@ function PasswordSuccess() {
             color:"white",
             fontWeight: "bold",
             marginTop: 900,
-            }}>Thank you for verifying your email! 
+            }}>Thank you for verifying your email!
+            <br></br>
             You may now go back to the app to change your password.</h3>        
     )
 }

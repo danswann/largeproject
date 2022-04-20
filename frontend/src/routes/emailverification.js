@@ -5,7 +5,9 @@ function EmailSuccess() {
             color:"white",
             fontWeight: "bold",
             marginTop: 900,
-            }}>Your account has been successfully verified. You may now return to the app.</h3>
+            }}>Your account has been successfully verified. 
+            <br></br>
+            You may now return to the app.</h3>
     )
 }
 
@@ -16,7 +18,9 @@ function EmailFailure() {
             color:"white",
             fontWeight: "bold",
             marginTop: 900,
-            }}>Your account could not be connected. Try again</h3>
+            }}>Your account could not be connected. 
+            <br></br>
+            Try again</h3>
     )
 }
 
