@@ -1,8 +1,8 @@
 {
   "expo": {
     "sdkVersion": "44.0.0",
-    "name": "mobileApp",
-    "slug": "mobileApp",
+    "name": "Soundlink",
+    "slug": "soundlink",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/LogoSquare.png",
