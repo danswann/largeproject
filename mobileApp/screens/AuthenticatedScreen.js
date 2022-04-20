@@ -33,6 +33,7 @@ const AuthenticatedScreen = ({ route, navigation }) => {
       behavior={Platform.OS === "ios" ? "padding" : null}
       style={{ height: "100%", width: "100%", backgroundColor: "#23192B" }}
     >
+      <StatusBar barStyle={"light-content"} backgroundColor={"black"} />
       <Tab.Navigator
         backBehavior={"history"}
         screenOptions={({ route }) => ({

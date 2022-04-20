@@ -50,10 +50,11 @@ function LoginScreen({ navigation }) {
       behavior={Platform.OS === "ios" ? "padding" : null}
       style={{ height: "100%", width: "100%", backgroundColor: "#23192B" }}
     >
+      <StatusBar barStyle={"light-content"} backgroundColor={"#23192B"} />
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={styles.container}>
           {/* Sets colors of status bar icons to white*/}
-          <StatusBar barStyle={"light-content"} backgroundColor={"#23192B"} />
+          
           {/* Soundlink logo */}
           <Image
             style={styles.image}
