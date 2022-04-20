@@ -14,7 +14,7 @@ const Nav = () => {
 				backgroundColor: "#12081A", 
 				padding: 0, 
 				justifyContent: "space-between",
-				marginLeft: -30
+				marginLeft: -30,
 			}}>
 			<Container style={{width:"70%", alignSelf:"flex-start"}}>			
 				<img 
@@ -25,7 +25,7 @@ const Nav = () => {
 					style={{
 						alignSelf:"flex-start", 
 						marginTop: 7.5,
-						backgroundColor:"transparent"				
+						backgroundColor:"transparent",		
 					}}
 				/>
 			</Container>
