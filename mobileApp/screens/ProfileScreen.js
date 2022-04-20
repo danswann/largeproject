@@ -45,9 +45,10 @@ export default function ProfileScreen({ route, navigation }) {
 
   const isFocused = useIsFocused();
   useEffect(async () => {
-    setProfileLoading(true)
+    setPostVisible(false);
+    setProfileLoading(true);
     await getUserData();
-    setProfileLoading(false)
+    setProfileLoading(false);
     getPosts();
     getLikedPosts();
   }, [isFocused]);
@@ -79,13 +80,11 @@ export default function ProfileScreen({ route, navigation }) {
         }
         bio.current = response.user.biography;
 
-        if (response.user.followers != null)
-        {
+        if (response.user.followers != null) {
           followerCount.current = response.user.followers.length;
-          if(response.user.followers.find(user => user === myUserID))
-            isFollowed.current = true
-          else
-            isFollowed.current = false
+          if (response.user.followers.find((user) => user === myUserID))
+            isFollowed.current = true;
+          else isFollowed.current = false;
         }
         if (response.user.following != null)
           followingCount.current = response.user.following.length;
@@ -209,7 +208,7 @@ export default function ProfileScreen({ route, navigation }) {
                 author={response.post.author}
                 originalPost={response.post.originalPost}
                 timeStamp={response.post.timeStamp}
-                myUserID={userID}
+                myUserID={myUserID}
                 accessToken={accessToken}
               />
             ) : (
@@ -222,7 +221,7 @@ export default function ProfileScreen({ route, navigation }) {
                 likedBy={response.post.likedBy}
                 playlistID={response.post.playlistID}
                 timeStamp={response.post.timeStamp}
-                myUserID={userID}
+                myUserID={myUserID}
                 accessToken={accessToken}
               />
             )
@@ -248,28 +247,38 @@ export default function ProfileScreen({ route, navigation }) {
           </TouchableOpacity>
         </View>
       ) : (
-        <View style={[styles.MainContainer, {width: "100%"}]}>
-          {profileLoading 
-          ? 
-          <View style={{backgroundColor: "#12081A", width: "85%", marginTop: 20, borderRadius: 25}}>
-            <ActivityIndicator size="large" color="#573C6B" style={{marginVertical: 50}}/>
-          </View>
-          :
-          <ProfileBox
-            username={username.current}
-            bio={bio.current}
-            image={image.current}
-            hasProfileImage={hasProfileImage.current}
-            postCount={postCount}
-            followerCount={followerCount.current}
-            followingCount={followingCount.current}
-            myUserID={myUserID}
-            targetUserID={userID}
-            isFollowed={isFollowed.current}
-            accessToken={accessToken}
-            navigation={navigation}
-          />
-          }
+        <View style={[styles.MainContainer, { width: "100%" }]}>
+          {profileLoading ? (
+            <View
+              style={{
+                backgroundColor: "#12081A",
+                width: "85%",
+                marginTop: 20,
+                borderRadius: 25,
+              }}
+            >
+              <ActivityIndicator
+                size="large"
+                color="#573C6B"
+                style={{ marginVertical: 50 }}
+              />
+            </View>
+          ) : (
+            <ProfileBox
+              username={username.current}
+              bio={bio.current}
+              image={image.current}
+              hasProfileImage={hasProfileImage.current}
+              postCount={postCount}
+              followerCount={followerCount.current}
+              followingCount={followingCount.current}
+              myUserID={myUserID}
+              targetUserID={userID}
+              isFollowed={isFollowed.current}
+              accessToken={accessToken}
+              navigation={navigation}
+            />
+          )}
           {/* Container for navigation between posts and likes */}
           <View style={styles.NavContainer}>
             {/* Posts and likes filter buttons */}
@@ -277,7 +286,14 @@ export default function ProfileScreen({ route, navigation }) {
               hitSlop={{ top: 40, bottom: 40, left: 90, right: 90 }}
               onPress={() => setPostsOrLikes("posts")}
             >
-              <View style={{backgroundColor: "#12081A", paddingHorizontal: 30, paddingVertical: 5, borderRadius: 50}}>
+              <View
+                style={{
+                  backgroundColor: "#12081A",
+                  paddingHorizontal: 30,
+                  paddingVertical: 5,
+                  borderRadius: 50,
+                }}
+              >
                 {postsOrLikes === "posts" ? (
                   <Ionicons name="grid" size={18} color="#573C6B" />
                 ) : (
@@ -289,7 +305,14 @@ export default function ProfileScreen({ route, navigation }) {
               hitSlop={{ top: 40, bottom: 40, left: 90, right: 90 }}
               onPress={() => setPostsOrLikes("likes")}
             >
-              <View style={{backgroundColor: "#12081A", paddingHorizontal: 30, paddingVertical: 5, borderRadius: 50}}>
+              <View
+                style={{
+                  backgroundColor: "#12081A",
+                  paddingHorizontal: 30,
+                  paddingVertical: 5,
+                  borderRadius: 50,
+                }}
+              >
                 {postsOrLikes === "likes" ? (
                   <Ionicons name="heart" size={20} color="#573C6B" />
                 ) : (
@@ -311,16 +334,18 @@ export default function ProfileScreen({ route, navigation }) {
                   ) : (
                     <View>
                       {isLoading ? (
-                        <View style={{ justifyContent: "center", marginTop: 60 }}>
+                        <View
+                          style={{ justifyContent: "center", marginTop: 60 }}
+                        >
                           <ActivityIndicator size="large" color="#573C6B" />
                         </View>
                       ) : (
-                      <FlatList
-                        data={postGridComplete}
-                        renderItem={({ item }) => (
-                          <RowBox row={item.row} openPost={openPost} />
-                        )}
-                      />
+                        <FlatList
+                          data={postGridComplete}
+                          renderItem={({ item }) => (
+                            <RowBox row={item.row} openPost={openPost} />
+                          )}
+                        />
                       )}
                     </View>
                   )}
@@ -335,16 +360,18 @@ export default function ProfileScreen({ route, navigation }) {
                   ) : (
                     <View>
                       {isLoading ? (
-                        <View style={{ justifyContent: "center", marginTop: 60 }}>
+                        <View
+                          style={{ justifyContent: "center", marginTop: 60 }}
+                        >
                           <ActivityIndicator size="large" color="#573C6B" />
                         </View>
                       ) : (
-                      <FlatList
-                        data={likedPostGridComplete}
-                        renderItem={({ item }) => (
-                          <RowBox row={item.row} openPost={openPost} />
-                        )}
-                      />
+                        <FlatList
+                          data={likedPostGridComplete}
+                          renderItem={({ item }) => (
+                            <RowBox row={item.row} openPost={openPost} />
+                          )}
+                        />
                       )}
                     </View>
                   )}
@@ -372,7 +399,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-evenly",
     paddingVertical: 10,
-    width:"90%",
+    width: "90%",
   },
   GridColumnContainer: {
     marginTop: 40,

@@ -397,7 +397,12 @@ export default function PostBox(props) {
                 )}
               </View>
             ) : (
-              <View style={{ width: "100%", flexDirection: "row" }}>
+              <View
+                style={{
+                  width: "100%",
+                  flexDirection: "row",
+                }}
+              >
                 <View
                   style={{
                     flexDirection: "column",
@@ -720,11 +725,12 @@ const styles = StyleSheet.create({
   EmptyContainer: {
     backgroundColor: "#12081A",
     justifyContent: "center",
-    minHeight: 330,
-    minWidth: "99%",
-    borderRadius: 23,
-    marginVertical: 2,
-    marginHorizontal: 2,
+    alignSelf: "center",
+    minHeight: 335,
+    minWidth: "99.5%",
+    borderRadius: 24,
+    marginVertical: 1,
+    marginHorizontal: 1,
   },
 
   PostContainer: {
@@ -741,10 +747,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#12081A",
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 2,
-    marginHorizontal: 2,
-    borderTopLeftRadius: 23,
-    borderTopRightRadius: 23,
+    marginTop: 1,
+    marginHorizontal: 1,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
   },
 
   ProfilePic: {
@@ -759,8 +765,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#12081A",
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 2,
-    marginHorizontal: 2,
+    marginTop: 1,
+    marginHorizontal: 1,
   },
 
   PlaylistPic: {
@@ -771,7 +777,7 @@ const styles = StyleSheet.create({
 
   SongList: {
     marginHorizontal: 10,
-    marginVertical: 2,
+    marginVertical: 1,
     backgroundColor: "#23192B",
   },
 
@@ -779,8 +785,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#12081A",
     flexDirection: "column",
     justifyContent: "space-between",
-    marginTop: 2,
-    marginHorizontal: 2,
+    marginTop: 1,
+    marginHorizontal: 1,
   },
 
   textInput: {
@@ -809,10 +815,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     height: 45,
-    marginTop: 2,
-    marginBottom: 2,
-    marginHorizontal: 2,
-    borderBottomLeftRadius: 23,
-    borderBottomRightRadius: 23,
+    marginTop: 1,
+    marginBottom: 1,
+    marginHorizontal: 1,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
   },
 });

@@ -62,11 +62,11 @@ const styles = StyleSheet.create({
     
     SongContainer: {
         borderColor: "#573C6B",
-        borderTopWidth: 2,
-        borderBottomWidth: 2,
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
         flexDirection: "row",
         justifyContent:"space-between",
-        marginVertical: -1,
+        marginVertical: -0.5,
     },
 
     SongCover: {

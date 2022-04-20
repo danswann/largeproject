@@ -100,11 +100,19 @@ export default function SearchResultBox(props) {
             unfollowUser();
           }}
         >
-          <Text style={styles.buttonText}>Followed</Text>
+          <Text style={styles.buttonText}>Unfollow</Text>
         </TouchableOpacity>
       )}
       <TouchableOpacity
-        style={[styles.button, {backgroundColor: "gray", paddingHorizontal: 8, paddingVertical: 8, marginRight: 20}]}
+        style={[
+          styles.button,
+          {
+            backgroundColor: "gray",
+            paddingHorizontal: 8,
+            paddingVertical: 8,
+            marginRight: 20,
+          },
+        ]}
         onPress={() => {
           props.navigation.navigate({
             name: "Chat",
@@ -118,7 +126,7 @@ export default function SearchResultBox(props) {
           });
         }}
       >
-        <Ionicons name="chatbox" color="white" size={20}/>
+        <Ionicons name="chatbox" color="white" size={20} />
       </TouchableOpacity>
     </TouchableOpacity>
   );
