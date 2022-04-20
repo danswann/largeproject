@@ -208,7 +208,7 @@ export default function ProfileScreen({ route, navigation }) {
                 author={response.post.author}
                 originalPost={response.post.originalPost}
                 timeStamp={response.post.timeStamp}
-                myUserID={userID}
+                myUserID={myUserID}
                 accessToken={accessToken}
               />
             ) : (
@@ -221,7 +221,7 @@ export default function ProfileScreen({ route, navigation }) {
                 likedBy={response.post.likedBy}
                 playlistID={response.post.playlistID}
                 timeStamp={response.post.timeStamp}
-                myUserID={userID}
+                myUserID={myUserID}
                 accessToken={accessToken}
               />
             )
