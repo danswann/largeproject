@@ -13,8 +13,7 @@ function ConnectionFailure() {
 
 function SpotifyConnect(props) {
     return (
-        <div>
-            <h3>Spotify Account Connection</h3>
+        <div>            
             {props.success ? <ConnectionSuccess /> : <ConnectionFailure />}
         </div>
     );

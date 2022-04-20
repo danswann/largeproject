@@ -8,8 +8,15 @@ const AboutPage = () => {
     const aboutRef = useNav('AboutPage');
 
     return (
-        <main ref={aboutRef} id='contactContainer' style={{marginBottom: 300}}>
-            <Container style={{justifyContent:'center', display:'flex'}}>
+        <main ref={aboutRef} id='aboutContainer' style={{marginBottom: 300}}>
+            <Container style={{
+                    justifyContent:'center', 
+                    display:'flex',
+                    alignItems: 'center',
+                    height: '100vh',
+                    width: "100%",
+                    borderBottom: "1px solid lightgrey",
+                }}>
                 <Row className="container mt-5">
                     {/* body text */}
                     <Col>				
@@ -24,7 +31,7 @@ const AboutPage = () => {
                     <Col>
                         <img
                             src='./assets/groupphoto.jpeg'
-                            alt='unsplash-img'
+                            alt=""
                             width="100%"
                         />
                     </Col>

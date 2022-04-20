@@ -5,11 +5,17 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../nav/Nav.css';
 
 const DownloadPage = () => {
-    const aboutRef = useNav('DownloadPage');
-
+    const downloadRef = useNav('DownloadPage');
     return (
-		<main ref={aboutRef} id='downloadContainer' style={{marginBottom: 300}}>
-			<Container style={{justifyContent:'center', display:'flex'}}>
+		<main ref={downloadRef} id='downloadContainer'>
+			<Container style={{
+				justifyContent:'center', 
+				display:'flex',
+				alignItems: 'center',
+				height: '100vh',
+				width: "100%",
+				borderBottom: "1px solid lightgrey",
+			}}>
 				<Row className="container mt-5">
 					{/* download buttons */}
 					<Col style={{
@@ -37,7 +43,7 @@ const DownloadPage = () => {
 					{/* body text */}
 					<Col>				
 						<h1 className="mt-4" style={{color:"#A57FC1", textAlign: 'right'}}>share your playlists with the world</h1>
-						<p className="mt-5" style={{textAlign: 'right', color: 'white'}}>join soundlink today for free</p>				
+						<p className="mt-5" style={{textAlign: 'right', color: 'white'}}>join <strong>soundlink</strong> today for free</p>				
                         <p style={{textAlign: 'right', color: 'white'}}>available on both iphone and android</p>
 					</Col>
 				</Row>

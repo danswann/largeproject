@@ -1,5 +1,4 @@
 import React from 'react';
-// import { HomePage, AboutPage, ContactPage } from './';
 import HomePage from './homepage';
 import DownloadPage from './downloadpage';
 import AboutPage from './aboutpage';

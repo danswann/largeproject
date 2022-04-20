@@ -1,5 +1,5 @@
 import React from 'react';
-// import { Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Nav } from './nav';
 import { Main } from './routes';
@@ -9,7 +9,7 @@ function App() {
   return (
     <div>      
 			<NavProvider>
-        {/* <Outlet /> */}
+        <Outlet />
 				<Nav />
 				<Main />
 			</NavProvider>

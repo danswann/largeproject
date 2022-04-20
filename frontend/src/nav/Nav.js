@@ -10,11 +10,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const Nav = () => {
 	return (
 		<nav style={{
-			width: "100%", 
-			backgroundColor: "#12081A", 
-			padding: 0, 
-			justifyContent: "space-between",
-			marginLeft: -30
+				width: "100%", 
+				backgroundColor: "#12081A", 
+				padding: 0, 
+				justifyContent: "space-between",
+				marginLeft: -30
 			}}>
 			<Container style={{width:"70%", alignSelf:"flex-start"}}>			
 				<img 
@@ -31,7 +31,7 @@ const Nav = () => {
 			</Container>
 			
 			{navLinks.map(({ navLinkId, scrollToId }, idx) => (
-				<NavLink key={idx} navLinkId={navLinkId} scrollToId={scrollToId} />				
+				<NavLink navLinkId={navLinkId} scrollToId={scrollToId} />				
 			))}		
 		</nav>
 	);
