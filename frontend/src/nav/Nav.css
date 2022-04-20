@@ -17,7 +17,7 @@ nav span {
 	transition: border-bottom 0.3s ease;	
 	transition-delay: 0.25s;
 	margin: 1em;
-	/* padding-bottom: 1.3em;	 */
+	padding-bottom: 1.3em;	
 	margin-right: 12;
 	/* justify-content: end; */	
 }
@@ -32,5 +32,5 @@ nav span:hover {
 }
 
 nav span.activeClass {
-	border-bottom-color: white;
+	border-bottom: 1px solid white;
 }
