@@ -45,6 +45,7 @@ export default function ProfileScreen({ route, navigation }) {
 
   const isFocused = useIsFocused();
   useEffect(async () => {
+    setPostVisible(false);
     setProfileLoading(true)
     await getUserData();
     setProfileLoading(false)
