@@ -21,7 +21,7 @@ function PasswordFailure() {
     )    
 }
 
-function PasswordValidation(props) {
+function PasswordVerification(props) {
     return (
         <div>            
             {props.success ? <PasswordSuccess /> : <PasswordFailure />}
@@ -29,4 +29,4 @@ function PasswordValidation(props) {
     );
 }
 
-export default PasswordValidation;
+export default PasswordVerification;
