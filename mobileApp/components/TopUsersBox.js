@@ -220,7 +220,7 @@ export default function TopUsersBox(props) {
                   console.log("ITEM: ", item);
                   return (
                     <TouchableOpacity
-                      style={{ width: "33%" }}
+                      style={{ width: "100%" , marginRight: 10}}
                       onPress={() => {
                         openPost(item.item._id);
                       }}
@@ -251,7 +251,6 @@ const styles = StyleSheet.create({
   postImages: {
     aspectRatio: 1,
     height: "100%",
-    marginRight: 10,
   },
   usernameText: {
     color: "white",
