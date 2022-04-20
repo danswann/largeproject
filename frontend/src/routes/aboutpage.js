@@ -30,7 +30,7 @@ const AboutPage = () => {
                     {/* Image */}
                     <Col>
                         <img
-                            src='https://i.gyazo.com/7db1774971b857226e96d5a9fad3bba6.jpg'
+                            src='./assets/group.jpg'
                             alt=""
                             width="100%"
                         />
