@@ -2,13 +2,13 @@ import React from 'react';
 // import { HomePage, AboutPage, ContactPage } from './';
 import HomePage from './homepage';
 import DownloadPage from './downloadpage';
-import ContactPage from './contactpage';
+import AboutPage from './aboutpage';
 
 const Main = () => (
 	<main>
 		<HomePage />
 		<DownloadPage />
-		<ContactPage />
+		<AboutPage />
 	</main>
 );
 
