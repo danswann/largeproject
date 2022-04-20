@@ -5,6 +5,7 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
+  TouchableWithoutFeedback,
 } from "react-native";
 import React, { useEffect } from "react";
 import PostBox from "./PostBox";
@@ -84,158 +85,160 @@ export default function TopUsersBox(props) {
     });
   }
   return (
-    <View
-      style={{
-        flex: 1,
-        width: "90%",
-        left: "5%",
-        borderWidth: 1,
-        borderColor: "#573C6B",
-        borderRadius: 10,
-        backgroundColor: "#12081A",
-        marginBottom: 20,
-      }}
-    >
-      {postVisible ? (
-        <View style={styles.PostContainer}>
-          {/* Opened post */}
-          {postBox}
-          {/* Close button */}
-          <TouchableOpacity
-            style={styles.closeBtn}
-            onPress={() => setPostVisible(false)}
-          >
-            <Text style={styles.btnText}>Back</Text>
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <View>
-          <View
-            style={{
-              marginTop: 30,
-              flexDirection: "row",
-              width: "100%",
-              justifyContent: "space-around",
-            }}
-          >
-            {/* Rank */}
+    <TouchableWithoutFeedback>
+      <View
+        style={{
+          flex: 1,
+          width: "90%",
+          left: "5%",
+          borderWidth: 1,
+          borderColor: "#573C6B",
+          borderRadius: 10,
+          backgroundColor: "#12081A",
+          marginBottom: 20,
+        }}
+      >
+        {postVisible ? (
+          <View style={styles.PostContainer}>
+            {/* Opened post */}
+            {postBox}
+            {/* Close button */}
+            <TouchableOpacity
+              style={styles.closeBtn}
+              onPress={() => setPostVisible(false)}
+            >
+              <Text style={styles.btnText}>Back</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View>
             <View
               style={{
-                width: "10%",
-                alignItems: "center",
-              }}
-            >
-              <Text
-                style={{ color: "white", fontWeight: "bold", fontSize: 16 }}
-              >
-                #{props.rank + 1}
-              </Text>
-            </View>
-            {/* Profile pic and username */}
-            <TouchableOpacity
-              style={{
+                marginTop: 30,
                 flexDirection: "row",
-                width: "55%",
-                left: "-5%",
+                width: "100%",
                 justifyContent: "space-around",
               }}
-              hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
-              onPress={() => {
-                props.navigation.navigate({
-                  name: "OtherProfile",
-                  params: {
-                    userID: props.userID,
-                    isFollowed: props.isFollowed,
-                  },
-                });
-              }}
             >
-              <View style={{ width: "10%" }}>
-                <Image
-                  style={styles.profilePic}
-                  source={
-                    props.profilePic
-                      ? { uri: props.profilePic }
-                      : require("../assets/images/defaultSmile.png")
-                  }
-                />
-              </View>
-              <View style={{ width: "60%", left: "5%" }}>
-                <View style={{ flexDirection: "row" }}>
-                  <Text
-                    style={styles.usernameText}
-                    adjustsFontSizeToFit={true}
-                    numberOfLines={1}
-                  >
-                    {props.username}
-                  </Text>
-                  {props.rank <= 2 ? (
-                    <Ionicons
-                      name={"trophy"}
-                      size={16}
-                      color={
-                        props.rank === 0
-                          ? "gold"
-                          : props.rank === 1
-                          ? "silver"
-                          : "#CD7F32"
-                      }
-                      style={{ marginTop: 1.7, marginLeft: 3 }}
-                    />
-                  ) : (
-                    <></>
-                  )}
-                </View>
-              </View>
-            </TouchableOpacity>
-            <View style={{ width: "25%", right: "90%" }}>
-              <Text
+              {/* Rank */}
+              <View
                 style={{
-                  color: "white",
-                  textAlign: "right",
-                  fontWeight: "bold",
-                  fontSize: 12,
+                  width: "10%",
+                  alignItems: "center",
                 }}
               >
-                {props.followerCount} Followers
-              </Text>
+                <Text
+                  style={{ color: "white", fontWeight: "bold", fontSize: 16 }}
+                >
+                  #{props.rank + 1}
+                </Text>
+              </View>
+              {/* Profile pic and username */}
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  width: "55%",
+                  left: "-5%",
+                  justifyContent: "space-around",
+                }}
+                hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
+                onPress={() => {
+                  props.navigation.navigate({
+                    name: "OtherProfile",
+                    params: {
+                      userID: props.userID,
+                      isFollowed: props.isFollowed,
+                    },
+                  });
+                }}
+              >
+                <View style={{ width: "10%" }}>
+                  <Image
+                    style={styles.profilePic}
+                    source={
+                      props.profilePic
+                        ? { uri: props.profilePic }
+                        : require("../assets/images/defaultSmile.png")
+                    }
+                  />
+                </View>
+                <View style={{ width: "60%", left: "5%" }}>
+                  <View style={{ flexDirection: "row" }}>
+                    <Text
+                      style={styles.usernameText}
+                      adjustsFontSizeToFit={true}
+                      numberOfLines={1}
+                    >
+                      {props.username}
+                    </Text>
+                    {props.rank <= 2 ? (
+                      <Ionicons
+                        name={"trophy"}
+                        size={16}
+                        color={
+                          props.rank === 0
+                            ? "gold"
+                            : props.rank === 1
+                            ? "silver"
+                            : "#CD7F32"
+                        }
+                        style={{ marginTop: 1.7, marginLeft: 3 }}
+                      />
+                    ) : (
+                      <></>
+                    )}
+                  </View>
+                </View>
+              </TouchableOpacity>
+              <View style={{ width: "25%", right: "90%" }}>
+                <Text
+                  style={{
+                    color: "white",
+                    textAlign: "right",
+                    fontWeight: "bold",
+                    fontSize: 12,
+                  }}
+                >
+                  {props.followerCount} Followers
+                </Text>
+              </View>
+            </View>
+            <View style={{ position: "relative", height: 150 }}>
+              {/* Rendering the users posts */}
+              <FlatList
+                style={{
+                  flexDirection: "row",
+                  position: "absolute",
+                  top: "2%",
+                  left: "15%",
+                  marginTop: 20,
+                  width: "72%",
+                  height: "55%",
+                }}
+                data={props.posts}
+                renderItem={(item) => {
+                  console.log("ITEM: ", item);
+                  return (
+                    <TouchableOpacity
+                      style={{ width: "33%" }}
+                      onPress={() => {
+                        openPost(item.item._id);
+                      }}
+                    >
+                      <Image
+                        style={styles.postImages}
+                        source={{ uri: item.item.image }}
+                      />
+                    </TouchableOpacity>
+                  );
+                }}
+                keyExtractor={(item, index) => item._id}
+              ></FlatList>
             </View>
           </View>
-          <View style={{ position: "relative", height: 150 }}>
-            {/* Rendering the users posts */}
-            <FlatList
-              style={{
-                flexDirection: "row",
-                position: "absolute",
-                top: "2%",
-                left: "15%",
-                marginTop: 20,
-                width: "72%",
-                height: "55%",
-              }}
-              data={props.posts}
-              renderItem={(item) => {
-                console.log("ITEM: ", item);
-                return (
-                  <TouchableOpacity
-                    style={{ width: "33%" }}
-                    onPress={() => {
-                      openPost(item.item._id);
-                    }}
-                  >
-                    <Image
-                      style={styles.postImages}
-                      source={{ uri: item.item.image }}
-                    />
-                  </TouchableOpacity>
-                );
-              }}
-              keyExtractor={(item, index) => item._id}
-            ></FlatList>
-          </View>
-        </View>
-      )}
-    </View>
+        )}
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
