@@ -207,10 +207,11 @@ export default function TopUsersBox(props) {
               style={{
                 flexDirection: "row",
                 position: "absolute",
+                top: "2%",
                 left: "15%",
                 marginTop: 20,
                 width: "72%",
-                height: "58%",
+                height: "55%",
               }}
               data={props.posts}
               renderItem={(item) => {

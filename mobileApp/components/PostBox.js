@@ -397,7 +397,12 @@ export default function PostBox(props) {
                 )}
               </View>
             ) : (
-              <View style={{ width: "100%", flexDirection: "row" }}>
+              <View
+                style={{
+                  width: "100%",
+                  flexDirection: "row",
+                }}
+              >
                 <View
                   style={{
                     flexDirection: "column",
