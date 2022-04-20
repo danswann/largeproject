@@ -32,7 +32,7 @@ nav span:hover i {
 }
 
 nav span.activeClass i {
-	color: gold;
+	color: white;
 }
 
 nav span.activeClass {

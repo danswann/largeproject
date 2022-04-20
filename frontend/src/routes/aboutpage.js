@@ -2,9 +2,10 @@ import '../App.css'
 import { Container, Row, Col } from 'react-bootstrap';
 import { useNav } from '../hooks/useNav';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '../nav/Nav.css';
 
-const ContactPage = () => {
-    const aboutRef = useNav('ContactPage');
+const AboutPage = () => {
+    const aboutRef = useNav('AboutPage');
 
     return (
         <main ref={aboutRef} id='contactContainer' style={{marginBottom: 300}}>
@@ -12,13 +13,17 @@ const ContactPage = () => {
                 <Row className="container mt-5">
                     {/* body text */}
                     <Col>				
-                        <h1 className="description mt-4">contact</h1>
-                        <p className="mt-5" style={{color: 'white'}}>This is the contact section</p>
+                        <h1 className="description mt-4">meet the team</h1>
+                        <p className="mt-5" style={{color: 'white'}}>
+                            pictured from left to right: 
+                            <br></br><br></br>
+                            roberto, doug, will, jason, sebastian, jinan, daniel
+                        </p>
                     </Col>
                     {/* Image */}
                     <Col>
                         <img
-                            src='https://source.unsplash.com/random/600x600/?nature,water'
+                            src='./assets/groupphoto.jpeg'
                             alt='unsplash-img'
                             width="100%"
                         />
@@ -32,5 +37,5 @@ const ContactPage = () => {
 
 // const styles = StyleSheet.create({});
 
-export default ContactPage;
+export default AboutPage;
 
