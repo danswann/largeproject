@@ -6,6 +6,7 @@ const crypto = require('crypto');
 const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const jwt = require('jsonwebtoken');
+const C = require('../../constants');
 
 function checkObjectId (id) {
     const ObjectId = require('mongoose').Types.ObjectId;
@@ -286,30 +287,37 @@ exports.verifyEmail = async function(req, res, next) {
             await user.save(function (err) {
                 if(err)
                 {
-                    response.ok = false;
+                    /*response.ok = false;
                     response.error = err;
-                    res.status(200).json(response);
+                    res.status(200).json(response);*/
+                    res.redirect(C.DOMAIN_ROOT + '/emailverification/failure');
+                    return;
                 }
                 else
                 {
-                    response.ok = true;
+                    /*response.ok = true;
                     response.status = "Email confirmed";
-                    res.status(200).json(response);
+                    res.status(200).json(response);*/
+                    res.redirect(C.DOMAIN_ROOT + '/emailverification/success');
+                    return;
                 }
             });
         }
         else
         {
             // If user not found, then error return.
-            response.ok = false;
+            /*response.ok = false;
             response.error = "User not found";
-            res.status(200).json(response);
+            res.status(200).json(response);*/
+            res.redirect(C.DOMAIN_ROOT + '/emailverification/failure');
+            return;
         }
 
     } catch (err) {
-        response.ok = false;
+        /*response.ok = false;
         response.error = err.message;
-        res.status(200).json(response);
+        res.status(200).json(response);*/
+        res.redirect(C.DOMAIN_ROOT + '/emailverification/failure');
     }
 }
 
@@ -796,30 +804,37 @@ exports.confirmChangePassword = async function(req, res, next) {
             await user.save(function (err) {
                 if(err)
                 {
-                    response.ok = false;
+                    /*response.ok = false;
                     response.error = err;
-                    res.status(200).json(response);
+                    res.status(200).json(response);*/
+                    res.redirect(C.DOMAIN_ROOT + '/passwordverification/failure');
+                    return;
                 }
                 else
                 {
-                    response.ok = true;
+                    /*response.ok = true;
                     response.status = "Can now change password from within the app";
-                    res.status(200).json(response);
+                    res.status(200).json(response);*/
+                    res.redirect(C.DOMAIN_ROOT + '/passwordverification/success');
+                    return;
                 }
             });
         }
         else
         {
             // If user not found, then error return.
-            response.ok = false;
+            /*response.ok = false;
             response.error = "User not found";
-            res.status(200).json(response);
+            res.status(200).json(response);*/
+            res.redirect(C.DOMAIN_ROOT + '/passwordverification/failure');
+            return;
         }
 
     } catch (err) {
-        response.ok = false;
+        /*response.ok = false;
         response.error = err.message;
-        res.status(200).json(response);
+        res.status(200).json(response);*/
+        res.redirect(C.DOMAIN_ROOT + '/passwordverification/failure');
     }
 
 }
