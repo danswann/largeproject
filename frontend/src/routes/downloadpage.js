@@ -28,21 +28,25 @@ const DownloadPage = () => {
               marginTop: 250,
               // alignItems:'center'
             }}
-          >
+          >          
+          <img
+            src="/assets/downloadAppStore.png"
+            height="50%"
+            width="56%"
+            alt=""
+            style={{ paddingBottom: 10 }}/>
+
+          <a href="https://expo.dev/artifacts/eas/jKeHEGCBPHjk3PgPK5knL7.apk"
+              style={{
+              // display: "flex",
+              height:"50%",
+              width:"75%" }}>
             <img
-              src="/assets/downloadAppStore.png"
-              height="50%"
-              width="45%"
+              src="https://uploads-ssl.webflow.com/5e71ed41f21ba5aeba14497f/5ec7db7df972fafdfaba03d7_android-apk-button.png"
+              width= "75%"
               alt=""
-              style={{ paddingBottom: 10 }}
-            />
-            <img
-              src="/assets/downloadGooglePlay.png"
-              height="50%"
-              width="45%"
-              alt=""
-              style={{ paddingTop: 10 }}
-            />
+              style={{ paddingTop: 10 }}/>
+          </a>            
           </Col>
           {/* body text */}
           <Col>
