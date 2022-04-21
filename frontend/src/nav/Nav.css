@@ -7,7 +7,7 @@ nav {
   z-index: 10;
   top: 0;
   color: white;
-  background-color: white;
+  background-color: black;
   max-height: 4em;
   /* justify-content: flex-end; */
   display: flex;
@@ -21,7 +21,7 @@ nav {
   transition: border-bottom 0.3s ease;
   transition-delay: 0.25s;
   margin-right: 25px;
-  color: #12081a;
+  color: white;
   /* justify-content: end; */
 }
 
@@ -41,14 +41,4 @@ nav {
   cursor: pointer;
   border-bottom: 1px solid #12081a;
   color: #a57fc1;
-}
-
-#home.activeClass {
-  border-bottom: 1px solid #12081a;
-}
-#download.activeClass {
-  border-bottom: 1px solid #12081a;
-}
-#about.activeClass {
-  border-bottom: 1px solid #12081a;
 }

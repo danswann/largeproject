@@ -1,25 +1,28 @@
-import React, { useContext } from "react";
-import { NavContext } from "../context/NavContext";
+import React from "react";
 
 const NavLink = ({ navLinkId, scrollToId }) => {
-  const { activeNavLinkId, setActiveNavLinkId } = useContext(NavContext);
-
   const handleClick = () => {
-    setActiveNavLinkId(navLinkId);
-    // Array.from(document.getElementsByClassName("activeClass")).forEach(
-    //   (element) => {
-    //     element.classList().remove("activeClass");
-    //   }
-    // );
+    // Removing borderbottom from previously selected navlink
+    Array.from(document.getElementsByClassName("navLinks")).forEach(
+      (element) => {
+        element.style.borderBottom = null;
+      }
+    );
     document.getElementById(scrollToId).scrollIntoView({ behavior: "smooth" });
-    // document.getElementById(activeNavLinkId).classList.add("activeClass");
+    // Giving borderbottom to currently selected nav link
+    document.getElementById(navLinkId).style.borderBottom = "1px solid white";
+    console.log("nav link id", navLinkId);
   };
 
   return (
     <div
       id={navLinkId}
-      style={{ height: 30 }}
-      className={activeNavLinkId === navLinkId ? "activeClass" : ""}
+      style={
+        navLinkId === "home"
+          ? { height: 30, borderBottom: "1px solid white" }
+          : { height: 30 }
+      }
+      className={"navLinks"}
       onClick={handleClick}
     >
       {navLinkId}
