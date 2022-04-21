@@ -42,7 +42,7 @@ const DownloadPage = () => {
               height:"50%",
               width:"75%" }}>
             <img
-              src="/assets/downloadGooglePlay.png"
+              src="https://uploads-ssl.webflow.com/5e71ed41f21ba5aeba14497f/5ec7db7df972fafdfaba03d7_android-apk-button.png"
               width= "75%"
               alt=""
               style={{ paddingTop: 10 }}/>
