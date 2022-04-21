@@ -49,7 +49,14 @@ exports.callback = async function(req, res, next) {
     swa.setRefreshToken(result.body['refresh_token']);
 
     // Get additional data from Spotify profile
-    const me = await swa.getMe();
+    var me;
+    try {
+        me = await swa.getMe();
+    }
+    catch(err) {
+        res.redirect(C.DOMAIN_ROOT + '/spotifyconnect/failure');
+        return;
+    }
 
     // Update the current user's document to reflect that they have connected their Spotify
     // account and assign them the access and refresh tokens from Spotify
