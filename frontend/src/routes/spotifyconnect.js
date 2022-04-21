@@ -11,7 +11,7 @@ function ConnectionSuccess() {
             // position: "relative",
             // top: "25%",
             // bottom: "25%",
-            }}>Spotify account succesfully connected!</h3>
+            }}>Spotify account successfully connected!</h3>
     )
 }
 
