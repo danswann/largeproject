@@ -10,6 +10,7 @@ const Nav = () => {
         width: "100%",
         padding: 0,
         justifyContent: "space-between",
+        borderBottom: "1px solid white",
       }}
     >
       <div style={{ width: "70%", alignItems: "left" }}>
