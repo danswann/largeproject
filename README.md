@@ -1,7 +1,4 @@
 
-soundlink
-=============
-
 ![alt text](./mobileApp/assets/images/soundlinklogo.png)
 
 ### COP 4331 Large Project ###
