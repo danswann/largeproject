@@ -8,7 +8,7 @@ const AboutPage = () => {
   const aboutRef = useNav("AboutPage");
 
   return (
-    <main ref={aboutRef} id="aboutContainer" style={{ marginBottom: 300 }}>
+    <main ref={aboutRef} id="aboutContainer">
       <Container
         style={{
           justifyContent: "center",
