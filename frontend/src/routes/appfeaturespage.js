@@ -3,11 +3,17 @@ import { Container, Row, Col } from "react-bootstrap";
 import { useNav } from "../hooks/useNav";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../nav/Nav.css";
-import { Carousel } from "react-responsive-carousel";
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import Carousel from "react-bootstrap/Carousel";
+import { useState } from "react";
 
 const AppFeaturesPage = () => {
   const appFeaturesRef = useNav("AppFeatures");
+
+  // Tracking the index of the slide that is currently displayed
+  const [index, setIndex] = useState(0);
+  const handleSelect = (selectedIndex, e) => {
+    setIndex(selectedIndex);
+  };
 
   return (
     <main
@@ -25,46 +31,60 @@ const AppFeaturesPage = () => {
           borderBottom: "1px solid lightgrey",
         }}
       >
-        <Row
-          className="container mt-5"
-          style={{ height: "75%", backgroundColor: "red" }}
-        >
+        <Row className="container mt-5" style={{ height: "75%" }}>
           {/* Image */}
           <Col
             style={{
               height: "100%",
-              backgroundColor: "yellow",
             }}
           >
-            <Carousel infiniteLoop={true} dynamicHeight={true}>
-              <div>
+            <Carousel
+              fade
+              activeIndex={index}
+              onSelect={handleSelect}
+              style={{ right: "12%" }}
+            >
+              {console.log(index)}
+              <Carousel.Item style={{ height: 650, width: 300, left: "25%" }}>
                 <img
+                  className="d-block w-100"
                   src="./assets/Demos/DemoHome.gif"
-                  alt=""
-                  height={"100%"}
-                  style={{
-                    objectFit: "contain",
-                  }}
+                  alt="First slide"
+                  style={{ objectFit: "contain" }}
                 />
-              </div>
-              <div>
+              </Carousel.Item>
+              <Carousel.Item style={{ height: 650, width: 300, left: "25%" }}>
                 <img
+                  className="d-block w-100"
                   src="./assets/Demos/DemoSearch.gif"
-                  alt=""
-                  style={{
-                    objectFit: "contain",
-                  }}
+                  alt="First slide"
+                  style={{ objectFit: "contain" }}
                 />
-              </div>
-              <div>
+              </Carousel.Item>
+              <Carousel.Item style={{ height: 650, width: 300, left: "25%" }}>
                 <img
+                  className="d-block w-100"
                   src="./assets/Demos/DemoCreate.gif"
-                  alt=""
-                  style={{
-                    objectFit: "contain",
-                  }}
+                  alt="First slide"
+                  style={{ objectFit: "contain" }}
                 />
-              </div>
+              </Carousel.Item>
+              <Carousel.Item style={{ height: 650, width: 300, left: "25%" }}>
+                <img
+                  className="d-block w-100"
+                  src="./assets/Demos/DemoNotifications.gif"
+                  alt="First slide"
+                  style={{ objectFit: "contain" }}
+                />
+              </Carousel.Item>
+              <Carousel.Item style={{ height: 650, width: 300, left: "25%" }}>
+                <img
+                  className="d-block w-100"
+                  src="./assets/Demos/DemoProfile.gif"
+                  alt="First slide"
+                  style={{ objectFit: "contain" }}
+                />
+              </Carousel.Item>
             </Carousel>
           </Col>
           {/* body text */}
@@ -73,14 +93,46 @@ const AppFeaturesPage = () => {
               className="mt-4"
               style={{ color: "#A57FC1", textAlign: "right" }}
             >
-              share your playlists with the world
+              explore app features
             </h1>
-            <p className="mt-5" style={{ textAlign: "right", color: "white" }}>
-              join <strong>soundlink</strong> today for free
-            </p>
-            <p style={{ textAlign: "right", color: "white" }}>
-              available on both iphone and android
-            </p>
+            {index === 0 ? (
+              <p
+                className="mt-5"
+                style={{ textAlign: "right", color: "white" }}
+              >
+                home
+              </p>
+            ) : index === 1 ? (
+              <p
+                className="mt-5"
+                style={{ textAlign: "right", color: "white" }}
+              >
+                search
+              </p>
+            ) : index === 2 ? (
+              <p
+                className="mt-5"
+                style={{ textAlign: "right", color: "white" }}
+              >
+                create
+              </p>
+            ) : index === 3 ? (
+              <p
+                className="mt-5"
+                style={{ textAlign: "right", color: "white" }}
+              >
+                notifications
+              </p>
+            ) : index === 4 ? (
+              <p
+                className="mt-5"
+                style={{ textAlign: "right", color: "white" }}
+              >
+                profile
+              </p>
+            ) : (
+              <p></p>
+            )}
           </Col>
         </Row>
       </Container>
