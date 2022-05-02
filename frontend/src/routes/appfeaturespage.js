@@ -42,10 +42,18 @@ const AppFeaturesPage = () => {
               fade
               activeIndex={index}
               onSelect={handleSelect}
+              interval={null}
               style={{ right: "12%" }}
             >
               {console.log(index)}
-              <Carousel.Item style={{ height: 650, width: 300, left: "25%" }}>
+              <Carousel.Item
+                style={{
+                  height: 650,
+                  width: 300,
+                  left: "25%",
+                  marginBottom: 70,
+                }}
+              >
                 <img
                   className="d-block w-100"
                   src="./assets/Demos/DemoHome.gif"
@@ -53,7 +61,14 @@ const AppFeaturesPage = () => {
                   style={{ objectFit: "contain" }}
                 />
               </Carousel.Item>
-              <Carousel.Item style={{ height: 650, width: 300, left: "25%" }}>
+              <Carousel.Item
+                style={{
+                  height: 650,
+                  width: 300,
+                  left: "25%",
+                  marginBottom: 70,
+                }}
+              >
                 <img
                   className="d-block w-100"
                   src="./assets/Demos/DemoSearch.gif"
@@ -61,7 +76,14 @@ const AppFeaturesPage = () => {
                   style={{ objectFit: "contain" }}
                 />
               </Carousel.Item>
-              <Carousel.Item style={{ height: 650, width: 300, left: "25%" }}>
+              <Carousel.Item
+                style={{
+                  height: 650,
+                  width: 300,
+                  left: "25%",
+                  marginBottom: 70,
+                }}
+              >
                 <img
                   className="d-block w-100"
                   src="./assets/Demos/DemoCreate.gif"
@@ -69,7 +91,14 @@ const AppFeaturesPage = () => {
                   style={{ objectFit: "contain" }}
                 />
               </Carousel.Item>
-              <Carousel.Item style={{ height: 650, width: 300, left: "25%" }}>
+              <Carousel.Item
+                style={{
+                  height: 650,
+                  width: 300,
+                  left: "25%",
+                  marginBottom: 70,
+                }}
+              >
                 <img
                   className="d-block w-100"
                   src="./assets/Demos/DemoNotifications.gif"
@@ -77,12 +106,19 @@ const AppFeaturesPage = () => {
                   style={{ objectFit: "contain" }}
                 />
               </Carousel.Item>
-              <Carousel.Item style={{ height: 650, width: 300, left: "25%" }}>
+              <Carousel.Item
+                style={{
+                  height: 650,
+                  width: 300,
+                  left: "25%",
+                  marginBottom: 70,
+                }}
+              >
                 <img
                   className="d-block w-100"
                   src="./assets/Demos/DemoProfile.gif"
                   alt="First slide"
-                  style={{ objectFit: "contain" }}
+                  style={{ minHeight: 650 }}
                 />
               </Carousel.Item>
             </Carousel>
@@ -100,35 +136,46 @@ const AppFeaturesPage = () => {
                 className="mt-5"
                 style={{ textAlign: "right", color: "white" }}
               >
-                home
+                <strong style={{ fontSize: 26 }}>home</strong> <br />
+                interact with posts by liking, commenting, or reposting
+                <br />
+                view posts created by users you follow
               </p>
             ) : index === 1 ? (
               <p
                 className="mt-5"
                 style={{ textAlign: "right", color: "white" }}
               >
-                search
+                <strong style={{ fontSize: 26 }}>search</strong> <br />
+                view the most popular users on <strong>soundlink</strong> <br />
+                search for users via the search bar
               </p>
             ) : index === 2 ? (
               <p
                 className="mt-5"
                 style={{ textAlign: "right", color: "white" }}
               >
-                create
+                <strong style={{ fontSize: 26 }}>create</strong> <br />
+                link your spotify account and share <br />
+                your music taste to the world
               </p>
             ) : index === 3 ? (
               <p
                 className="mt-5"
                 style={{ textAlign: "right", color: "white" }}
               >
-                notifications
+                <strong style={{ fontSize: 26 }}>notifications</strong> <br />
+                see who is interacting with you and your posts <br />
+                create conversations with <strong>soundlink</strong> users
               </p>
             ) : index === 4 ? (
               <p
                 className="mt-5"
                 style={{ textAlign: "right", color: "white" }}
               >
-                profile
+                <strong style={{ fontSize: 26 }}>profile</strong> <br />
+                view your posts and what you have liked <br />
+                share a little bit about yourself with a bio
               </p>
             ) : (
               <p></p>
