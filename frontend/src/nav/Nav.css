@@ -15,7 +15,8 @@ nav {
 
 #home,
 #about,
-#download {
+#download,
+#demo {
   font-size: 18px;
   border-bottom: 1px solid transparent;
   transition: border-bottom 0.3s ease;
@@ -38,6 +39,12 @@ nav {
 }
 
 #about:hover {
+  cursor: pointer;
+  border-bottom: 1px solid #12081a;
+  color: #a57fc1;
+}
+
+#demo:hover {
   cursor: pointer;
   border-bottom: 1px solid #12081a;
   color: #a57fc1;
